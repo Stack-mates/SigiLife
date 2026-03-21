@@ -4,24 +4,24 @@ import { Routes, Route } from 'react-router-dom'
 import LandingPage from './components/LogInAuth/LandingPage'
 import Login from './components/LogInAuth/LogIn'
 import MakeProfile from './components/LogInAuth/MakeProfile'
-import UserSettings from './components/LogInAuth/UserSettings'
+import UserSettings from './components/SigilRoomHome/Grimiore/ProfileFriends/UserSettings'
 
 // SigilRoomHome
 import HomeRoom from './components/SigilRoomHome/HomeRoom'
-import Grimoire from './components/SigilRoomHome/Grimoire'
-import ScryeMirror from './components/SigilRoomHome/ScryeMirror'
+import Grimoire from './components/SigilRoomHome/Grimiore/Grimoire'
+import ScryeMirror from './components/SigilRoomHome/Grimiore/ScryeMirror'
 
 // MakeSigil
-import MakeSigil from './components/MakeSigil/MakeSigil'
-import DrawSigil from './components/MakeSigil/DrawSigil'
-import WriteSigil from './components/MakeSigil/WriteSigil'
-import StyleSigil from './components/MakeSigil/StyleSigil'
+import MakeSigil from './components/SigilRoomHome/MakeSigil/MakeSigil'
+import DrawSigil from './components/SigilRoomHome/MakeSigil/MakeSigilComponents/DrawSigil'
+import WriteSigil from './components/SigilRoomHome/MakeSigil/MakeSigilComponents/WriteSigil'
+import StyleSigil from './components/SigilRoomHome/MakeSigil/MakeSigilComponents/StyleSigil'
 
 // Other
-import MapBox from './components/Map/MapBox'
-import UserProfile from './components/ProfileFriends/UserProfile'
-import SigilCharge from './components/ActivateSigils/ChargeSigil/SigilCharge'
-import SigilDestroy from './components/ActivateSigils/DestroySigil/SigilDestroy'
+import MapBox from './components/SigilRoomHome/Grimiore/Map/MapBox'
+import UserProfile from './components/SigilRoomHome/Grimiore/ProfileFriends/UserProfile'
+import SigilCharge from './components/SigilRoomHome/ChargeSigil/SigilCharge'
+import SigilDestroy from './components/SigilRoomHome/DestroySigil/SigilDestroy'
 
 function App() {
   return (
