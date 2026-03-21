@@ -1,4 +1,4 @@
-import BackButton from "../Parts/BackButton"
+import BackButton from "../../../Parts/BackButton"
 import { useEffect, useRef, useState } from 'react';
 import * as fabric from 'fabric';
 
@@ -20,7 +20,7 @@ export default function DrawSigil() {
         backgroundColor: '#f5f5f5',
         isDrawingMode: true
       });
-      
+
       // Explicitly instantiate the PencilBrush
       const brush = new fabric.PencilBrush(canvas);
       brush.color = '#000000';
@@ -70,7 +70,7 @@ export default function DrawSigil() {
     if (fabricCanvasRef.current) {
       fabricCanvasRef.current.clear();
       fabricCanvasRef.current.backgroundColor = '#f5f5f5';
-      fabricCanvasRef.current.renderAll(); 
+      fabricCanvasRef.current.renderAll();
     }
   };
 
@@ -84,7 +84,7 @@ export default function DrawSigil() {
       if (typeof data === 'string' && fabricCanvasRef.current) {
         try {
           const { objects, options } = await fabric.loadSVGFromString(data);
-          
+
           if (!objects || objects.length === 0) return;
 
           // Filter out null values
@@ -92,7 +92,7 @@ export default function DrawSigil() {
 
           // Group the objects so they move as a single vector shape
           const obj = fabric.util.groupSVGElements(validObjects, options);
-          
+
           // Center the loaded SVG
           obj.set({
             left: 250,
@@ -101,24 +101,24 @@ export default function DrawSigil() {
             originY: 'center',
             selectable: true,
           });
-          
+
           // Scale it down if it's too big
           if (obj.width && obj.width > 400) {
             obj.scaleToWidth(400);
           }
-          
+
           fabricCanvasRef.current.add(obj);
           fabricCanvasRef.current.renderAll();
-          
+
           // Switch to select mode so they can manipulate the imported vector
           setIsDrawingMode(false);
-          
+
         } catch (error) {
           console.error("Error parsing SVG:", error);
         }
       }
     };
-    
+
     reader.readAsText(file);
     // Reset file input so they can re-upload the same file if needed
     e.target.value = '';
@@ -128,12 +128,12 @@ export default function DrawSigil() {
     <div className="draw-sigil-container">
       <h2>Draw Your Sigil</h2>
       <BackButton />
-      
+
       <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginTop: '1rem' }}>
-        <button 
+        <button
           onClick={() => setIsDrawingMode(!isDrawingMode)}
-          style={{ 
-            background: isDrawingMode ? '#e0e0e0' : '#4a90e2', 
+          style={{
+            background: isDrawingMode ? '#e0e0e0' : '#4a90e2',
             color: isDrawingMode ? '#000' : '#fff',
             padding: '8px 16px',
             border: 'none',
@@ -144,23 +144,23 @@ export default function DrawSigil() {
           {isDrawingMode ? "Switch to Manipulate Mode" : "Switch to Draw Mode"}
         </button>
 
-        <label style={{ 
-            background: '#e0e0e0', 
-            padding: '8px 16px', 
-            borderRadius: '4px', 
-            cursor: 'pointer',
-            fontSize: '14px'
-          }}>
+        <label style={{
+          background: '#e0e0e0',
+          padding: '8px 16px',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          fontSize: '14px'
+        }}>
           Import SVG Vector
-          <input 
-            type="file" 
-            accept=".svg" 
-            style={{ display: 'none' }} 
+          <input
+            type="file"
+            accept=".svg"
+            style={{ display: 'none' }}
             onChange={handleSVGUpload}
           />
         </label>
       </div>
-      
+
       {/* Wrap the canvas in a responsive div to monitor resizing,
           and keep Fabric's internal wrapper from messing up borders */}
       <div
@@ -178,7 +178,7 @@ export default function DrawSigil() {
       >
         <canvas ref={canvasRef} />
       </div>
-      
+
       <div style={{ marginTop: '1rem' }}>
         <button onClick={handleClear}>Clear Sigil</button>
       </div>

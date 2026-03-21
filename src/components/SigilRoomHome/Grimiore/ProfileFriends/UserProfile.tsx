@@ -1,7 +1,7 @@
 
-import BackButton from "../Parts/BackButton"
+import BackButton from "../../../Parts/BackButton"
 
-export default function UserFriends() {
+export default function UserProfile() {
 
   return (
     <div>
