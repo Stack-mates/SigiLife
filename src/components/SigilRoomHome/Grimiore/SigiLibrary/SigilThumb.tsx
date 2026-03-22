@@ -4,7 +4,7 @@ export default function SigilThumb() {
 
   return (<div>
     This is the SigilThumb!
-    <div>
-      <Link to="/sigil-page">Sigil</Link></div>
+    <br />
+    <Link to="/sigil-page">Sigil</Link>
   </div>)
 };

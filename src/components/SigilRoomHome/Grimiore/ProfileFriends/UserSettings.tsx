@@ -7,6 +7,9 @@ export default function UserSettings() {
       This is where you can delete your account
       <br /> This is where you can Log Out
       <br />
+      <br />
+      <br />
+
       <BackButton />
     </div>
   )

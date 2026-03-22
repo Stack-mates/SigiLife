@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import BackButton from '../Parts/BackButton'
 
 export default function HomeRoom() {
   return (
@@ -13,9 +14,14 @@ export default function HomeRoom() {
         <Link to="/grimoire">Grimoire</Link>
         <br />
         <Link to="/make-sigil">Make Sigil</Link>
-        <br />
       </nav>
+      <br />
+      <br />
+      <br />
+
+      <BackButton />
     </div>
   )
+
 }
 

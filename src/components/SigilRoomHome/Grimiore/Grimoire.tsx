@@ -16,8 +16,6 @@ export default function Grimoire() {
       <br />
       <Link to="/library">SigiLibrary</Link>
       <br />
-
-      <br />
       <br />
       <br />
 
