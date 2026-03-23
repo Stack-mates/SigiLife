@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom'
 import GoogleAuth from './GoogleAuth'
+type ApiCallType = (typeCall?: string, endpoint?: string, request?: any) => Promise<any>;
 
-export default function Login() {
+
+export default function Login({ ApiCall }: { ApiCall: ApiCallType }) {
   return (
     <div>
       <h1>Login</h1>
       <br />
-      <GoogleAuth />
+      <GoogleAuth ApiCall={ApiCall} />
       <br />
       Or:
       <br />
