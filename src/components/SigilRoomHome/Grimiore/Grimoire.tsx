@@ -14,18 +14,18 @@ export default function Grimoire() {
         <br />
         <Link to="/scrye-friends">Scrye</Link>
         <br />
-        <Link to="/profile">Profile</Link>
+        <Link to="/profile" >Profile</Link>
         <br />
       </div>
 
       <div>
         <Link to="/library">SigiLibrary</Link>
-        </div>
+      </div>
       <br />
       <br />
       <br />
 
-        <BackButton />
-      </div>
+      <BackButton />
+    </div>
   )
 }

@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import { useState} from 'react'
 
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Landing Page & Log in
 import LandingPage from './components/LogInAuth/LandingPage'
 import Login from './components/LogInAuth/LogIn'
@@ -68,13 +67,13 @@ function App() {
 
       {/* User */}
       <Route path="/settings" element={<UserSettings />} />
-      <Route path="/profile" element={<UserProfile />} />
+      <Route path="/profile" element={<UserProfile user={user}/>} />
 
       {/* Main Room Nav */}
       <Route path="/destroy-sigil" element={<SigilDestroy />} />
-      <Route path="/home" element={<HomeRoom user={user}/>} />
+      <Route path="/home" element={<HomeRoom />} />
       <Route path="/charge-sigil" element={<SigilCharge />} />
-      <Route path="/grimoire" element={<Grimoire />} />
+      <Route path="/grimoire" element={<Grimoire/>} />
       <Route path="/make-sigil" element={<MakeSigil />} />
 
 

@@ -1,8 +1,8 @@
 
 import BackButton from "../../../Parts/BackButton"
 
-export default function UserProfile() {
-
+export default function UserProfile({ user }: { user: any }) {
+  console.log(user)
   return (
     <div>
       <br />
