@@ -109,3 +109,20 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+grimoire,
+.grimoire {
+  display: flex;
+  flex-direction: column;
+}
+
+rightpage,
+.right-page {
+  display: flex;
+  flex-direction: column;
+}
+leftpage,
+.left-page {
+  display: flex;
+  flex-direction: column;
+}

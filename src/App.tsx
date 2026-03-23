@@ -73,7 +73,7 @@ function App() {
       <Route path="/destroy-sigil" element={<SigilDestroy />} />
       <Route path="/home" element={<HomeRoom />} />
       <Route path="/charge-sigil" element={<SigilCharge />} />
-      <Route path="/grimoire" element={<Grimoire/>} />
+      <Route path="/grimoire" element={<Grimoire user={user}/>} />
       <Route path="/make-sigil" element={<MakeSigil />} />
 
 

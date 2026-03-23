@@ -5,9 +5,9 @@ export default function Menu() {
     <div>
       <Link to="/profile">Back to Sigil Room</Link>
       <br />
-            <Link to="/map">SigilMap</Link>
-                  <br />
-            <Link to="/settings">Back to Sigil Room</Link>
-  </div>
+      <Link to="/map">SigilMap</Link>
+      <br />
+      <Link to="/settings">Back to Sigil Room</Link>
+    </div>
   )
 }
