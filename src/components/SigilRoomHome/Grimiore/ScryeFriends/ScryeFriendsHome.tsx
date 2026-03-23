@@ -9,7 +9,7 @@ export default function ScryeFriendsHome() {
       <br />
       <br />
 
-      <BackButton />
+      <BackButton name={"Grimiore"}/>
     </div>
   )
 };

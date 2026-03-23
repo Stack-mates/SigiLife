@@ -29,40 +29,19 @@ import SigilPage from './components/SigilRoomHome/Grimiore/SigiLibrary/SigilPage
 import ScryeFriends from './components/SigilRoomHome/Grimiore/ScryeFriends/ScryeFriendsHome'
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Properties
-const BASE_URL = 'http://localhost:3000'
 
-const ApiCall = async (typeCall = 'GET', endpoint = '/', request = null) => {
-  try{
-    const options: RequestInit = {
-      method: typeCall,
-      headers: {
-        "Content-Type": "application/json"
-      },
-    };
-    if (request){
-      options.body = JSON.stringify(request)
-    }
-    const response = await fetch(`${BASE_URL}${endpoint}`, options);
-    if (!response.ok){
-      throw new Error(`🚨 SigiLife apiCall error status 📢:${response.status}`)
-    }
-    return await response.json();
-  }
-  catch (error){
-    console.error(`🚨 SigiLife apiCall fail reason 📢:${error}❗👀`);
-    throw error;
-  }
-};
 
 
 function App() {
   const [user, setUser] = useState(null);
+  //const [room, setRoom] = useState('home');
+
 
   return (
     <Routes>
       {/* Auth flow */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Login ApiCall={ApiCall} setUser={setUser}/>} />
+      <Route path="/login" element={<Login setUser={setUser}/>} />
       <Route path="/make-profile" element={<MakeProfile />} />
 
       {/* User */}

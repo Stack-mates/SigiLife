@@ -7,12 +7,13 @@ export default function MakeSigil() {
       <br />
       <h1>Make a Sigil</h1>
       <Link to="/make-sigil/write">Write It</Link>
+      <br />
       <Link to="/library">Sigil Library</Link>
       <br />
       <br />
       <br />
 
-      <BackButton />
+      <BackButton name={"Go Back"} />
     </div>
   )
 }

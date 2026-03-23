@@ -5,7 +5,7 @@ export default function NextButton({ to }: { to: string }) {
     <Link to={to}>
       <button className="nav-button"
         style={{ backgroundColor: "#9e38fd" }}>
-        Next
+        {to}
       </button>
     </Link>
   )

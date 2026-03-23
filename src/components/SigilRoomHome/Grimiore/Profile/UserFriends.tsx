@@ -10,7 +10,7 @@ export default function UserFriends() {
       <br />
       <br />
 
-      <BackButton />
+      <BackButton name={"Profile"}/>
     </div>
   )
 };

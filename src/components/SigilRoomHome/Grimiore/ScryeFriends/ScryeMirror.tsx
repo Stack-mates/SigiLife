@@ -11,7 +11,7 @@ export default function ScryeMirror() {
       <br />
       <br />
 
-      <BackButton />
+      <BackButton name={"Grimiore"}/>
     </div>
   )
 }

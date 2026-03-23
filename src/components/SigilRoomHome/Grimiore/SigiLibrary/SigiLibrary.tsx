@@ -8,7 +8,7 @@ export default function SigiLibrary() {
     <h1>This is the SigiLibrary</h1>
     <SigilThumb/>
     <br />
-    <BackButton/>
+    <BackButton name={"Grimiore"}/>
 
   </div>)
 };

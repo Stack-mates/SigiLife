@@ -22,7 +22,7 @@ export default function HomeRoom() {
       <br />
       <br />
 
-      <BackButton />
+      <BackButton name={"Go Back"}/>
     </div>
   )
 

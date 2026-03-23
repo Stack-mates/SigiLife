@@ -14,7 +14,7 @@ export default function UserProfile({ user }: { user: any }) {
       {user.theme}
       <br />
 
-      <BackButton />
+      <BackButton name={"Grimiore"}/>
     </div>
   )
 };

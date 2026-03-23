@@ -10,7 +10,7 @@ export default function UserSettings() {
       <br />
             This is where you can delete your account
 
-      <BackButton />
+      <BackButton name={"Go Back"}/>
     </div>
   )
 }

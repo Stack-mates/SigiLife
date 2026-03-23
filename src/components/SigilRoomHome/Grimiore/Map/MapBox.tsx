@@ -13,7 +13,7 @@ export default function MapBox() {
     <br />
     <br />
 
-    <BackButton />
+    <BackButton name={"Grimiore"}/>
   </div>
   )
 };

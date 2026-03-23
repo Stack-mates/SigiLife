@@ -16,7 +16,7 @@ export default function DestroySigil() {
       <br />
       <br />
 
-      <BackButton />
+      <BackButton name={"Go Back"}/>
     </div>
   )
 };

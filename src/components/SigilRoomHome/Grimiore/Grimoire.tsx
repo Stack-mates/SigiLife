@@ -11,22 +11,24 @@ export default function Grimoire({ user }: { user: any }) {
       <div className={'bookbox'}>
         <div className={'leftpage'}>
           <br />
-          <Link to="/map"> Map </Link>
+          <Link to="/map"> 🗺️ Map </Link>
           <br />
-          <Link to="/scrye-friends"> Scrye Friends </Link>
+          <Link to="/scrye-friends"> 👥 Scrye Friends 👥 </Link>
           <br />
-          <Link to="/profile" > Profile </Link>
+          <Link to="/profile" > 👤 Profile 👤 </Link>
           <br />
         </div>
 
         <div className={'rightpage'}>
-          <Link to="/library"> SigiLibrary </Link>
+          <Link to="/library"> 📜 SigiLibrary 📜 </Link>
+          <br />
+          <Link to="/make-sigil"> 🪶 MakeSigil 🪶 </Link>
         </div>
         <br />
         <br />
         <br />
       </div>
-      <BackButton />
+      <BackButton name={"Sigil Home Room"} />
     </div>
   )
 }

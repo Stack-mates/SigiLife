@@ -10,6 +10,6 @@ export default function SigilPage() {
     <br />
     <Link to="/destroy-sigil">Destroy Sigil</Link>
     <br />
-    <BackButton />
+    <BackButton name={"Sigil Library"}/>
   </div>)
 };
