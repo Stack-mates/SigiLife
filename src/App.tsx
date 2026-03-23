@@ -1,14 +1,15 @@
 import { Routes, Route } from 'react-router-dom'
+import { useState} from 'react'
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Landing Page & Log in
 import LandingPage from './components/LogInAuth/LandingPage'
 import Login from './components/LogInAuth/LogIn'
-import MakeProfile from './components/LogInAuth/MakeProfile'
+import MakeProfile from './components/SigilRoomHome/Grimiore/Profile/MakeProfile'
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ User
-import UserProfile from './components/SigilRoomHome/Grimiore/ProfileFriends/UserProfile'
-import UserSettings from './components/SigilRoomHome/Grimiore/ProfileFriends/UserSettings'
+import UserProfile from './components/SigilRoomHome/Grimiore/Profile/UserProfile'
+import UserSettings from './components/SigilRoomHome/Grimiore/Profile/UserSettings'
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HomeRoom & Components
 import HomeRoom from './components/SigilRoomHome/HomeRoom'
@@ -28,6 +29,9 @@ import SigiLibrary from './components/SigilRoomHome/Grimiore/SigiLibrary/SigiLib
 import SigilPage from './components/SigilRoomHome/Grimiore/SigiLibrary/SigilPage'
 import ScryeFriends from './components/SigilRoomHome/Grimiore/ScryeFriends/ScryeFriendsHome'
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Properties
+const BASE_URL = 'http://localhost:3000'
+
 const ApiCall = async (typeCall = 'GET', endpoint = '/', request = null) => {
   try{
     const options: RequestInit = {
@@ -39,14 +43,14 @@ const ApiCall = async (typeCall = 'GET', endpoint = '/', request = null) => {
     if (request){
       options.body = JSON.stringify(request)
     }
-    const response = await fetch(endpoint, options);
+    const response = await fetch(`${BASE_URL}${endpoint}`, options);
     if (!response.ok){
-      throw new Error(`🚨 𒆙 SigiLife apiCall error status 📢:${response.status}❗👀`)
+      throw new Error(`🚨 SigiLife apiCall error status 📢:${response.status}`)
     }
     return await response.json();
   }
   catch (error){
-    console.error(`🚨 𒆙 SigiLife apiCall fail reason 📢:${error}❗👀`);
+    console.error(`🚨 SigiLife apiCall fail reason 📢:${error}❗👀`);
     throw error;
   }
 };
@@ -59,7 +63,7 @@ function App() {
     <Routes>
       {/* Auth flow */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Login ApiCall={ApiCall} setUser={setUser0}/>} />
+      <Route path="/login" element={<Login ApiCall={ApiCall} setUser={setUser}/>} />
       <Route path="/make-profile" element={<MakeProfile />} />
 
       {/* User */}
@@ -68,7 +72,7 @@ function App() {
 
       {/* Main Room Nav */}
       <Route path="/destroy-sigil" element={<SigilDestroy />} />
-      <Route path="/home" element={<HomeRoom />} />
+      <Route path="/home" element={<HomeRoom user={user}/>} />
       <Route path="/charge-sigil" element={<SigilCharge />} />
       <Route path="/grimoire" element={<Grimoire />} />
       <Route path="/make-sigil" element={<MakeSigil />} />
