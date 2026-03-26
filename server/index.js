@@ -5,14 +5,16 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import compression from 'compression';
-import { fileURLToPath } from 'url';
+//import { fileURLToPath } from 'url';
+
 import prisma from '../prisma/prisma.client.js';
 
 const app = express();
+// const router = express.Router();
 const PORT = process.env.PORT || 3000;
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Middleware
 app.use(express.json());
@@ -20,12 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(compression());
 
-app.use('/api', apiRouter);
-app.use(express.static(path.join(__dirname, '../dist')));
+// app.use('/api', router);
+// app.use(express.static(path.join(__dirname, '../dist')));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../dist/index.html'));
+// });
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Routes
 app.post('/api/character-vectors', async (req, res) => {
