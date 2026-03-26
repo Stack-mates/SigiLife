@@ -11,6 +11,9 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^7.5.0",
     "@tailwindcss/vite": "^4.2.2",

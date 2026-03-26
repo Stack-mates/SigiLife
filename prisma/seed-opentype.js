@@ -11,8 +11,12 @@ const __dirname = path.dirname(__filename);
 
 async function seed() {
   try {
-    console.log('Clearing svg_vectors...');
-    await prisma.svgVector.deleteMany({});
+    const count = await prisma.svgVector.count();
+      if (count > 0){
+        console.log('SVG data exists, do not need to seed');
+        return;
+      }
+    console.log('seeding table with svgVectors!')
 
     const fontPath = path.join(
       __dirname,
@@ -28,6 +32,7 @@ async function seed() {
     const font = await opentype.load(fontPath);
 
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
     console.log(`Extracting vectors for ${chars.length} characters...`);
 
     for (const char of chars) {
@@ -52,7 +57,7 @@ async function seed() {
   } catch (error) {
     console.error('Error seeding database:', error);
   } finally {
-    await prisma.$disconnect
+    await prisma.$disconnect();
   }
 }
 
