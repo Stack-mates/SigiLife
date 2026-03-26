@@ -189,30 +189,42 @@ export default function DrawSigil({ user }: { user: any }) {
     }
   };
 
-  const undo = () => {
+  const undo = async () => {
     if (historyIndexRef.current > 0 && fabricCanvasRef.current) {
       isRestoringHistory.current = true;
       historyIndexRef.current -= 1;
       const jsonStr = historyRef.current[historyIndexRef.current]!;
-        await fabricCanvasRef.current.loadFromJSON(JSON.parse(jsonStr));
+      await fabricCanvasRef.current.loadFromJSON(JSON.parse(jsonStr));
       fabricCanvasRef.current.renderAll();
       isRestoringHistory.current = false;
-        forceRender({});
-        return;
+      forceRender({});
+      return;
     }
   };
 
-  const redo = () => {
+  const redo = async () => {
     if (historyIndexRef.current < historyRef.current.length - 1 && fabricCanvasRef.current) {
       isRestoringHistory.current = true;
       historyIndexRef.current += 1;
       const jsonStr = historyRef.current[historyIndexRef.current]!;
-        await fabricCanvasRef.current.loadFromJSON(JSON.parse(jsonStr));
+      await fabricCanvasRef.current.loadFromJSON(JSON.parse(jsonStr));
       fabricCanvasRef.current.renderAll();
       isRestoringHistory.current = false;
-        forceRender({});
-        return;
+      forceRender({});
+      return;
     }
+  };
+
+  const handleExport = () => {
+    if (!fabricCanvasRef.current) return;
+    const dataURL = fabricCanvasRef.current.toDataURL({
+      format: 'png',
+      multiplier: 2
+    });
+    const link = document.createElement('a');
+    link.download = `${sigilName.replace(/\s+/g, '_')}_sigil.png`;
+    link.href = dataURL;
+    link.click();
   };
 
   const handleSave = async () => {
@@ -299,11 +311,12 @@ export default function DrawSigil({ user }: { user: any }) {
 
         {/* Undo/Redo */}
         <div style={{ display: 'flex', gap: '5px' }}>
-          <button onClick={undo} disabled={!canUndo} style={{ opacity: canUndo ? 1 : 0.5 }}>↶ Undo</button>
-          <button onClick={redo} disabled={!canRedo} style={{ opacity: canRedo ? 1 : 0.5 }}>↷ Redo</button>
+          <button className="navbutton" onClick={undo} disabled={!canUndo} style={{ opacity: canUndo ? 1 : 0.5 }}>↶ Undo</button>
+          <button className="navbutton" onClick={redo} disabled={!canRedo} style={{ opacity: canRedo ? 1 : 0.5 }}>↷ Redo</button>
         </div>
 
         <button
+          className="navbutton"
           onClick={() => setIsDrawingMode(!isDrawingMode)}
           style={{
             background: isDrawingMode ? '#e0e0e0' : '#4a90e2',
@@ -315,7 +328,7 @@ export default function DrawSigil({ user }: { user: any }) {
         </button>
 
         {!isDrawingMode && (
-          <button onClick={handleDeleteSelected} style={{ background: '#ff4d4d', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}>
+          <button className="navbutton" onClick={handleDeleteSelected} style={{ background: '#ff4d4d', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}>
             🗑️ Delete Selected
           </button>
         )}
@@ -325,7 +338,7 @@ export default function DrawSigil({ user }: { user: any }) {
           <input type="file" accept=".svg" style={{ display: 'none' }} onChange={handleSVGUpload} />
         </label>
 
-        <button onClick={handleExport} style={{ background: '#28a745', color: '#fff', padding: '8px 16px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}>
+        <button className="navbutton" onClick={handleExport} style={{ background: '#28a745', color: '#fff', padding: '8px 16px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}>
           💾 Save Image
         </button>
 
@@ -386,10 +399,10 @@ export default function DrawSigil({ user }: { user: any }) {
       </div>
 
       <div style={{ marginTop: '1rem' }}>
-        <button onClick={handleClear} style={{ background: '#6c757d', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}>
+        <button className="navbutton" onClick={handleClear} style={{ background: '#6c757d', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer' }}>
           Clear All
         </button>
-        <button onClick={handleClear}>Clear Sigil</button>
+        <button className="navbutton" onClick={handleClear}>Clear Sigil</button>
         <NextButton to="/make-sigil/style" />
       </div>
     </div>

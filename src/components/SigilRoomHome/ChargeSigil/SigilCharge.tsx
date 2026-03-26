@@ -12,11 +12,11 @@ export default function ChargeSigil({ user }: { user: any }) {
       <SigilChargeEffect />
       <ChargeEmotion />
       <br />
-      <Link to="/sigil-page">Save your Sigil!</Link>
+      <Link className="navbutton" to="/sigil-page">Save your Sigil!</Link>
       <br />
-      <Link to="/destroy-sigil">Destroy Your Charged Sigil!</Link>
+      <Link className="navbutton" to="/destroy-sigil">Destroy Your Charged Sigil!</Link>
       <br />
-      <Link to="/home">Back to Sigil Room</Link>
+      <Link className="navbutton" to="/home">Back to Sigil Room</Link>
       <br />
       <br />
       <br />

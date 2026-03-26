@@ -12,22 +12,21 @@ export default function Grimoire({ user }: { user: any }) {
           {user.user}'s Grimoire
         </div>
         <div className={'bookbox'}>
-          <div className={'leftpage'}>
+          <div className="grimiore-left-page-nav-box">
+            <Link className="navbutton" to="/map"> 🗺️ Map </Link>
             <br />
-            <Link to="/map"> 🗺️ Map </Link>
+            <Link className="navbutton" to="/scrye-friends"> 👥 Scrye Friends </Link>
             <br />
-            <Link to="/scrye-friends"> 👥 Scrye Friends </Link>
-            <br />
-            <Link to="/profile" > 👤 Profile </Link>
-            <br />
+            <Link className="navbutton" to="/profile" > 👤 Profile </Link>
           </div>
-
-          <div className={'grimiorerightpage'}>
+        </div>
+        <div className="bookbox">
+          <div className="grimiore-right-page">
             <br />
-            <Link className="grimiorerightpagelibrarybox" to="/right-page" > 📜 SigiLibrary </Link>
+            <Link className="navbutton grimiorerightpagelibrarybox" to="/right-page" > 📜 SigiLibrary </Link>
             <br />
             <br />
-            <Link to="/make-sigil"> 🪶 MakeSigil </Link>
+            <Link className="navbutton" to="/make-sigil"> 🪶 MakeSigil </Link>
           </div>
           <br />
           <br />

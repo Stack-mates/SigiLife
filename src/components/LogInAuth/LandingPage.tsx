@@ -26,9 +26,9 @@ export default function LandingPage() {
           <br />
         </div>
 
-        <Link to="/login">Login</Link>
+        <Link className="navbutton" to="/login">Login</Link>
         <br />
-        <Link to="/make-profile">Create Profile</Link>
+        <Link className="navbutton" to="/make-profile">Create Profile</Link>
       </section>
     </>
   );

@@ -3,7 +3,7 @@
   themes: all;
 }
 
-navbutton,
+.nav-button,
 .navbutton {
   font-family: 'Poller One', sans-serif;
   font-size: medium;
@@ -19,7 +19,7 @@ mainContainer,
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow-x: scroll;
+  overflow-y: auto;
   width: 100vw;
   scrollbar-color: #6915c9 #136d2a;
   scrollbar-width: thin;

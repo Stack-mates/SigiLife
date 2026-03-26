@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 export default function Menu() {
   return (
     <div>
-      <Link to="/profile">Profile</Link>
+      <Link className="navbutton" to="/make-sigil/write">Write It</Link>
       <br />
-      <Link to="/map">SigilMap</Link>
+      <Link className="navbutton" to="/library">Sigil Library</Link>
       <br />
-      <Link to="/settings">Settings</Link>
+      <Link className="navbutton" to="/map">SigilMap</Link>
+      <br />
+      <Link className="navbutton" to="/settings">Settings</Link>
     </div>
   )
 }
