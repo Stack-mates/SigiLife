@@ -1,16 +1,13 @@
 import SigilThumb from "./SigilThumb"
 
-export default function SigiLibrary({ items }: { items: any }) {
-  console.log(items)
-  const mapItems = items.flatMap((item: any) => Object.entries(item));
+export default function SigiLibrary({ items }: { items: any[]}) {
 
   return (
     <div className="sigilibrary">
-      {mapItems.flatMap(([sigilKey, sigilData]: [any, any]) => (
+      {items.map((sigil:any) => (
         <SigilThumb
-        key={sigilKey}
-        sigilKey={sigilKey}
-        sigilData={sigilData} />
+        key={sigil.name}
+        sigilData={sigil} />
       ))}
     </div>
   );

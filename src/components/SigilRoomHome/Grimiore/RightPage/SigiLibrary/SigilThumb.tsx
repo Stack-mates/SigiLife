@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom'
 
-export default function SigilThumb({ sigilKey, sigilData }: { sigilKey: string, sigilData: any }) {
+export default function SigilThumb({ sigilData }: {  sigilData: any }) {
   return (
-    <Link className="sigilthumb" to="/sigil-page" state={{ sigilKey, sigilData }}>
+    <Link className="sigilthumb" to="/sigil-page" state={{ sigilData }}>
       <div>
         <p>{sigilData.name}</p>
-        <p>{sigilData.location.name}</p>
-        <p>{sigilData.sigilGroup}</p>
+        <p>{sigilData.locationName}</p>
+        <p>{sigilData.sigilGroups?.map((g: any) => g.groupMember.join(','))}</p>
       </div>
     </Link>
   )

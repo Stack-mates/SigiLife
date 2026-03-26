@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
-import pool from '../database/main.js';
+import prisma from '../database.main.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,11 +25,12 @@ app.post('/api/character-vectors', async (req, res) => {
       return res.json([]);
     }
 
-    const [rows] = await pool.query(
-      `SELECT filename as char_name, vector_data FROM svg_vectors WHERE BINARY filename IN (?)`,
-      [charArray],
-    );
-    res.json(rows);
+    const vectors = await prisma.svgVector.findMany({
+      where: {filename: {in: charArray}},
+      select: {filename: true, vectorData: true}
+    });
+
+    res.json(vectors);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
@@ -38,10 +39,11 @@ app.post('/api/character-vectors', async (req, res) => {
 
 app.get('/api/sigils', async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      'SELECT * FROM sigils ORDER BY created_at DESC',
-    );
-    res.json(rows);
+    const sigils = await prisma.sigil.findMany({
+      orderBy: { createdAt: 'desc'},
+      include: {sigilGroups: true}
+    });
+    res.json(sigils);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
@@ -50,17 +52,19 @@ app.get('/api/sigils', async (req, res) => {
 
 app.post('/api/sigils', async (req, res) => {
   try {
-    const { name, user_id, intention, canvas_data, image_data } = req.body;
+    const { name, userId, intention, canvasData, imageData } = req.body;
 
-    // Default to user_id 1 if not provided (temp for dev)
-    const finalUserId = user_id || 1;
+    const sigil = await prisma.sigil.create({
+      data: {
+        name,
+        userId: userId || 1,
+        intention,
+        canvasData,
+        imageData
+      }
+    });
 
-    const [result] = await pool.query(
-      'INSERT INTO sigils (name, user_id, intention, canvas_data, image_data) VALUES (?, ?, ?, ?, ?)',
-      [name, finalUserId, intention, canvas_data, image_data],
-    );
-
-    res.json({ id: result.insertId, message: 'Sigil saved successfully' });
+    res.json({ id: sigil.id, message: 'Sigil saved successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: error.message });
