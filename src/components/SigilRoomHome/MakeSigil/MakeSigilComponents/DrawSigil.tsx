@@ -2,6 +2,7 @@ import BackButton from "../../../Parts/BackButton"
 import { useEffect, useRef, useState, useCallback } from 'react';
 import NextButton from "../../../Parts/NextButton";
 import * as fabric from 'fabric';
+import axios from 'axios';
 
 export default function DrawSigil({ user }: { user: any }) {
   console.log(user)
@@ -12,6 +13,8 @@ export default function DrawSigil({ user }: { user: any }) {
   const [isDrawingMode, setIsDrawingMode] = useState(true);
   const [brushColor, setBrushColor] = useState('#000000');
   const [brushWidth, setBrushWidth] = useState(5);
+  const [sigilName, setSigilName] = useState('My New Sigil');
+  const [isSaving, setIsSaving] = useState(false);
 
   // Undo/Redo State
   const historyRef = useRef<string[]>([]);
@@ -37,8 +40,9 @@ export default function DrawSigil({ user }: { user: any }) {
   }, []);
 
   useEffect(() => {
-    if (canvasRef.current && !fabricCanvasRef.current) {
-      const initialSize = wrapperRef.current ? wrapperRef.current.clientWidth : 500;
+    if (!canvasRef.current || fabricCanvasRef.current) return;
+
+    const initialSize = wrapperRef.current ? wrapperRef.current.clientWidth : 500;
 
       const canvas = new fabric.Canvas(canvasRef.current, {
         width: initialSize,
@@ -64,6 +68,51 @@ export default function DrawSigil({ user }: { user: any }) {
         // Prevent duplicate history entries when clearing the canvas programmatically
         if (!isRestoringHistory.current) saveHistory();
       });
+
+      // Load character vectors from backend
+      const loadVectors = async () => {
+        const uniqueChars = localStorage.getItem('sigilUniqueChars');
+        if (uniqueChars) {
+          try {
+            const response = await axios.post('http://localhost:3000/api/character-vectors', { chars: uniqueChars });
+            const vectors = response.data;
+
+            for (const charData of vectors) {
+              console.log("Loading char vector:", charData.char_name);
+              const svgWrapper = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">${charData.vector_data}</svg>`;
+              const { objects, options } = await fabric.loadSVGFromString(svgWrapper);
+              console.log("Parsed objects:", objects?.length);
+              if (objects && objects.length > 0) {
+                const validObjects = objects.filter((o): o is fabric.FabricObject => o !== null);
+                const obj = fabric.util.groupSVGElements(validObjects, options) as fabric.Group;
+
+                obj.set({
+                  left: canvas.width ? (canvas.width / 2) + (Math.random() * 50 - 25) : 250,
+                  top: canvas.height ? (canvas.height / 2) + (Math.random() * 50 - 25) : 250,
+                  originX: 'center',
+                  originY: 'center',
+                  selectable: true,
+                });
+
+                if (obj.width && canvas.width && obj.width > canvas.width * 0.4) {
+                  obj.scaleToWidth(canvas.width * 0.4);
+                }
+
+                canvas.add(obj);
+              }
+            }
+            if (vectors.length > 0) {
+              canvas.renderAll();
+              setIsDrawingMode(false);
+              saveHistory();
+            }
+          } catch (error) {
+            console.error("Error loading character vectors:", error);
+          }
+        }
+      };
+
+      loadVectors();
 
       // Handle keyboard Delete
       const handleKeyDown = (e: KeyboardEvent) => {
@@ -97,8 +146,7 @@ export default function DrawSigil({ user }: { user: any }) {
           fabricCanvasRef.current = null;
         }
       };
-    }
-  }, [saveHistory]);
+    }, [saveHistory]);
 
   // Update canvas state when mode changes
   useEffect(() => {
@@ -130,17 +178,18 @@ export default function DrawSigil({ user }: { user: any }) {
 
   const handleDeleteSelected = () => {
     if (!fabricCanvasRef.current) return;
-    const activeObjects = fabricCanvasRef.current.getActiveObjects();
+    const canvas = fabricCanvasRef.current;
+    const activeObjects = canvas.getActiveObjects();
     if (activeObjects.length > 0) {
-      fabricCanvasRef.current.discardActiveObject();
+      canvas.discardActiveObject();
       activeObjects.forEach((obj) => {
-        fabricCanvasRef.current!.remove(obj);
+        canvas.remove(obj);
       });
-      // history is updated via 'object:removed' listener
+
     }
   };
 
-  const undo = async () => {
+  const undo = () => {
     if (historyIndexRef.current > 0 && fabricCanvasRef.current) {
       isRestoringHistory.current = true;
       historyIndexRef.current -= 1;
@@ -153,7 +202,7 @@ export default function DrawSigil({ user }: { user: any }) {
     }
   };
 
-  const redo = async () => {
+  const redo = () => {
     if (historyIndexRef.current < historyRef.current.length - 1 && fabricCanvasRef.current) {
       isRestoringHistory.current = true;
       historyIndexRef.current += 1;
@@ -166,17 +215,32 @@ export default function DrawSigil({ user }: { user: any }) {
     }
   };
 
-  const handleExport = () => {
+  const handleSave = async () => {
     if (!fabricCanvasRef.current) return;
-    // Export at a higher multiplier for a crisper sigil
-    const dataURL = fabricCanvasRef.current.toDataURL({
-      format: 'png',
-      multiplier: 2
-    });
-    const link = document.createElement('a');
-    link.href = dataURL;
-    link.download = 'my-sigil.png';
-    link.click();
+    setIsSaving(true);
+    try {
+      const canvas = fabricCanvasRef.current;
+      const canvas_data = JSON.stringify(canvas.toJSON());
+      const image_data = canvas.toDataURL({
+        format: 'png',
+        multiplier: 2
+      });
+      const intention = localStorage.getItem('sigilIntention') || '';
+
+      await axios.post('http://localhost:3000/api/sigils', {
+        name: sigilName,
+        intention,
+        canvas_data,
+        image_data
+      });
+
+      alert('Sigil saved successfully!');
+    } catch (error) {
+      console.error("Error saving sigil:", error);
+      alert('Failed to save sigil.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSVGUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -192,7 +256,7 @@ export default function DrawSigil({ user }: { user: any }) {
           if (!objects || objects.length === 0) return;
 
           const validObjects = objects.filter((o): o is fabric.FabricObject => o !== null);
-          const obj = fabric.util.groupSVGElements(validObjects, options);
+          const obj = fabric.util.groupSVGElements(validObjects, options) as fabric.Group;
 
           obj.set({
             left: fabricCanvasRef.current.width ? fabricCanvasRef.current.width / 2 : 250,
@@ -264,6 +328,17 @@ export default function DrawSigil({ user }: { user: any }) {
         <button onClick={handleExport} style={{ background: '#28a745', color: '#fff', padding: '8px 16px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}>
           💾 Save Image
         </button>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <label htmlFor="sigilName">Name:</label>
+          <input
+            type="text"
+            id="sigilName"
+            value={sigilName}
+            onChange={(e) => setSigilName(e.target.value)}
+            style={{ padding: '6px', borderRadius: '4px', border: '1px solid #ccc' }}
+          />
+        </div>
       </div>
 
       {/* Brush Controls (Only relevant in Drawing Mode) */}

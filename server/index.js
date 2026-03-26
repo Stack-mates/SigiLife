@@ -3,6 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import pool from '../database/main.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,6 +14,57 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Routes
+app.post('/api/character-vectors', async (req, res) => {
+  try {
+    const { chars } = req.body;
+    if (!chars || typeof chars !== 'string') {
+      return res.json([]);
+    }
+    const charArray = chars.split('');
+    if (charArray.length === 0) {
+      return res.json([]);
+    }
+
+    const [rows] = await pool.query(
+      `SELECT filename as char_name, vector_data FROM svg_vectors WHERE BINARY filename IN (?)`,
+      [charArray]
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/sigils', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT * FROM sigils ORDER BY created_at DESC');
+    res.json(rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/sigils', async (req, res) => {
+  try {
+    const { name, user_id, intention, canvas_data, image_data } = req.body;
+    
+    // Default to user_id 1 if not provided (temp for dev)
+    const finalUserId = user_id || 1;
+
+    const [result] = await pool.query(
+      'INSERT INTO sigils (name, user_id, intention, canvas_data, image_data) VALUES (?, ?, ?, ?, ?)',
+      [name, finalUserId, intention, canvas_data, image_data]
+    );
+
+    res.json({ id: result.insertId, message: 'Sigil saved successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('Hello SigiLife!');
 });
