@@ -11,7 +11,7 @@ export default function Login({ setUser }: { setUser: (user: any) => void }) {
       <br />
       Or:
       <br />
-      <Link to="/make-profile">Create an account</Link>
+      <Link className="navbutton" to="/make-profile">Create an account</Link>
     </div>
   )
 }

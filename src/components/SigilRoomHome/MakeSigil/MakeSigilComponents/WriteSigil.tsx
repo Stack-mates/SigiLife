@@ -3,6 +3,28 @@ import NextButton from "../../../Parts/NextButton"
 import { useState } from 'react';
 
 export default function WriteSigil({ user }: { user: any }) {
+  const [intention, setIntention] = useState('');
+
+  const getUniqueChars = (text: string): string => {
+    // Remove vowels, non-alphabetic characters, and duplicate characters
+    const nonAlphaOrVowels = /[^a-zA-Z]|[aeiouAEIOU]/g;
+    const cleanText = text.replace(nonAlphaOrVowels, '').toUpperCase();
+    const seen = new Set<string>();
+    const uniqueChars = cleanText.split('').filter(char => {
+      if (seen.has(char)) return false;
+      seen.add(char);
+      return true;
+    });
+    return uniqueChars.join('');
+  };
+
+  const handleNext = () => {
+    const uniqueChars = getUniqueChars(intention);
+    // Store in localStorage for the next page
+    localStorage.setItem('sigilIntention', intention);
+    localStorage.setItem('sigilUniqueChars', uniqueChars);
+  };
+
   console.log(user)
   return (
     <div className='maincontainer'>

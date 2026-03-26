@@ -8,9 +8,9 @@ export default function MakeSigil({ user }: { user: any }) {
     <div>
       <br />
       <h1>Make a Sigil</h1>
-      <Link to="/make-sigil/write">Write It</Link>
+      <Link className="navbutton" to="/make-sigil/write">Write It</Link>
       <br />
-      <Link to="/library">Sigil Library</Link>
+      <Link className="navbutton" to="/library">Sigil Library</Link>
       <br />
       <br />
       <br />

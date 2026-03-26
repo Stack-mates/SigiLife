@@ -35,7 +35,7 @@ export default function GoogleAuth({ setUser }: { setUser: (user: any) => void }
 
   return (
     <div>
-      <button onClick={handleLogin}>Sign in with Google</button>
+      <button className="navbutton" onClick={handleLogin}>Sign in with Google</button>
     </div>
   )
 };

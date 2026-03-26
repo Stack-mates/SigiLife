@@ -12,7 +12,7 @@ export default function DestroySigil({ user }: { user: any }) {
       <DestroyEmotion />
       <SigilDestroyEffect />
       <br />
-      <Link to="/home">Back to Sigil Room</Link>
+      <Link className="navbutton" to="/home">Back to Sigil Room</Link>
       <br />
       <br />
       <br />

@@ -22,9 +22,9 @@ export default function SigilPage( ) {
         <br />
     </div>
     
-    <Link to="/charge-sigil">Charge Sigil</Link>
+    <Link className="navbutton" to="/charge-sigil">Charge Sigil</Link>
     <br />
-    <Link to="/destroy-sigil">Destroy Sigil</Link>
+    <Link className="navbutton" to="/destroy-sigil">Destroy Sigil</Link>
     <br />
     <img className="sigilbox"src="src/assets/dummySigil.svg"/>
     <br />
