@@ -1,6 +1,8 @@
 import BackButton from "../../../Parts/BackButton"
 import NextButton from "../../../Parts/NextButton"
 
+//this is where we will need a call to the db to save
+
 export default function StyleSigil({ user }: { user: any }) {
   console.log(user)
   return (

@@ -2,7 +2,7 @@ import 'dotenv/config';
 import opentype from 'opentype.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import prisma from './prisma.client.js';
+import prisma from './prisma.client.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

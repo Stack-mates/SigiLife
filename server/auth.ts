@@ -37,6 +37,7 @@ router.post('/google', async (req, res) => {
     });
 
     req.session.userId = user.id;
+    
     res.json({
       success: true,
       user: {

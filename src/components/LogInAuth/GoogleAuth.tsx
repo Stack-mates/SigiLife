@@ -16,7 +16,6 @@ export default function GoogleAuth({ setUser }: { setUser: (user: any) => void }
       try {
         const res = await fetch('http://localhost:3000/api/auth/google', {
           method: 'POST',
-          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ credential: response.credential })
         });
