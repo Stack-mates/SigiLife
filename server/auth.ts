@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { OAuth2Client } from 'google-auth-library';
-import { Prisma } from '../prisma/generated/client.ts';
+import prisma from '../prisma/prisma.client';
 
 const router = Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -29,7 +29,7 @@ router.post('/google', async (req, res) => {
       return;
     }
 
-    const user = await Prisma.user.upsert({
+    const user = await prisma.user.upsert({
       where: { googleId },
       update: { name, picture },
       create: { email, name, picture, googleId },
@@ -47,7 +47,7 @@ router.post('/google', async (req, res) => {
     });
   } catch (error) {
     console.error('Google Auth error: ', error);
-    res.status(500).json({ error: 'Auth failed' });
+    res.status(500).json({ error: (error as Error).message });
   }
 });
 

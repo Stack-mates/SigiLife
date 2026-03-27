@@ -5,12 +5,18 @@ import express from 'express';
 import cors from 'cors';
 //import path from 'path';
 import compression from 'compression';
-import 'express-session';
 import authRouter from './auth.js';
+
+import 'express-session';
+import session from 'express-session';
+import { sessionStore } from './sessionStore';
+
+
+
 
 //import { fileURLToPath } from 'url';
 
-import { Prisma } from '../prisma/generated/client.ts';
+import prisma from '../prisma/prisma.client';
 
 const app = express();
 // const router = express.Router();
@@ -20,6 +26,20 @@ const PORT = process.env.PORT || 3000;
 // const __dirname = path.dirname(__filename);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Middleware
+
+app.use(session({
+  secret: process.env.SESSION_SECRET as string,
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  },
+}));
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
@@ -45,7 +65,7 @@ app.post('/api/character-vectors', async (req, res) => {
       return res.json([]);
     }
 
-    const vectors = await Prisma.svgVector.findMany({
+    const vectors = await prisma.svgVector.findMany({
       where: { filename: { in: charArray } },
       select: { filename: true, vectorData: true },
     });
@@ -53,20 +73,20 @@ app.post('/api/character-vectors', async (req, res) => {
     res.json(vectors);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error as Error).message });
   }
 });
 
 app.get('/api/sigils', async (req, res) => {
   try {
-    const sigils = await Prisma.sigil.findMany({
+    const sigils = await prisma.sigil.findMany({
       orderBy: { createdAt: 'desc' },
       include: { sigilGroups: true },
     });
     res.json(sigils);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error as Error).message });
   }
 });
 
@@ -74,7 +94,7 @@ app.post('/api/sigils', async (req, res) => {
   try {
     const { name, userId, intention, canvasData, imageData } = req.body;
 
-    const sigil = await Prisma.sigil.create({
+    const sigil = await prisma.sigil.create({
       data: {
         name,
         userId: userId || 1,
@@ -87,7 +107,7 @@ app.post('/api/sigils', async (req, res) => {
     res.json({ id: sigil.id, message: 'Sigil saved successfully' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error as Error).message });
   }
 });
 
@@ -240,11 +260,12 @@ app.post('/auth', (req, res) => {
 });
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Error handler
-app.use((err, req, res, next) => {
+import { Request, Response, NextFunction } from 'express';
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ error: err.message });
 });
-
 const server = app.listen(PORT, (err) => {
   if (err) {
     console.error('Failed to start server:', err);
