@@ -39,9 +39,6 @@ function Submit() {
     <div className='main-container'>
       <div className='makeprofile'>
         <h1>Create Profile</h1>
-
-        This is where you will link your Google Account
-
         <form>
           <label>
             <input
@@ -67,7 +64,8 @@ function Submit() {
               value={homeLatitude}
               onChange={() => handleHomeLocation}
             />
-            choose your home location?</label>
+            choose your home location
+            </label>
 
           <label>
             <input
