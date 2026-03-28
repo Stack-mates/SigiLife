@@ -13,7 +13,7 @@ export default function SigilPage() {
 
       {sigilData.name}
       <br />
-      was created on : {sigilData.created_at}
+      was created on : {sigilData.createdAt}
       <br />
       at {sigilData.locationName}
       <br />
