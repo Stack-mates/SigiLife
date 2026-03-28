@@ -1,6 +1,6 @@
 import SigilThumb from "./SigilThumb"
-
 import MapBox from "../../LeftPage/Map/MapBox"
+import { Link } from 'react-router-dom'
 
 export default function SigiLibrary({ items, user }: { items: any[], user: any }) {
   return (
@@ -18,6 +18,11 @@ export default function SigiLibrary({ items, user }: { items: any[], user: any }
             sigilData={sigil} 
           />
         ))}
+      </div>
+
+      <div className="flex justify-between mt-4">
+        <Link className="navbutton" to="/grimoire">⬅️ Left Page</Link>
+        <Link className="navbutton" to="/right-page">Right Page ➡️</Link>
       </div>
       
     </div>
