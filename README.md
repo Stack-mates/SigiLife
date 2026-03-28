@@ -24,7 +24,7 @@ An app for creating and sharing magically imbued sigils.
    ```
 3. Start the server frontend and backend:
    ```bash
-   npm run dev
+   npm start
    ```
 
 ## 🛠 Tech Stack
@@ -47,6 +47,3 @@ For our components, we use a specific naming convention based on the root word "
 * **All other letters:** If the Subcomponent would not naturally start with the letter 'L', the component is named PascalCase `SigilXxxx`.
   * *Example:* `Card` -> `SigilCard`
   * *Example:* `Button` -> `SigilButton`
-
-## 📜 License
-Distributed under the MIT License. See `LICENSE` for more information.

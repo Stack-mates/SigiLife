@@ -37,7 +37,20 @@ export default function MapBox({ user }: { user: any }) {
         </Map>
       </div>
 
-      <MapSearchBox />
+      <MapSearchBox 
+        accessToken={MAPBOX_TOKEN}
+        onRetrieve={(res) => {
+          if (res.features && res.features.length > 0) {
+            const [lng, lat] = res.features[0].geometry.coordinates;
+            setViewState({
+              ...viewState,
+              longitude: lng,
+              latitude: lat,
+              zoom: 14
+            });
+          }
+        }}
+      />
       <PlaceSigil />
       <br />
       <br />
