@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   server: {
+    proxy: {
+      '/api': 'http://localhost:3000' },
     host: true,
     allowedHosts: ['ec2-18-223-34-170.us-east-2.compute.amazonaws.com', 'localhost:5173'],
   },

@@ -32,6 +32,8 @@ nope.md
 vitereadme.md
 
 .env
+/.env
+
 
 src/assets/HomeRoomClickables
 /src/generated/prisma

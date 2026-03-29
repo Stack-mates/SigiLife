@@ -85,8 +85,7 @@ export const UserScalarFieldEnum = {
   isAdmin: 'isAdmin',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  homeLatitude: 'homeLatitude',
-  homeLongitude: 'homeLongitude'
+  homeLocation: 'homeLocation'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -153,7 +152,8 @@ export const UserOrderByRelevanceFieldEnum = {
   email: 'email',
   name: 'name',
   picture: 'picture',
-  googleId: 'googleId'
+  googleId: 'googleId',
+  homeLocation: 'homeLocation'
 } as const
 
 export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]

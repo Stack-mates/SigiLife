@@ -1,43 +1,104 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SigiLifeLogo from '../../assets/SigiLifeLogo.png';
+import GoogleAuth from './GoogleAuth';
+import MapSearchBox from '@/components/SigilRoomHome/Grimoire/LeftPage/Map/MapSearchBox';
 
-export default function LandingPage() {
+
+export default function LandingPage({ setUser }: { setUser: (user: any) => void }) {
   const navigate = useNavigate();
+  const [username, setUsername] = useState('');
+  const [avatar, setAvatar] = useState('0');
+  const [theme, setTheme] = useState('0');
+  const [homeLocation, setHomeLocation] = useState('');
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/auth/me', { credentials: 'include' })
-      .then(res => res.json())
-      .then(data => { if (data.user) navigate('/home'); });
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user && !data.needsProfile) {
+          navigate('/home');
+        }
+      });
   }, []);
 
   return (
     <>
       <section id="center">
         <div className="hero">
-          <img
-            src={SigiLifeLogo}
-            className="logo"
-            width="75%"
-            height="75%"
-            alt="Sigil-Life-Logo"
-          />
+          <img src={SigiLifeLogo} className="logo" width="75%" height="75%" alt="Sigil-Life-Logo" />
         </div>
-        <div>
-          <h1>Coming Soon, SigiLife!</h1>
-        </div>
+        <h1>Coming Soon, SigiLife!</h1>
         <div className="info" style={{ fontSize: 'large' }}>
           An app for creating and sharing magically imbued sigils.
-          <br />
         </div>
         <div className="more-info" style={{ fontSize: 'small' }}>
           An Operation Spark Thesis project, by Stack-Mates, cohort tango, 2026. All rights reserved.
           <br />
         </div>
+        {!isNewUser && (
+          <div>
+            <GoogleAuth setUser={setUser} formData={{}} />
+            <br />
+            <button className="navbutton" onClick={() => setIsNewUser(true)}>
+              Create an Account
+            </button>
+          </div>
+        )}
+        {isNewUser && (
+          <div className="makeprofile">
+            <h2>Create Your Profile</h2>
 
-        <Link className="navbutton" to="/login">Login</Link>
-        <br />
-        <Link className="navbutton" to="/make-profile">Create Profile</Link>
+            <label>Choose a SigiLife Username:
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </label>
+
+            <label>Choose a SigiLord:
+              <div>
+                <img
+                  src='src/assets/Avatar1.png'
+                  alt='trench-coat-detective'
+                  height='50px'
+                  onClick={() => setAvatar('0')}
+                  style={{ outline: avatar === '0' ? '3px solid purple' : 'none', cursor: 'pointer' }}
+                />
+                <img
+                  src='src/assets/Avatar2.png'
+                  alt='dress-detective'
+                  height='50px'
+                  onClick={() => setAvatar('1')}
+                  style={{ outline: avatar === '1' ? '3px solid purple' : 'none', cursor: 'pointer' }}
+                />
+              </div>
+            </label>
+
+            <label>Choose your Home Sigil Location:
+              <MapSearchBox
+                accessToken={import.meta.env.VITE_MAPBOX_TOKEN || ''}
+                onRetrieve={(res) => {
+                  if (res.features && res.features.length > 0) {
+                    setHomeLocation(res.features[0].properties.full_address || res.features[0].properties.name);
+                  }
+                }}
+              />
+            </label>
+
+            <label>Choose a theme:
+              <input value={theme} onChange={(e) => setTheme(e.target.value)} />
+            </label>
+            {username && homeLocation && (
+              <GoogleAuth
+                setUser={setUser}
+                formData={{ username, avatar, theme, homeLocation }}
+              />
+            )}
+          </div>
+        )}
       </section>
     </>
   );

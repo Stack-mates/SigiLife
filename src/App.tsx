@@ -2,9 +2,9 @@ import { Routes, Route } from 'react-router-dom'
 import { useState } from 'react'
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Landing Page & Log in
+import ProtectedRoute from './components/LogInAuth/ProtectedRoute'
 import LandingPage from './components/LogInAuth/LandingPage'
-import Login from './components/LogInAuth/LogIn'
-import MakeProfile from './components/SigilRoomHome/Grimoire/LeftPage/Profile/MakeProfile'
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ User
 import UserProfile from './components/SigilRoomHome/Grimoire/LeftPage/Profile/UserProfile'
@@ -36,15 +36,14 @@ import SigilPage from './components/SigilRoomHome/Grimoire/RightPage/SigiLibrary
 
 function App() {
   const [user, setUser] = useState(null);
-  //const [room, setRoom] = useState('home');
+
 
 
   return (
     <Routes>
       {/* Auth flow */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<Login setUser={setUser} />} />
-      <Route path="/make-profile" element={<MakeProfile setUser={setUser} />} />
+      <Route path="/" element={<LandingPage setUser={setUser}/>} />
+
 
       {/* User */}
       <Route path="/settings" element={<UserSettings user={user} />} />
@@ -52,7 +51,7 @@ function App() {
 
       {/* Main Room Nav */}
       <Route path="/destroy-sigil" element={<SigilDestroy user={user} />} />
-      <Route path="/home" element={<HomeRoom user={user} />} />
+      <Route path="/home" element={<ProtectedRoute><HomeRoom user={user} /></ProtectedRoute>} />
       <Route path="/charge-sigil" element={<SigilCharge user={user} />} />
       <Route path="/grimoire" element={<Grimoire user={user} />} />
       <Route path="/make-sigil" element={<MakeSigil user={user} />} />

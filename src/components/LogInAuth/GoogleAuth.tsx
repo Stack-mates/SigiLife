@@ -13,9 +13,9 @@ export default function GoogleAuth({ setUser, formData }: { setUser: (user: any)
 
   useEffect(() => {
     window.handleCredentialResponse = async (response: any) => {
-      console.log('data being sent', formData, formData.username)
+//      console.log('data being sent', formData, formData.username)
       try {
-        const res = await fetch('http://localhost:3000/api/auth/google', {
+        const res = await fetch('/api/auth/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ credential: response.credential, ...formData})
@@ -28,6 +28,7 @@ export default function GoogleAuth({ setUser, formData }: { setUser: (user: any)
         }
 
         const data = await res.json();
+//        console.log(' backend response:', data);
         setUser(data.user);
         if (data.needsProfile){
           navigate('/make-profile');
@@ -50,7 +51,7 @@ export default function GoogleAuth({ setUser, formData }: { setUser: (user: any)
         { theme: 'outline', size: 'large' }
       );
     }
-  }, []);
+  }, [formData]);
 
   return (
     <div>

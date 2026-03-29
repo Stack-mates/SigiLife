@@ -299,10 +299,11 @@ export type SigilOrderByWithRelationInput = {
 
 export type SigilWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  name?: string
+  userId_name?: Prisma.SigilUserIdNameCompoundUniqueInput
   AND?: Prisma.SigilWhereInput | Prisma.SigilWhereInput[]
   OR?: Prisma.SigilWhereInput[]
   NOT?: Prisma.SigilWhereInput | Prisma.SigilWhereInput[]
+  name?: Prisma.StringFilter<"Sigil"> | string
   userId?: Prisma.IntFilter<"Sigil"> | number
   intention?: Prisma.StringNullableFilter<"Sigil"> | string | null
   canvasData?: Prisma.StringNullableFilter<"Sigil"> | string | null
@@ -314,7 +315,7 @@ export type SigilWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Sigil"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   sigilGroups?: Prisma.SigilGroupListRelationFilter
-}, "id" | "name">
+}, "id" | "userId_name">
 
 export type SigilOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -466,6 +467,11 @@ export type SigilOrderByRelevanceInput = {
   search: string
 }
 
+export type SigilUserIdNameCompoundUniqueInput = {
+  userId: number
+  name: string
+}
+
 export type SigilCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -567,6 +573,14 @@ export type SigilUncheckedUpdateManyWithoutUserNestedInput = {
   update?: Prisma.SigilUpdateWithWhereUniqueWithoutUserInput | Prisma.SigilUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.SigilUpdateManyWithWhereWithoutUserInput | Prisma.SigilUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.SigilScalarWhereInput | Prisma.SigilScalarWhereInput[]
+}
+
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
 export type SigilCreateNestedOneWithoutSigilGroupsInput = {
