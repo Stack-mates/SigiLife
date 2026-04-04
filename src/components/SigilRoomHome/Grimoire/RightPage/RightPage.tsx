@@ -10,7 +10,7 @@ const { user } = useUser()
 if (!user) { return null }
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/sigils/user/${user.id}/sigils`)
+    fetch(`/api/sigils/user/${user.id}/sigils`)
       .then(res => res.json())
       .then(data => setSigils(data))
   }, [])

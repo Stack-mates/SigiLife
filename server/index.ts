@@ -1,83 +1,40 @@
 import dotenv from 'dotenv';
-dotenv.config();
-
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import compression from 'compression';
 import path from 'path';
 import session from 'express-session';
 import 'express-session';
-import { Request, Response, NextFunction } from 'express';
 
 import authRouter from './routes/auth.routes.js';
 import sigilRouter from './routes/sigil.routes.js';
 import userRouter from './routes/user.routes.js';
 import { sessionStore } from './sessionStore.js';
-import prisma from './prisma/prisma.client.js';
+import client from './prisma/prisma.client.js';
 
-
-
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
-// Trust proxy for secure cookies behind ELB/Nginx
 app.set('trust proxy', 1);
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
 app.use(compression());
-
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Middleware
-app.use((req, res, next) => {
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  next();
-});
 
 app.use(cors({
   origin: true,
   credentials: true,
 }));
 
-
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     const allowedOrigins = [
-//       'http://18.223.34.170',
-//       'http://ec2-18-223-34-170.us-east-2.compute.amazonaws.com',
-//     ];
-    
-//     const devOrigins = [
-//       /^http:\/\/localhost:\d+$/,
-//       /^http:\/\/127\.0\.0\.1:\d+$/
-//     ];
-
-//     if (!origin) return callback(null, true);
-
-//     const isAllowed = allowedOrigins.includes(origin) || 
-//                      (process.env.NODE_ENV !== 'production' && devOrigins.some(regex => regex.test(origin)));
-
-//     if (isAllowed) {
-//       callback(null, true);
-//     } else {
-//       console.warn(`CORS blocked for origin: ${origin}`);
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-// }));
-
 app.use(session({
-  secret: process.env.SESSION_SECRET as string,
+  secret: process.env.SESSION_SECRET || 'secret',
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
   proxy: true,
   cookie: {
-    // Only set secure to true if we are in production AND actually on HTTPS
     secure: process.env.NODE_ENV === 'production' && process.env.ENABLE_HTTPS === 'true',
     httpOnly: true,
     sameSite: 'lax',
@@ -87,72 +44,20 @@ app.use(session({
 
 app.use('/api/auth', authRouter);
 app.use('/api/sigils', sigilRouter);
-app.use('/api/users', userRouter)
+app.use('/api/users', userRouter);
 
 const distPath = path.join(process.cwd(), 'dist');
-
 app.use(express.static(distPath));
 
-app.get('/{*path}', (req, res) => {
+app.get('/*splat', (req: Request, res: Response) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Routes
-app.post('/api/character-vectors', async (req, res) => {
-  try {
-    const { chars } = req.body;
-    if (!chars || typeof chars !== 'string') {
-      return res.json([]);
-    }
-    const charArray = chars.split('');
-    if (charArray.length === 0) {
-      return res.json([]);
-    }
-
-    const vectors = await prisma.svgVector.findMany({
-      where: { filename: { in: charArray } },
-      select: { filename: true, vectorData: true },
-    });
-
-    res.json(vectors);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: (error as Error).message });
-  }
-});
-
-
-app.use(express.static(distPath));
-
-app.get('/{*path}', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
-});
-
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-
-
-
-
-app.get('/', (req, res) => {
-  res.send('Hello SigiLife!');
-});
-
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Error handler
-
-
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ error: err.message });
 });
 
-
-
-app.listen(PORT, (err) => {
-  if (err) {
-    console.error('Failed to start server:', err);
-    process.exit(1);
-  }
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+  console.log('Server is running on port ' + PORT);
 });

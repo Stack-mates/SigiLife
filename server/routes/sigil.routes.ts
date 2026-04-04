@@ -1,6 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import prisma from '../prisma/prisma.client.js';
-import '../types/session.d.ts';
 
 const router = Router();
 
