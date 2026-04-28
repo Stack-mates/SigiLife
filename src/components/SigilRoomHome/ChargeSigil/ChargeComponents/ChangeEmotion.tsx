@@ -15,12 +15,22 @@ export default function changeEmotion({ emotion, setEmotion }: { emotion: string
     <div className="changeemotion">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline"> {emotion || "Choose Emotion"} </Button>
+          <Button className="btn" style={{ background: "transparent" }}> {"My Emotion"} </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => { setEmotion("Glad") }}>I'm Glad</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { setEmotion("Sad") }}>I'm Sad</DropdownMenuItem>
-          <DropdownMenuItem onClick={() => { setEmotion("Mad") }} >I'm Mad</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Hope") }}>Hopeful</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Joy") }} >Happy</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Desire") }}>Want</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Pride") }} >Proud</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Relief") }}>Let it Go</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Just Because") }} >No Reason</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Fear") }}>Afraid</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Anger") }} >Angry</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Grief") }}>Sad</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Guilt") }}>Mad at Myself</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Shame") }}>Cant Believe I Did That</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => { setEmotion("Loneliness") }}>Alone</DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="emotion">{emotion}</div>

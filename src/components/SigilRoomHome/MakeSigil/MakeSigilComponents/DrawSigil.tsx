@@ -375,17 +375,18 @@ export default function DrawSigil() {
   return (
     <div className='maincontainer'>
       <div ref={scrollRef} className='scrollcontainer'>
-        <div className="drawsigilcontainer">
-          <div className='drawsigilbox'>
+        <div className="drawsigil">
+          <Menu />
+          <div className="flex flex-col justify-evenly h-[90vh] bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-[80vw] m-6 pointer-events-auto border border-white/20 transform transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8">
             <h1 style={{fontSize: 32}}>Draw Your Sigil</h1>
-            <Menu />
+
             {/* Main Control Panel */}
             <div className="drawsigilmenu">
               {step === 'draw' ? (
                 <>
 
                   <button
-                    className="navbutton"
+                    className="btn"
                     onClick={() => setIsDrawingMode(!isDrawingMode)}
                     style={{
                       color: isDrawingMode ? '#000' : '#fff',
@@ -401,34 +402,34 @@ export default function DrawSigil() {
                       <input type="file" accept=".svg" style={{ display: 'none' }} onChange={handleSVGUpload} />
                     </label>}
                 </>
-              ) : (<div className='drawsigilmenutoobox'>
-                <div className='clmnbox'>
-                  <label htmlFor="sigilName">Name:</label>
+              ) : (
+                <div >
+                  <label htmlFor="sigilName">Name Your Sigil:</label>
                   <input
                     type="text"
                     className='textinput'
-                    width={"60px"}
+                    width={"100%"}
                     id="sigilName"
                     value={sigilName}
                     onChange={(e) => setSigilName(e.target.value)}
                   />
-                </div>
+                <div >
 
-                <div className='drawsigilmenutoo' >
-
-                  <label >Style Color:</label>
-                  <input type="color" value={styleColor} onChange={(e) => setStyleColor(e.target.value)} style={{ cursor: 'pointer', width: '30px', height: '30px' }} /><br />
-                  <button className="navbutton" onClick={handleChangeColor} >🎨 Apply Color</button>
-                  <button className="navbutton" onClick={handleAddRing}>⭕ Add Ring</button>
-                  <button className="navbutton" onClick={handleAddGlow}>✨ Add Glow</button>
+                  
+                  <button className="btn" onClick={handleChangeColor} >🎨Color</button>
+                  <button className="btn" onClick={handleAddRing}>⭕Ring</button>
+                  <button className="btn" onClick={handleAddGlow}>✨Glow</button>
+              
+                  <label > Color:</label>
+                  <input type="color" value={styleColor} onChange={(e) => setStyleColor(e.target.value)} style={{ cursor: 'pointer', width: '40px', height: '40px', borderRadius: "12px", alignSelf: "center"}} /><br />
                 </div>
               </div>
               )}
 
 
               {user.isAdmin === true &&
-                <button className="navbutton" onClick={handleExport}>
-                  💾 Save Image
+                <button className="btn" onClick={handleExport}>
+                  💾
                 </button>
               }
 
@@ -469,6 +470,8 @@ export default function DrawSigil() {
               style={{
                 width: '100%',
                 maxWidth: 'calc(100vh - 350px)',
+                minHeight: '250px',
+                height:'100%',
                 margin: '0 auto',
                 aspectRatio: '1 / 1',
                 border: '2px solid #ccc',
@@ -480,41 +483,40 @@ export default function DrawSigil() {
               <canvas ref={canvasRef} />
             </div>
             {!isDrawingMode && (
-              <div className='rowbox'>
-              <button className="navbutton" onClick={handleDeleteSelected} >
-                🗑️ Delete Selected
+              <div className='rowbox'style={{justifyContent: "center"}}>
+              <button className="btn" onClick={handleDeleteSelected} >
+                🗑️ Delete
               </button>
 
             {/* Undo/Redo */}
             <div className='rowbox'>
-              <button className="navbutton" onClick={undo} disabled={!canUndo} style={{ opacity: canUndo ? 1 : 0.5 }}>↶ Undo</button>
-              <button className="navbutton" onClick={redo} disabled={!canRedo} style={{ opacity: canRedo ? 1 : 0.5 }}>↷ Redo</button>
+              <button className="btn" onClick={undo} disabled={!canUndo} style={{ opacity: canUndo ? 1 : 0.5 }}>↶ Undo</button>
+              <button className="btn" onClick={redo} disabled={!canRedo} style={{ opacity: canRedo ? 1 : 0.5 }}>↷ Redo</button>
             </div></div>
             )}
             {step === 'draw' ? (
               <div >
-                <button className="navbutton" onClick={handleClear} >
+                <button className="btn" onClick={handleClear} >
                   Clear All
                 </button>
 
                 <button
-                  className="navbutton"
+                  className="btn"
                   onClick={() => { setStep('style'); setIsDrawingMode(false); }}
                 >
                   Next: Style Sigil
                 </button>
               </div>
             ) : (
-              <div style={{ marginTop: '1rem', display: 'flex', gap: '10px', alignItems: 'center',  }}>
-                <button className="navbutton" onClick={() => setStep('draw')} style={{ background: '#6c757d', color: '#fff', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', border: 'none' }}>
-                  ⬅ Back to Draw
+              <div >
+                <button className="btn" onClick={() => setStep('draw')} >
+                  ⬅ Back
                 </button>
                 <button
-                  className="navbutton"
+                  className="btn"
                   onClick={handleNextToStyle}
-                  style={{ backgroundColor: "#9e38fd", color: 'white', padding: '8px 16px', borderRadius: '4px', cursor: 'pointer', border: 'none' }}
                 >
-                  Review & Save
+                  Review
                 </button>
               </div>
             )}

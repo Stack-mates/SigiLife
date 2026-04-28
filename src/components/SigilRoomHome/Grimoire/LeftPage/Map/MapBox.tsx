@@ -51,30 +51,16 @@ export default function MapBox() {
     <div className='maincontainer'>
       <div ref={scrollRef} className='scrollcontainer'>
         <div className=" mapbox">
-          <h1>This is the MapBox</h1>
           <Menu />
-          <div className="rowbox">
-            <button
-              onClick={() => setFilterMode("all")}
-              className={`px-4 py-2 rounded-md font-bold transition-colors ${filterMode === "all" ? "bg-purple-600 text-white" : "bg-zinc-800 text-purple-300 border border-purple-600"}`}
-            >
-              All Sigils
-            </button>
-            <button
-              onClick={() => setFilterMode("mine")}
-              className={`px-4 py-2 rounded-md font-bold transition-colors ${filterMode === "mine" ? "bg-purple-600 text-white" : "bg-zinc-800 text-purple-300 border border-purple-600"}`}
-            >
-              My Sigils
-            </button>
-          </div>
 
-          <div className="relative w-75 max-w-4xl h-100 rounded-lg overflow-hidden my-4 border-2 border-purple-500 shadow-xl" style={{ height: "60vh" }}>
+
+          <div className="relative w-75 max-w-4xl h-100 rounded-lg overflow-hidden my-4 border-2 border-purple-500 shadow-xl" style={{ height: "60vh", borderRadius: "14px" }}>
             <Map
               {...viewState}
               onMove={evt => setViewState(evt.viewState)}
               mapStyle="mapbox://styles/mapbox/dark-v11" // You can change this style url
               mapboxAccessToken={MAPBOX_TOKEN}
-              style={{ width: '100%', height: '100%' }}
+              style={{ width: '100%', height: '100%', borderRadius: "12px" }}
             >
               {sigils.map((sigil) => {
                 if (sigil.longitude && sigil.latitude) {
@@ -111,6 +97,7 @@ export default function MapBox() {
                   latitude={Number(popupInfo.latitude)}
                   onClose={() => setPopupInfo(null)}
                   className="bg-zinc-800 text-white rounded-md p-2"
+                  style={{ borderRadius: "12px", borderWidth: "1px"}}
                 >
                   <div className="flex flex-col items-center p-1 text-black">
                     <h3 className="font-bold text-md text-purple-700">{popupInfo.name}</h3>
@@ -127,7 +114,7 @@ export default function MapBox() {
                         navigate('/place-sigil-world', { state: { sigilData: popupInfo } })
                       }}
                     >
-                      View in AR
+                      View in Real World
                     </button>
                   </div>
                 </Popup>
@@ -151,7 +138,26 @@ export default function MapBox() {
               }
             }}
           />
+                    <div className="rowbox">
+            <button
+              style={{ borderRadius: "12px", margin: "5px" }}
+              onClick={() => setFilterMode("all")}
+              className={` bo px-4 py-2 rounded-md font-bold transition-colors ${filterMode === "all" ? "bg-purple-600 text-white" : "bg-zinc-800 text-purple-300 border border-purple-600"}`}
+            >
+              All Sigils
+            </button>
+            <button
+              style={{ borderRadius: "12px", margin: "5px" }}
+              onClick={() => setFilterMode("mine")}
+              className={` px-4 py-2 rounded-md font-bold transition-colors ${filterMode === "mine" ? "bg-purple-600 text-white" : "bg-zinc-800 text-purple-300 border border-purple-600"}`}
+            >
+              My Sigils
+            </button>
+          </div>
+
+        <div className="flex flex-col justify-evenly justify-self-center bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-[80vw] m-6 pointer-events-auto border border-white/20 transform transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8">
         </div>
+      </div>
       </div>
     </div>)
 };

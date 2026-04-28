@@ -1,11 +1,46 @@
+
+
+
+/*imports, tailwind, animate, shadcn, fonts! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
+
 @import '@fontsource-variable/roboto';
-@import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
 @import '@fontsource-variable/figtree';
-/*---break---*/
+
+
+/*root! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+:root {
+  /* LIGHT (default) — soft neutral */
+  --background: #f7f7fb;
+  --foreground: #1a1a1a;
+
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+
+  --primary: #6b7280;
+  --primary-foreground: #ffffff;
+
+  --accent: #e5e7eb;
+  --accent-foreground: #1a1a1a;
+
+  --border: #e5e7eb;
+  --input: #e5e7eb;
+  --ring: #9ca3af;
+
+  /* Theme identity */
+  --theme-text: #6b3fa0;
+  --theme-bg-1: #e9edf5;
+  --theme-bg-2: #d8e0ef;
+  --theme-accent: #4b5563;
+  --theme-glow: rgba(120, 120, 120, 0.25);
+}
+
+
+
+
+
 @custom-variant dark (&:is(.dark *));
 
 .nav-button,
@@ -19,6 +54,7 @@
   padding: 5px;
   cursor: pointer;
   border: none;
+  color: rgb(15, 131, 4);
   text-decoration: none;
   display: inline-block;
   text-align: center;
@@ -29,7 +65,6 @@
   border-radius: 12px;
   border-color: #2b0681;
   border-width: 1px;
-  width: 100%;
   text-align: center;
 }
 
@@ -69,52 +104,6 @@ h3,
 .h3 {
   font-size: 16px;
 }
-
-btn,
-.btn {
-  background-color: #6915c9;
-  width: fit-content;
-  border-radius: 12px;
-  align-self: center;
-  padding: 5px;
-  margin: 5px;
-}
-
-.glasscard {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  height: 90vh;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding: 2rem;
-  border-radius: 2rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-  width: 80vw;
-  margin: 1.5rem;
-  pointer-events: auto;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transform: translateZ(0);
-  transition: all 500ms ease;
-    overflow-y: auto;
-  overflow-x: hidden;
-
-  /* animate-in fade-in zoom-in slide-in-from-bottom-8 */
-  animation: glass-card-in 500ms ease forwards;
-}
-
-@keyframes glass-card-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(2rem);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Main Container*/
 mainContainer,
 .maincontainer {
@@ -130,6 +119,7 @@ mainContainer,
   overflow-x: hidden;
   scrollbar-color: #6915c9 #136d2a;
   scrollbar-width: thick;
+
   font-family: 'New Rocker', system-ui;
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
@@ -208,6 +198,7 @@ landingpage,
   flex-direction: column;
   align-items: center;
   background-color: #9f6bdb;
+  background-image: url('./assets/OutsideLino.svg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -221,21 +212,17 @@ logo,
   display: flex;
   position: relative;
   align-self: center;
-  width: 80vw;
+  width: 85vw;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+}
+makeprofile,
+.makeprofile {
   display: flex;
   flex-direction: column;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding: 2rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-  width: 80vw;
-  margin: 1.5rem;
-  pointer-events: auto;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transform: translateZ(0);
-  transition: all 500ms ease;
-  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  padding: 25px;
 }
 
 slidebox,
@@ -255,7 +242,6 @@ displaypitch,
   background-color: #6d8b00;
   border-radius: 12px;
 }
-
 landingrowbox,
 .landingrowbox {
   display: flex;
@@ -275,18 +261,16 @@ createaccountbutton,
   height: '40px';
 }
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Make Profile*/
-
 makeprofile,
 .makeprofile {
   display: flex;
-  flex-direction: column;
+  position: relative;
   align-items: center;
   justify-content: space-around;
-  background-color: white;
-  border-radius: 12px;
   height: 90vh;
+  background-color: #e0e0e0;
+  border-radius: 12px;
 }
-
 
 avatarchoicebox,
 .avatarchoicebox {
@@ -299,7 +283,7 @@ avatarimgbox,
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: space-evenly;
+  justify-content: space-between;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  HomeRoom*/
@@ -405,7 +389,7 @@ avatarimgbox,
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-
+  background-image: url('./assets/AltarLino.svg');
   min-width: 1024px;
   height: 100vh;
   position: relative;
@@ -438,7 +422,7 @@ avatarimgbox,
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-
+  background-image: url('./assets/PyreLino.svg');
   overflow: visible;
   min-width: 1024px;
   height: 100vh;
@@ -477,12 +461,17 @@ avatarimgbox,
   z-index: 1;
 }
 
-
+.sigilbox {
+  width: 60vw;
+  max-width: 600px;
+  height: auto;
+  object-fit: contain;
+}
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Grimoire*/
 
 .grimoire {
   display: flex;
-
+  background-image: url('./assets/Bookshelf.svg');
   overflow: visible;
   min-width: 1024px;
   height: 85vh;
@@ -552,7 +541,7 @@ avatarimgbox,
 .rightpage {
   display: flex;
   flex-direction: column;
-
+  background-image: url('./assets/LibraryLino.svg');
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
   background-size: 1024px 100vh;
@@ -564,33 +553,15 @@ avatarimgbox,
   overflow: visible;
 }
 
-.rightpage2 {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-    justify-content: flex-start;
-  overflow: visible;
-  flex: 1;
-    width: 80%;
-  height: 80%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  
-}
-
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Library*/
 .sigilibrary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: 20vh;
+  width: 30%;
+  height: 80%;
   position: relative;
   background: transparent;
-  align-self: center;
-  height: auto; ;
-  background: transparent;
-  box-sizing: border-box;
-  padding: 8px;
-  gap: 8px;
+  overflow-y: auto;
 }
 
 .sigilthumb {
@@ -598,11 +569,10 @@ avatarimgbox,
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 6px;
   cursor: pointer;
   border-radius: 12px;
-  padding: 6px;
-  min-height: 140px; 
+  font-family: 'New Rocker', system-ui;
+  padding: 15px;
 }
 
 .sigilthumb:hover {
@@ -624,7 +594,7 @@ sigilpage,
 .sigilpage {
   display: flex;
   flex-direction: column;
-
+  background-image: url('./assets/LibraryLino.svg');
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
   background-size: 1024px 100vh;
@@ -661,7 +631,6 @@ sigildetailslocation,
   flex-direction: column;
   align-items: center;
 }
-
 sigilbox,
 .sigilbox {
   height: 35%;
@@ -672,6 +641,13 @@ sigilbox,
   opacity: 0.5;
 }
 
+.sigilpagesigilbox {
+  height: 50%;
+  display: flex;
+  position: relative;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+}
 
 sigilpageaddlocation,
 .sigilpageaddlocation {
@@ -691,7 +667,7 @@ leftpage,
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  MakeSigil*/
 .makesigil {
   background-image:
-
+    url('./assets/WritingLino.svg'),
     linear-gradient(160deg, var(--theme-bg-1), var(--theme-bg-2));
   background-size:
     1024px 100vh,
@@ -739,29 +715,7 @@ leftpage,
 writesigil,
 .writesigil {
   background-image:
-
-    linear-gradient(160deg, var(--theme-bg-1), var(--theme-bg-2));
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  min-width: 1024px;
-  height: 100dvh;
-
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-}
-writesigilbox,
-.writesigilbox {
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Draw Sigil*/
-drawsigil,
-.drawsigil {
-  background-image:
-
+    url('./assets/WritingLino.svg'),
     linear-gradient(160deg, var(--theme-bg-1), var(--theme-bg-2));
   background-size:
     1024px 100vh,
@@ -777,19 +731,11 @@ drawsigil,
   transition: background-color 0.6s ease;
 }
 
-drawsigilmenu,
-.drawsigilmenu {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  justify-content: center;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Style Sigil*/
-.stylesigilcontainer {
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Draw Sigil*/
+drawsigilcontainer,
+.drawsigilcontainer {
   background-image:
-
+    url('./assets/WritingLino.svg'),
     linear-gradient(160deg, var(--theme-bg-1), var(--theme-bg-2));
   background-size:
     1024px 100vh,
@@ -797,6 +743,74 @@ drawsigilmenu,
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-width: 1024px;
+  position: relative;
+  height: 100vh;
+  background-color: var(--theme-bg-1);
+  transition: background-color 0.6s ease;
+}
+drawsigilcontainerbox,
+.drawsigilbox {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 35%;
+  padding: 5px;
+  align-items: center;
+  background-color: #e0e0e0;
+  border-radius: 12px;
+}
+
+drawsigilmenu,
+.drawsigilmenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+drawsigilmenutoobox,
+.drawsigilmenutoobox {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  position: relative;
+}
+drawsigilmenutoo,
+.drawsigilmenu {
+  display: flex;
+  flex-direction: row;
+  height: fit-content;
+  position: relative;
+}
+drawsigilmenutoobox1,
+.drawsigilmenutoobox1 {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  position: relative;
+}
+
+drawsigilmenutoobox2,
+.drawsigilmenutoobox2 {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  position: relative;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Style Sigil*/
+.stylesigilcontainer {
+  background-image:
+    url('./assets/WritingLino.svg'),
+    linear-gradient(160deg, var(--theme-bg-1), var(--theme-bg-2));
+  background-size:
+    1024px 100vh,
+    cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
   min-width: 1024px;
   position: relative;
   height: 100vh;
@@ -834,13 +848,12 @@ mapbox,
   background-size: cover;
   background-position: center;
   align-items: center;
-  justify-content: center;
   position: relative;
   overflow: visible;
   min-width: 1024px;
   height: 100vh;
   position: relative;
-
+  background-image: url('./assets/MapbookLino.svg');
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
   background-size: 1024px 100vh;
@@ -859,7 +872,7 @@ profilepage,
   min-width: 1024px;
   height: 100vh;
   position: relative;
-
+  background-image: url('./assets/WritingLino.svg');
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
   background-size: 1024px 100vh;
@@ -1193,6 +1206,7 @@ usersettings,
   }
 
   .makeprofile {
+    width: 100vw;
     min-width: unset;
     padding: 16px;
   }
@@ -1299,6 +1313,7 @@ usersettings,
 
   /* --- Make profile --- */
   .makeprofile {
+    width: 100vw;
     min-width: unset;
     padding: 16px;
     height: auto;
@@ -1448,6 +1463,7 @@ usersettings,
 
   /* --- Make profile --- */
   .makeprofile {
+    width: 100vw;
     min-width: unset;
     padding: 12px;
     height: auto;

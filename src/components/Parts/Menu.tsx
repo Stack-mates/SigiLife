@@ -11,7 +11,7 @@ const NavMenu = function () {
       <Link className="button" to="/home">Home Room</Link>
       <Link className="button" to="/library?action=charge">Charge Sigil</Link>
       <Link className="button" to="/library?action=destroy">Destroy Sigil</Link>
-      <Link className="button" to="/make-sigil/write">Make Sigil</Link>
+      <Link className="button" to="/make-sigil">Make Sigil</Link>
       <Link className="button" to="/library">Sigil Library</Link>
       <Link className="button" to="/map">SigilMap</Link>
       <Link className="button" to="/settings">Settings</Link>
@@ -29,7 +29,7 @@ export default function Menu() {
 
   return (
     <div className="navmenu">
-      <button id="menu-btn" onClick={() => setMenuOpen(prev => !prev)}>
+     <button id="menu-btn" className="button" onClick={() => setMenuOpen(prev => !prev)}>
         {menuOpen ? '✕ Close Menu' : '☰ Menu'}
       </button>
       {menuOpen && <NavMenu />}

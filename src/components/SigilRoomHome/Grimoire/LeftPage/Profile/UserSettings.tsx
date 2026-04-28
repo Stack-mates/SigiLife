@@ -2,6 +2,7 @@ import { useState } from 'react'
 import * as SwitchPrimitive from "@radix-ui/react-switch"
 import { useUser } from '@/context/UserContext'
 import { useNavigate, Link } from 'react-router-dom'
+import Menu from '../../../../Parts/Menu'
 
 
 const AvatarSelector = ({ avatarId, onSelect }: { avatarId: string, onSelect: (id: string) => void }) => {
@@ -141,6 +142,7 @@ export default function UserSettings() {
   return (
     <div className="maincontainer">
       <div className="usersettings">
+                  <Menu />
         <h1 style={{ fontSize: 32 }}>User Settings</h1>
         <br />
         <AvatarSelector avatarId={avatarId} onSelect={handleAvatarChange} />

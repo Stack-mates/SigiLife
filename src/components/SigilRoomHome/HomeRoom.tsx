@@ -38,7 +38,7 @@ export default function HomeRoom() {
         <div className='homeroom'>
           <Menu />
 
-          <nav>
+          <nav className=''>
             <Link
               id='destroy-btn'
               className='destroybutton'

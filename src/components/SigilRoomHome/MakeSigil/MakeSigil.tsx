@@ -70,20 +70,24 @@ export default function MakeSigil() {
             <p className="infotext">Current Sigils: {sigilCount}/{MAX_SIGILS}</p>
             {remainingSlots < 3 && (
 
-              <p className="info-text warning">⚠️ {remainingSlots} slot(s) remaining</p>
+              <p className="info-text warning">⚠️ {remainingSlots} slot(s) remaining. <br/>
+               {remainingSlots === 0 ? 'You will have to destroy a Sigil before you can create a new sigil. Visit your Library to select and destroy Sigils.' : ""}
+              
+              </p>
+          
             )}
             {error && <p className="info-text error">{error}</p>}
           </div>
 
           <button
-            className="navbutton"
+            className="btn"
             onClick={handleCreateSigil}
             disabled={loading || !canCreateMore}
           >
             {loading ? 'Loading...' : canCreateMore ? 'Create New Sigil' : 'Max Limit Reached'}
           </button>
 
-          <Link className="navbutton" to="/library">Sigil Library</Link>
+          <Link className="btn" to="/library">Sigil Library</Link>
 
         </div>
       </div>

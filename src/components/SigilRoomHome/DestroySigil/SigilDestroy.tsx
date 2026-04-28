@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import Menu from '../../Parts/Menu'
-import { useSearchParams,  useNavigate } from "react-router-dom"
+import { useSearchParams, useNavigate } from "react-router-dom"
 import ChangeEmotion from '../ChargeSigil/ChargeComponents/ChangeEmotion'
 import EvilEye from './DestroyComponents/EvilEye'
 import { useUser } from '@/context/UserContext'
@@ -10,6 +10,7 @@ import GhostCursor from './DestroyComponents/GhostCursor.tsx'
 export default function DestroySigil() {
   const [searchParams] = useSearchParams()
   const sigilId = searchParams.get('sigilId')
+
   const { user } = useUser()
   const [sigilData, setSigilData] = useState<any>(null)
   const [emotion, setEmotion] = useState("")
@@ -47,6 +48,12 @@ export default function DestroySigil() {
   };
 
   const handleDestroy = async () => {
+
+
+
+
+
+
     console.log('destroy clicked, sigilData.id:', sigilData.id)
     if (isSubmitting) {
       return;
@@ -68,7 +75,10 @@ export default function DestroySigil() {
     <div className='maincontainer'>
       <div ref={scrollRef} className={`scrollcontainer ${isDestroying ? 'noscroll' : ''}`}>
         <Menu />
-        <div className='destroysigil' onMouseMove={isDestroying ? handleMouseMove : undefined}>
+        <div className='destroysigil' onMouseMove={isDestroying ? handleMouseMove : undefined} style={{
+          backgroundColor: isDestroying ? '#000000' : undefined,
+          transition: 'background-color 800ms ease',
+        }}>
 
           {isDestroying && (
             <>
@@ -113,29 +123,40 @@ export default function DestroySigil() {
           )
           }
 
-          <h1 style={{fontSize: 32,borderRadius:'12px', position: 'relative', zIndex: 20, backgroundColor: "#e0e0e0"}}>Destroy Sigil</h1>
+          <h1 style={{ fontSize: 32, borderRadius: '12px', position: 'relative', zIndex: 20 }}>Destroy Sigil</h1>
 
           {sigilData.imageData && (
-            <img className="sigilbox" src={sigilData.imageData} alt={sigilData.name} />
+            <img
+              src={sigilData.imageData}
+              alt={sigilData.name}
+              style={{
+                width: "60%", height: "60%", borderRadius: isDestroying ? '12px' : undefined,
+                transition: 'all 800ms ease',
+                position: 'relative',
+                zIndex: 20,
+              }}
+              className={isDestroying ? '' : 'glasscard'}
+            />
           )}
+
           <ChangeEmotion emotion={emotion} setEmotion={setEmotion} />
           {!isDestroying && (
-            <button className="navbutton" onClick={handleDestroy} style={{ position: 'relative', zIndex: 20, backgroundColor: "#e0e0e0" }} disabled={!emotion || isSubmitting}>
+            <button className="btn" onClick={handleDestroy} disabled={!emotion || isSubmitting}>
               Destroy Sigil
             </button>
           )}
-{isDestroying && (
-  <button
-    className="navbutton"
-    style={{ position: 'relative', zIndex: 20, backgroundColor: "#e0e0e0" }}
-    onClick={() => {
-      setIsDestroying(false)
-      setTimeout(() => navigate('/home'), 200)
-    }}
-  >
-    Go Home
-  </button>
-)}
+          {isDestroying && (
+            <button
+              className="btn"
+              style={{ position: 'relative', zIndex: 20 }}
+              onClick={() => {
+                setIsDestroying(false)
+                setTimeout(() => navigate('/home'), 200)
+              }}
+            >
+              Go Home
+            </button>
+          )}
         </div>
       </div>
     </div>

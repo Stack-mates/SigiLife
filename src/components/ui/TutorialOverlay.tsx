@@ -107,20 +107,20 @@ export default function TutorialOverlay({ onComplete }: { onComplete: () => void
     <div className="fixed inset-0 z-2000 overflow-hidden pointer-events-none">
       {/* Premium Backdrop: Radial gradient for depth */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_40%,rgba(0,0,0,0.8)_100%)] pointer-events-auto transition-opacity duration-1000" />
-      
+
       {/* Spotlight highlight with multiple glows */}
       <div
         className="absolute rounded-2xl transition-all duration-700 ease-out pointer-events-none"
         style={highlightStyle}
       >
-         <div className="absolute inset-0 border-2 border-yellow-400/80 rounded-2xl shadow-[0_0_30px_rgba(255,215,0,0.4),_inset_0_0_20px_rgba(255,215,0,0.2)]" />
-         <div className="absolute -inset-2 animate-pulse bg-yellow-400/10 rounded-3xl blur-md" />
+        <div className="absolute inset-0 border-2 border-yellow-400/80 rounded-2xl shadow-[0_0_30px_rgba(255,215,0,0.4),_inset_0_0_20px_rgba(255,215,0,0.2)]" />
+        <div className="absolute -inset-2 animate-pulse bg-yellow-400/10 rounded-3xl blur-md" />
       </div>
 
       {/* Content Card: High-end glassmorphism */}
       <div className="absolute inset-0 flex items-center justify-center p-6 pointer-events-none">
         <div className="bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] max-w-md w-full pointer-events-auto border border-white/20 transform transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8">
-          
+
           <div className="flex justify-between items-start mb-6">
             <button
               onClick={handleComplete}
@@ -140,36 +140,35 @@ export default function TutorialOverlay({ onComplete }: { onComplete: () => void
           </p>
 
           <div className="flex justify-between items-center">
-             <div className="flex gap-1.5">
-                {steps.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-1.5 rounded-full transition-all duration-500 ${
-                      i === currentStep 
-                        ? 'w-10 bg-gradient-to-r from-purple-400 to-pink-400' 
-                        : 'w-2 bg-white/20'
+            <div className="flex gap-1.5">
+              {steps.map((_, i) => (
+                <div
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all duration-500 ${i === currentStep
+                      ? 'w-10 bg-gradient-to-r from-purple-400 to-pink-400'
+                      : 'w-2 bg-white/20'
                     }`}
-                  />
-                ))}
-             </div>
+                />
+              ))}
+            </div>
 
-             <div className="flex gap-3">
-               {currentStep > 0 && (
-                 <button
-                   onClick={handlePrev}
-                   className="p-3 rounded-2xl border border-white/10 text-white hover:bg-white/10 transition-all backdrop-blur-sm"
-                 >
-                   <ChevronLeft size={24} />
-                 </button>
-               )}
-               <button
-                 onClick={handleNext}
-                 className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-2xl font-bold transition-all shadow-[0_10px_20px_rgba(168,85,247,0.4)] hover:shadow-purple-500/60 hover:-translate-y-0.5 active:translate-y-0"
-               >
-                 {currentStep === steps.length - 1 ? "Begin Journey" : "Next Step"}
-                 <ChevronRight size={20} />
-               </button>
-             </div>
+            <div className="flex gap-3">
+              {currentStep > 0 && (
+                <button
+                  onClick={handlePrev}
+                  className="p-3 rounded-2xl border border-white/10 text-white hover:bg-white/10 transition-all backdrop-blur-sm"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+              )}
+              <button
+                onClick={handleNext}
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-2xl font-bold transition-all shadow-[0_10px_20px_rgba(168,85,247,0.4)] hover:shadow-purple-500/60 hover:-translate-y-0.5 active:translate-y-0"
+              >
+                {currentStep === steps.length - 1 ? "Begin Journey" : "Next Step"}
+                <ChevronRight size={20} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
