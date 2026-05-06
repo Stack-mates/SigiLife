@@ -27,10 +27,10 @@ const Themebox = () => {
   const colorTheme = user.color_theme ?? 'cyber'
   const isDark = theme === 1
   const labels = {
-    'cyber-light': 'You have theme: Cyber · Setting: Light',
-    'cyber-dark': 'You have theme: Cyber · Setting: Dark',
-    'foliage-light': 'You have theme: Foliage · Setting: Light',
-    'foliage-dark': 'You have theme: Foliage · Setting: Dark',
+    'cyber-light': 'You have theme: Glacial · Setting: Light',
+    'cyber-dark': 'You have theme: Glacial · Setting: Dark',
+    'foliage-light': 'You have theme: Verdant · Setting: Light',
+    'foliage-dark': 'You have theme: Verdant · Setting: Dark',
   }
 
   const swatches = {
@@ -64,7 +64,7 @@ const Themebox = () => {
   }
   const key = `${colorTheme}-${isDark ? 'dark' : 'light'}` as keyof typeof swatches
   return (
-    <div className="themebox">
+    <div className="themebox" style={{ color: 'black' }}>
       {labels[key]}
       <div className="flex gap-2 mt-2">
         {swatches[key].map((color, i) => (
@@ -142,7 +142,7 @@ export default function UserSettings() {
   return (
     <div className="maincontainer">
       <div className="usersettings">
-                  <Menu />
+        <Menu />
         <h1 style={{ fontSize: 32 }}>User Settings</h1>
         <br />
         <AvatarSelector avatarId={avatarId} onSelect={handleAvatarChange} />
@@ -177,17 +177,17 @@ export default function UserSettings() {
           <Themebox />
         </div>
 
-        <div className="flex flex-col gap-4 items-center">
-          <button style={{ margin: "10 px", borderRadius: "12px"}}
+        <div className="flex flex-col gap-4 items-center just">
+          <button style={{  borderRadius: "12px" }}
             className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
             onClick={handleReplayTutorial}
           >
             Replay Tutorial
           </button>
-          <button style={{ margin: "5px", borderRadius: "12px"}} className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95" onClick={handleLogout}>
+          <button style={{ margin: "5px", borderRadius: "12px" }} className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95" onClick={handleLogout}>
             Log Out
           </button>
-          <Link style={{ margin: "5px", borderRadius: "12px"}} className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95" to="/profile">Go to Profile </Link>
+          <Link style={{ margin: "5px", borderRadius: "12px" }} className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95" to="/profile">Go to Profile </Link>
         </div>
       </div>
     </div>

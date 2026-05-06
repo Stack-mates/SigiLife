@@ -8,21 +8,23 @@ datasource db {
 }
 
 model User {
-  id                     Int          @id @default(autoincrement())
-  username               String?      @unique @db.VarChar(100)
-  email                  String       @unique @db.VarChar(255)
-  name                   String?      @db.VarChar(255)
-  picture                String?      @db.VarChar(500)
-  googleId               String?      @unique @db.VarChar(255)
-  avatar                 Int          @default(0)
-  theme                  Int          @default(1)
-  color_theme            String       @default("cyber") @db.VarChar(50)
-  isAdmin                Boolean      @default(false)
-  createdAt              DateTime     @default(now())
-  updatedAt              DateTime     @updatedAt
-  homeLocation           String?      @db.VarChar(500)
-  hasCompletedTutorial   Boolean      @default(false)
-  sigils                 Sigil[]
+  id                    Int          @id @default(autoincrement())
+  username              String?      @unique @db.VarChar(100)
+  email                 String       @unique @db.VarChar(255)
+  name                  String?      @db.VarChar(255)
+  picture               String?      @db.VarChar(500)
+  googleId              String?      @unique @db.VarChar(255)
+  avatar                Int          @default(0)
+  theme                 Int          @default(1)
+  color_theme           String       @default("cyber") @db.VarChar(50)
+  isAdmin               Boolean      @default(false)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  homeLocation          String?      @db.VarChar(500)
+  hasCompletedTutorial  Boolean      @default(false)
+  sigilCount            Int          @default(0)
+  sigils                Sigil[]
+  sigilVotes            SigilVote[]
   following             Follow[]     @relation("follower")
   followers             Follow[]     @relation("following")
   arPlacement           ArPlacement?
@@ -45,9 +47,29 @@ model Sigil {
   sigilGroups  SigilGroup[]
   arPlacement  ArPlacement?
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  chargeScore  Int          @default(0)
+  destroyScore Int          @default(0)
+  votes        SigilVote[]
   @@map("sigils")
 }
+
+model SigilVote {
+  id        Int      @id @default(autoincrement())
+  sigilId   Int
+  userId    Int
+  voteType  String   @db.VarChar(10)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sigil     Sigil    @relation(fields: [sigilId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sigilId, userId])
+  @@index([sigilId])
+  @@index([userId])
+  @@map("sigil_votes")
+}
+
 
 model Follow {
   id          Int      @id @default(autoincrement())

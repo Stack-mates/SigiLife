@@ -50,7 +50,10 @@ export default function DrawSigil() {
   useEffect(() => {
     if (!canvasRef.current || fabricCanvasRef.current) return;
 
-    const initialSize = wrapperRef.current ? wrapperRef.current.clientWidth : 500;
+    const wrapper = wrapperRef.current;
+    const initialSize = wrapper
+      ? Math.min(wrapper.clientWidth, wrapper.clientHeight)
+      : 500;
 
     const canvas = new fabric.Canvas(canvasRef.current, {
       width: initialSize,
@@ -97,8 +100,8 @@ export default function DrawSigil() {
             console.log("Loading path for char:", vector.filename);
 
             const { objects } = await fabric.loadSVGFromString(
-  `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">${vector.vectorData}</svg>`
-);
+              `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">${vector.vectorData}</svg>`
+            );
 
             if (objects && objects.length > 0) {
               const pathObj = objects[0] as fabric.FabricObject;
@@ -146,8 +149,9 @@ export default function DrawSigil() {
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         if (fabricCanvasRef.current) {
-          const newSize = entry.contentRect.width;
-          fabricCanvasRef.current.setDimensions({ width: newSize, height: newSize });
+          const { width, height } = entry.contentRect;
+          const size = Math.min(width, height);  // ← square but fills available space
+          fabricCanvasRef.current.setDimensions({ width: size, height: size });
         }
       }
     });
@@ -377,11 +381,14 @@ export default function DrawSigil() {
       <div ref={scrollRef} className='scrollcontainer'>
         <div className="drawsigil">
           <Menu />
-          <div className="flex flex-col justify-evenly h-[90vh] bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-[80vw] m-6 pointer-events-auto border border-white/20 transform transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8">
-            <h1 style={{fontSize: 32}}>Draw Your Sigil</h1>
+          <div className="flex flex-col justify-evenly h-[90vh] bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-[80vw] m-6 pointer-events-auto border border-white/20 transform transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8"
+          >
+            <h1 style={{ fontSize: "clamp(26px, 4vw, 42px)", textAlign: "center" }}>
+              {step === 'draw' ? 'Draw Your Sigil' : 'Style Your Sigil'}
+            </h1>
 
             {/* Main Control Panel */}
-            <div className="drawsigilmenu">
+            <div className="drawsigilmenu" style={{ fontSize: "clamp(13px, 2vw, 17px)" }}>
               {step === 'draw' ? (
                 <>
 
@@ -389,7 +396,8 @@ export default function DrawSigil() {
                     className="btn"
                     onClick={() => setIsDrawingMode(!isDrawingMode)}
                     style={{
-                      color: isDrawingMode ? '#000' : '#fff',
+                      backgroundColor: '#9e38fd', fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px",
+                      color: isDrawingMode ? 'white' : 'black',
                       cursor: 'pointer'
                     }}
                   >
@@ -413,17 +421,28 @@ export default function DrawSigil() {
                     value={sigilName}
                     onChange={(e) => setSigilName(e.target.value)}
                   />
-                <div >
+                  <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
+                    <p>select <br />color:</p>
+                    <input type="color" value={styleColor} onChange={(e) => setStyleColor(e.target.value)} style={{ cursor: 'pointer', width: '80px', height: '80px', alignSelf: "center" }} />
 
-                  
-                  <button className="btn" onClick={handleChangeColor} >🎨Color</button>
-                  <button className="btn" onClick={handleAddRing}>⭕Ring</button>
-                  <button className="btn" onClick={handleAddGlow}>✨Glow</button>
-              
-                  <label > Color:</label>
-                  <input type="color" value={styleColor} onChange={(e) => setStyleColor(e.target.value)} style={{ cursor: 'pointer', width: '40px', height: '40px', borderRadius: "12px", alignSelf: "center"}} /><br />
+                    <button className="btn" onClick={handleChangeColor}
+                      style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}
+>
+                      🎨 Color
+                    </button>
+                    <button className="btn" onClick={handleAddRing}
+                      style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}
+>
+                      ⭕ Ring
+                    </button>
+                    <button className="btn" onClick={handleAddGlow}
+                      style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}
+>
+                      ✨ Glow
+                    </button>
+
+                  </div>
                 </div>
-              </div>
               )}
 
 
@@ -439,7 +458,8 @@ export default function DrawSigil() {
 
             {/* Brush Controls (Only relevant in Drawing Mode) */}
             {step === 'draw' && isDrawingMode && (
-              <div>
+              <div style={{ display: "flex", gap: "1rem", alignItems: "center", justifyContent: "center", fontSize: "clamp(13px, 2vw, 16px)" }}>
+
                 <div >
                   <label htmlFor="brushColor">Color:</label>
                   <input
@@ -468,54 +488,56 @@ export default function DrawSigil() {
             <div
               ref={wrapperRef}
               style={{
-                width: '100%',
-                maxWidth: 'calc(100vh - 350px)',
-                minHeight: '250px',
-                height:'100%',
-                margin: '0 auto',
+                width: 'min(100%, 60vh)',
                 aspectRatio: '1 / 1',
+                margin: '0 auto',
                 border: '2px solid #ccc',
                 borderRadius: '8px',
                 overflow: 'hidden',
-                marginTop: '1rem'
+                flexShrink: 0,
               }}
             >
-              <canvas ref={canvasRef} />
+              <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%' }} />
             </div>
             {!isDrawingMode && (
-              <div className='rowbox'style={{justifyContent: "center"}}>
-              <button className="btn" onClick={handleDeleteSelected} >
-                🗑️ Delete
-              </button>
-
-            {/* Undo/Redo */}
-            <div className='rowbox'>
-              <button className="btn" onClick={undo} disabled={!canUndo} style={{ opacity: canUndo ? 1 : 0.5 }}>↶ Undo</button>
-              <button className="btn" onClick={redo} disabled={!canRedo} style={{ opacity: canRedo ? 1 : 0.5 }}>↷ Redo</button>
-            </div></div>
+              <div className='rowbox' style={{ justifyContent: "center", gap: "8px" }}>
+                <button className="btn" onClick={handleDeleteSelected}
+                  style={{ backgroundColor: '#9e38fd', opacity: canUndo ? 1 : 0.5, fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}
+>
+                  🗑️ Delete
+                </button>
+                <button className="btn" onClick={undo} disabled={!canUndo}
+                  style={{ backgroundColor: '#9e38fd', opacity: canUndo ? 1 : 0.5, fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}
+>
+                  ↶ Undo
+                </button>
+                <button className="btn" onClick={redo} disabled={!canRedo}
+                  style={{ backgroundColor: '#9e38fd', opacity: canUndo ? 1 : 0.5, fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}
+>
+                  ↷ Redo
+                </button>
+              </div>
             )}
+
             {step === 'draw' ? (
-              <div >
-                <button className="btn" onClick={handleClear} >
+              <div className='rowbox' style={{ justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
+                <button className="btn" onClick={handleClear}
+                  style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 20px" }}>
                   Clear All
                 </button>
-
-                <button
-                  className="btn"
-                  onClick={() => { setStep('style'); setIsDrawingMode(false); }}
-                >
+                <button className="btn" onClick={() => { setStep('style'); setIsDrawingMode(false); }}
+                  style={{ backgroundColor: '#9e38fd', fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>
                   Next: Style Sigil
                 </button>
               </div>
             ) : (
-              <div >
-                <button className="btn" onClick={() => setStep('draw')} >
+              <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
+                <button className="btn" onClick={() => setStep('draw')}
+                  style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 20px" }}>
                   ⬅ Back
                 </button>
-                <button
-                  className="btn"
-                  onClick={handleNextToStyle}
-                >
+                <button className="btn" onClick={handleNextToStyle}
+                  style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 20px" }}>
                   Review
                 </button>
               </div>

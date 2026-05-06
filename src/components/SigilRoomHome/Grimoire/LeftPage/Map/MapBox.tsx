@@ -12,6 +12,19 @@ import Menu from '../../../../Parts/Menu';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
+// type Sigil = {
+//   id: number;
+//   name: string;
+//   intention?: string;
+//   imageData?: string;
+//   locationName?: string;
+//   latitude?: number | string;
+//   longitude?: number | string;
+//   chargeScore: number;
+//   destroyScore: number;
+//   userVote: VoteType | null;
+// };
+
 export default function MapBox() {
   const { user } = useUser()
   const navigate = useNavigate();
@@ -47,20 +60,36 @@ export default function MapBox() {
 
   if (!user) { return null; }
 
-  return (
-    <div className='maincontainer'>
-      <div ref={scrollRef} className='scrollcontainer'>
-        <div className=" mapbox">
-          <Menu />
-
-
-          <div className="relative w-75 max-w-4xl h-100 rounded-lg overflow-hidden my-4 border-2 border-purple-500 shadow-xl" style={{ height: "60vh", borderRadius: "14px" }}>
+return (
+  <div className='maincontainer'>
+    <div ref={scrollRef} className='scrollcontainer'>
+      <div className="mapbox">
+        <Menu />
+        <div style={{
+          width: '88dvw',
+          height: '88dvh',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.75rem',
+          position: 'relative',
+          zIndex: 55,
+        }}>
+          {/* Map takes top 60% */}
+          <div style={{
+            width: '100%',
+            flex: '3',
+            borderRadius: '14px',
+            overflow: 'hidden',
+            border: '2px solid #a855f7',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
+            minHeight: 0,
+          }}>
             <Map
               {...viewState}
               onMove={evt => setViewState(evt.viewState)}
-              mapStyle="mapbox://styles/mapbox/dark-v11" // You can change this style url
+              mapStyle="mapbox://styles/mapbox/dark-v11"
               mapboxAccessToken={MAPBOX_TOKEN}
-              style={{ width: '100%', height: '100%', borderRadius: "12px" }}
+              style={{ width: '100%', height: '100%' }}
             >
               {sigils.map((sigil) => {
                 if (sigil.longitude && sigil.latitude) {
@@ -79,9 +108,7 @@ export default function MapBox() {
                         {sigil.imageData ? (
                           <img src={sigil.imageData} alt={sigil.name} className="w-8 h-8 object-cover rounded-full border-2 border-purple-500 bg-black/50" />
                         ) : (
-                          <div className="w-6 h-6 bg-purple-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs">
-                            ✧
-                          </div>
+                          <div className="w-6 h-6 bg-purple-500 rounded-full border-2 border-white flex items-center justify-center text-white text-xs">✧</div>
                         )}
                       </div>
                     </Marker>
@@ -89,75 +116,66 @@ export default function MapBox() {
                 }
                 return null;
               })}
-
               {popupInfo && (
                 <Popup
                   anchor="top"
                   longitude={Number(popupInfo.longitude)}
                   latitude={Number(popupInfo.latitude)}
                   onClose={() => setPopupInfo(null)}
-                  className="bg-zinc-800 text-white rounded-md p-2"
-                  style={{ borderRadius: "12px", borderWidth: "1px"}}
+                  style={{ borderRadius: "12px" }}
                 >
                   <div className="flex flex-col items-center p-1 text-black">
                     <h3 className="font-bold text-md text-purple-700">{popupInfo.name}</h3>
-                    {popupInfo.locationName && (
-                      <p className="text-xs text-gray-500">{popupInfo.locationName}</p>
-                    )}
-                    {popupInfo.imageData && (
-                      <img width="80" src={popupInfo.imageData} alt="Sigil" className="mt-2 border-purple-300 border rounded" />
-                    )}
+                    {popupInfo.locationName && <p className="text-xs text-gray-500">{popupInfo.locationName}</p>}
+                    {popupInfo.imageData && <img width="80" src={popupInfo.imageData} alt="Sigil" className="mt-2 border-purple-300 border rounded" />}
                     <p className="text-sm mt-1 italic">{popupInfo.intention || "A mysterious sigil..."}</p>
                     <button
                       className="mt-2 px-3 py-1 bg-purple-600 text-white text-xs font-bold rounded hover:bg-purple-500"
-                      onClick={() => {
-                        navigate('/place-sigil-world', { state: { sigilData: popupInfo } })
-                      }}
+                      onClick={() => navigate('/place-sigil-world', { state: { sigilData: popupInfo } })}
                     >
                       View in Real World
                     </button>
                   </div>
                 </Popup>
               )}
-
               <NavigationControl position="bottom-right" />
             </Map>
           </div>
 
-          <MapSearchBox
-            accessToken={MAPBOX_TOKEN}
-            onRetrieve={(res) => {
-              if (res.features && res.features.length > 0) {
-                const [lng, lat] = res.features[0].geometry.coordinates;
-                setViewState({
-                  ...viewState,
-                  longitude: lng,
-                  latitude: lat,
-                  zoom: 14
-                });
-              }
-            }}
-          />
-                    <div className="rowbox">
+          {/* Controls row */}
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <MapSearchBox
+              accessToken={MAPBOX_TOKEN}
+              onRetrieve={(res) => {
+                if (res.features && res.features.length > 0) {
+                  const [lng, lat] = res.features[0].geometry.coordinates;
+                  setViewState({ ...viewState, longitude: lng, latitude: lat, zoom: 14 });
+                }
+              }}
+            />
             <button
-              style={{ borderRadius: "12px", margin: "5px" }}
+              style={{ borderRadius: "12px", margin: "0" }}
               onClick={() => setFilterMode("all")}
-              className={` bo px-4 py-2 rounded-md font-bold transition-colors ${filterMode === "all" ? "bg-purple-600 text-white" : "bg-zinc-800 text-purple-300 border border-purple-600"}`}
+              className={`px-4 py-2 rounded-md font-bold transition-colors ${filterMode === "all" ? "bg-purple-600 text-white" : "bg-zinc-800 text-purple-300 border border-purple-600"}`}
             >
               All Sigils
             </button>
             <button
-              style={{ borderRadius: "12px", margin: "5px" }}
+              style={{ borderRadius: "12px", margin: "0" }}
               onClick={() => setFilterMode("mine")}
-              className={` px-4 py-2 rounded-md font-bold transition-colors ${filterMode === "mine" ? "bg-purple-600 text-white" : "bg-zinc-800 text-purple-300 border border-purple-600"}`}
+              className={`px-4 py-2 rounded-md font-bold transition-colors ${filterMode === "mine" ? "bg-purple-600 text-white" : "bg-zinc-800 text-purple-300 border border-purple-600"}`}
             >
               My Sigils
             </button>
           </div>
 
-        <div className="flex flex-col justify-evenly justify-self-center bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-[80vw] m-6 pointer-events-auto border border-white/20 transform transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8">
+          {/* Feed card — placeholder for future feed */}
+          <div className="flex flex-col bg-white/10 backdrop-blur-xl p-4 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/20"
+            style={{ flex: '1', minHeight: 0, overflowY: 'auto' }}>
+          </div>
         </div>
       </div>
-      </div>
-    </div>)
+    </div>
+  </div>
+)
 };

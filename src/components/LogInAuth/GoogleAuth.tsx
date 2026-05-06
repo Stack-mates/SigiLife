@@ -42,6 +42,7 @@ export default function GoogleAuth() {
         console.log('[GoogleAuth] Backend response successful:', data.success);
 
         setUser(data.user);
+        console.log(data)
         setTimeout(() => {
           if (data.needsProfile) {
             navigate('/create-profile');

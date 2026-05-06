@@ -107,15 +107,21 @@ router.get('/:id', async (req, res) => {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Updates User info from DB
 router.patch('/:id', async (req, res) => {
   try {
+    if (!req.session.userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+    if (req.session.userId !== parseInt(req.params.id)) {
+      return res.status(403).json({ error: 'Cannot edit another user' });
+    }
     const { username, avatar, theme, homeLocation, hasCompletedTutorial } = req.body;
     const user = await prisma.user.update({
       where: { id: parseInt(req.params.id) },
       data: {
-        username,
-        avatar: avatar != null ? parseInt(avatar) : undefined,
-        theme: theme != null ? parseInt(theme) : undefined,
-        homeLocation: homeLocation || null,
-        hasCompletedTutorial: hasCompletedTutorial !== undefined ? Boolean(hasCompletedTutorial) : undefined,
+        ...(username !== undefined && { username }),
+        ...(avatar !== undefined && { avatar: parseInt(avatar) }),
+        ...(theme !== undefined && { theme: parseInt(theme) }),
+        ...(homeLocation !== undefined && { homeLocation }),
+        ...(hasCompletedTutorial !== undefined && { hasCompletedTutorial: Boolean(hasCompletedTutorial) }),
       },
     });
     res.json(user)

@@ -4,7 +4,6 @@ import axios from 'axios'
 import { useUser } from '@/context/UserContext'
 import Menu from '../../Parts/Menu'
 
-
 export default function MakeSigil() {
   const { user } = useUser()
   const navigate = useNavigate()
@@ -13,18 +12,37 @@ export default function MakeSigil() {
   const [error, setError] = useState<string | null>(null)
   const [canCreateMore, setCanCreateMore] = useState(true)
   const [remainingSlots, setRemainingSlots] = useState(12)
-
+  const [dims, setDims] = useState({ width: 2160, height: 1260 })
+  const scrollRef = useRef<HTMLDivElement>(null)
   const MAX_SIGILS = 12
 
   useEffect(() => {
-    if (user) {
-      checkSigilCount()
-    }
+    if (user) checkSigilCount()
   }, [user])
 
+  useEffect(() => {
+    const calculate = () => {
+      const scale = window.innerHeight / 1260
+      setDims({
+        width: Math.round(2160 * scale),
+        height: window.innerHeight,
+      })
+    }
+    calculate()
+    window.addEventListener('resize', calculate)
+    return () => window.removeEventListener('resize', calculate)
+  }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    setTimeout(() => {
+      el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2
+    }, 50)
+  }, [dims])
 
   const checkSigilCount = async () => {
-    if (!user) return null;
+    if (!user) return null
     try {
       setLoading(true)
       setError(null)
@@ -49,46 +67,55 @@ export default function MakeSigil() {
     }
   }
 
-  const scrollRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) {
-      return;
-    }
-    el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-  }, []);
   if (!user) return null
-
 
   return (
     <div className='maincontainer'>
       <div ref={scrollRef} className='scrollcontainer'>
-        <div className='makesigil'>
-          <h1 style={{fontSize: 32}}>Make a Sigil</h1>
+        <div className='makesigil' style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
           <Menu />
-          <div className="sigilinfo">
-            <p className="infotext">Current Sigils: {sigilCount}/{MAX_SIGILS}</p>
-            {remainingSlots < 3 && (
+          <div style={{
+            position: 'absolute',
+            top: '5dvh',
+            left: '50dvh',
+            width: '55dvh',
+            height: '88dvh',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '2rem',
+            borderRadius: '2rem',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+          }}>
+            <h1 style={{ fontSize: "clamp(22px, 4vw, 36px)" }}>Make a Sigil</h1>
 
-              <p className="info-text warning">⚠️ {remainingSlots} slot(s) remaining. <br/>
-               {remainingSlots === 0 ? 'You will have to destroy a Sigil before you can create a new sigil. Visit your Library to select and destroy Sigils.' : ""}
-              
-              </p>
-          
-            )}
-            {error && <p className="info-text error">{error}</p>}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%' }}>
+              <p style={{ fontSize: "clamp(14px, 2.5vw, 20px)" }}>Current Sigils: {sigilCount}/{MAX_SIGILS}</p>
+              {remainingSlots < 3 && (
+                <p className="info-text warning">
+                  ⚠️ {remainingSlots} slot(s) remaining.{' '}
+                  {remainingSlots === 0 ? 'You will have to destroy a Sigil before you can create a new sigil. Visit your Library to select and destroy Sigils.' : ''}
+                </p>
+              )}
+              {error && <p className="info-text error">{error}</p>}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+              <button
+                className="btn"
+                onClick={handleCreateSigil}
+                disabled={loading || !canCreateMore}
+                style={{ backgroundColor: '#9e38fd', fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}>
+                {loading ? 'Loading...' : canCreateMore ? 'Create New Sigil' : 'Max Limit Reached'}
+              </button>
+              <Link className="btn" to="/library"
+                style={{ backgroundColor: '#9e38fd', fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}>
+                Sigil Library
+              </Link>
+            </div>
           </div>
-
-          <button
-            className="btn"
-            onClick={handleCreateSigil}
-            disabled={loading || !canCreateMore}
-          >
-            {loading ? 'Loading...' : canCreateMore ? 'Create New Sigil' : 'Max Limit Reached'}
-          </button>
-
-          <Link className="btn" to="/library">Sigil Library</Link>
-
         </div>
       </div>
     </div>

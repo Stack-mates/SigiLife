@@ -87,11 +87,11 @@ export default function UserFriends() {
         <div >
           <input
             type="text"
+            className="textinput"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             onKeyDown={e => { if (e.key === "Enter") { handleSearch() } }}
             placeholder="Search by username..."
-            className="border rounded-md px-3 py-1 text-sm flex-1"
           />
           <button style={{borderRadius: "12px"}} onClick={handleSearch} className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95">
             🔍
@@ -110,7 +110,7 @@ export default function UserFriends() {
         <div className="profilebox">
           <h3>Followers</h3>
           {onlyFollowers.length === 0
-            ? <p className="text-sm text-gray-400">No followers<br/> yet</p>
+            ? <p className="text-sm text-gray-400">No followers</p>
             : onlyFollowers.map(u => (
               <UserCard key={u.id} user={u} />
             ))
@@ -119,7 +119,7 @@ export default function UserFriends() {
         <div className="profilebox">
           <h3>SigilFriends</h3>
           {mutual.length === 0
-            ? <p className="text-sm text-gray-400">No SigilFriends <br/> yet!</p>
+            ? <p className="text-sm text-gray-400">No SigilFriends</p>
             : mutual.map(u => (
               <UserCard key={u.id} user={u} action={() => handleUnfollow(u.id)} actionLabel="Unfollow" />
             ))
@@ -128,7 +128,7 @@ export default function UserFriends() {
         <div className="profilebox">
           <h3>Following</h3>
           {onlyFollowing.length === 0
-            ? <p className="text-sm text-gray-400">Not following <br/>anyone yet</p>
+            ? <p className="text-sm text-gray-400">No following </p>
             : onlyFollowing.map(u => (
               <UserCard key={u.id} user={u} action={() => handleUnfollow(u.id)} actionLabel="Unfollow" />
             ))

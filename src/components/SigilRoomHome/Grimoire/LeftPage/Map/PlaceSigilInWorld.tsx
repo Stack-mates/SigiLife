@@ -236,11 +236,11 @@ export default function PlaceSigilInWorld() {
                 const hitTestResults = XR8.XrController.hitTest(
                   tapX, tapY, ['DETECTED_SURFACE', 'ESTIMATED_SURFACE', 'FEATURE_POINT']
                 );
-                
+
                 if (hitTestResults && hitTestResults.length > 0) {
                   const hit = hitTestResults[0];
                   getOrCreateMesh();
-                  
+
                   targetPosition.set(hit.position.x, hit.position.y, hit.position.z);
                   if (hit.rotation) {
                     targetQuaternion.set(
@@ -250,7 +250,7 @@ export default function PlaceSigilInWorld() {
                     // Default to flat on floor (X-axis rotation)
                     targetQuaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
                   }
-                  
+
                   setStatus("Sigil Anchored!");
                   slamSucceeded = true;
                 }

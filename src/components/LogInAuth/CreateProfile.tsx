@@ -10,7 +10,11 @@ export default function CreateProfile() {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [avatar, setAvatar] = useState('0');
-  const [homeLocation, setHomeLocation] = useState('');
+  const [homeLocation, setHomeLocation] = useState<{
+    name: string;
+    latitude: number;
+    longitude: number;
+  } | null>(null);
   const [isDark, setIsDark] = useState(false);
 
   const handleCreate = async () => {
@@ -23,7 +27,7 @@ export default function CreateProfile() {
           username,
           avatar: parseInt(avatar),
           theme: isDark ? 1 : 0,
-          homeLocation
+          homeLocation: homeLocation ? JSON.stringify(homeLocation) : null
         })
       });
       const updated = await res.json();
@@ -41,53 +45,71 @@ export default function CreateProfile() {
 
   return (
     <div className='maincontainer'>
-      <div className="landingpage">
-        <div className="flex flex-col justify-evenly h-[90vh] bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-[80vw] m-6 pointer-events-auto border border-white/20 transform transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8">
-          <h1 style={{ color: "black", fontSize: "38px" }}>Create Your Profile:</h1>
-          <label className="h2">Choose a unique SigiLife Username:
+
+      <div className='scrollcontainer'>
+        <div className="landingpage">
+          <div className="glasscard" style={{
+            width: "95dvw",
+          }}>
+            <h1 style={{ color: "black" }}>Create Your Profile:</h1>
+            <p style={{ textAlign: "center", width: "100%" }}>
+              Choose a unique SigiLife Username:
+              <input
+                style={{ color: "black" }}
+                className="textinput"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </p>
+
+            <label className='avatarchoicebox'><h2 style={{ color: "black" }}>Choose a SigiLord:</h2>
+              <div className='avatarimgbox'>
+                <img className='avatar' src='Avatar1.png' alt='trench-coat-detective' onClick={() => setAvatar('0')}
+                  style={{ outline: avatar === '0' ? '2px solid #2b0681' : 'none', cursor: 'pointer', height: 100, borderRadius: "20px" }} />
+                <img className='avatar' src='Avatar2.png' alt='dress-detective' onClick={() => setAvatar('1')}
+                  style={{ outline: avatar === '1' ? '2px solid #136d2a' : 'none', cursor: 'pointer', height: 100, borderRadius: "20px" }} />
+              </div>
+            </label>
+
+            <label>Choose your Home Sigil Location:
+              <MapSearchBox
+                accessToken={import.meta.env.VITE_MAPBOX_TOKEN || ''}
+                onRetrieve={(res) => {
+                  if (res.features && res.features.length > 0) {
+                    const feature = res.features[0];
+                    const [lng, lat] = feature.geometry.coordinates;
+                    const name = feature.properties.full_address
+                      || feature.properties.place_formatted
+                      || feature.properties.name
+                      || '';
+                    setHomeLocation({ name, latitude: lat, longitude: lng });
+                  }
+                }}
+              />
+            </label>
+
+            <label>
+              <h2 style={{ color: "black" }} >Dark or Light Theme:</h2>
+              <SwitchPrimitive.Root checked={isDark} onCheckedChange={handleThemeChange}
+                className="relative inline-flex h-6 w-11 items-center rounded-full bg-purple-300 data-[state=checked]:bg-purple-500">
+
+                <SwitchPrimitive.Thumb className="block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform data-[state=checked]:translate-x-6" />
+              </SwitchPrimitive.Root>
+              <label className='p1'>
+                {isDark ? "  Dark" : "  Light"}
+                <br />
+                {isDark ? " You prefer the shadows, stealth attacks, sewing secrets, deep corners, and the night... (or you are playing the game at night.)" : " You prefer the daylight, sparkly, splashy attacks, shimmering light, and bright sun... (or you are playing the game in daylight.)"}
+              </label></label>
             <br />
-            <input style={{color:"black"}}className="textinput" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-          </label>
-
-          <label className='avatarchoicebox'><h3>Choose a SigiLord:</h3>
-            <div className='avatarimgbox'>
-              <img className='avatar' src='Avatar1.png' alt='trench-coat-detective' onClick={() => setAvatar('0')}
-                style={{ outline: avatar === '0' ? '2px solid #2b0681' : 'none', cursor: 'pointer', height: 100, borderRadius: "20px" }} />
-              <img className='avatar' src='Avatar2.png' alt='dress-detective' onClick={() => setAvatar('1')}
-                style={{ outline: avatar === '1' ? '2px solid #136d2a' : 'none', cursor: 'pointer', height: 100, borderRadius: "20px" }} />
-            </div>
-          </label>
-
-          <label>Choose your Home Sigil Location:
-            <MapSearchBox
-              accessToken={import.meta.env.VITE_MAPBOX_TOKEN || ''}
-              onRetrieve={(res) => {
-                if (res.features && res.features.length > 0) {
-                  setHomeLocation(res.features[0].properties.full_address || res.features[0].properties.name);
-                }
-              }}
-            />
-          </label>
-
-          <label>
-            Dark or Light Theme:<br />
-            <SwitchPrimitive.Root checked={isDark} onCheckedChange={handleThemeChange}
-              className="relative inline-flex h-6 w-11 items-center rounded-full bg-purple-300 data-[state=checked]:bg-purple-500">
-
-              <SwitchPrimitive.Thumb className="block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform data-[state=checked]:translate-x-6" />
-            </SwitchPrimitive.Root>
-            {isDark ? "  Dark" : "  Light"}
-            <br />
-            {isDark ? " You prefer the shadows, stealth attacks, sewing secrets, deep corners, and the night... (or you are playing the game at night.)" : " You prefer the daylight, sparkly, splashy attacks, shimmering light, and bright sun... (or you are playing the game in daylight.)"}
-          </label>
-<br />
-          <button
-            className="btn"
-            disabled={!username || !homeLocation}
-            onClick={handleCreate}
-          >
-            Save Profile
-          </button>
+            <button
+              className="btn"
+              disabled={!username || !homeLocation}
+              onClick={handleCreate}
+            >
+              Save Profile
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -12,6 +12,7 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel"
 
+
 export default function LandingPage() {
   const { user, isLoading } = useUser();
   const navigate = useNavigate();
@@ -43,10 +44,11 @@ export default function LandingPage() {
   }, [carouselApi]);
 
   const slides = [
-    <><br/>Mark your intent.<br />Leave a trace.<br /><br />Nothing disappears without a ritual.</>,
+    <><br />Mark your intent.<br />Leave a trace.<br /><br />Nothing disappears without a ritual.</>,
     <>SigiLife is a map of hidden intentions: <br />yours and everyone else's.<br />
-    Every sigil is a statement, a feeling,<br /> a moment made permanent…<br /> until you choose to let it go.</>,
-    <><br/><br/>How It Works:</>,
+      Every sigil is a statement, a feeling,<br /> a moment made permanent…<br /></>,
+    <> until you choose to let it go.</>,
+    <><br /><br />How It Works:</>,
     <>You don't just write goals.<br /> You encode them.<br />Write your intention. <br />Strip it down. <br />Distill it.</>,
     <>Turn it into a Sigil:<br />something abstract, <br />something unique, <br /> something yours.</>,
     <>Then, choose how it feels: <br /> Hope. Anger. Obsession. Relief.<br />Emotion becomes the Charge.</>,
@@ -58,37 +60,49 @@ export default function LandingPage() {
     <>Nothing lasts forever.<br />When you are ready,<br /> you can destroy your sigil.<br />Not delete—destroy.</>,
     <>The intention dissolves.<br />The charge breaks.<br />The mark is gone.<br /><br />And that matters.</>,
     <>Right now, you can see and use what your friends make.<br />Soon, you'll be able to do much more.</>,
-    <><br/>Every moment can leave a trace.<br /> SigiLife lets you decide what remains.</>,
+    <><br />Every moment can leave a trace.<br /> SigiLife lets you decide what remains.</>,
   ];
 
   return (
     <>
       <div className='maincontainer'>
-        <div className="landingpage">
-          <>
-            <img src={SigiLifeLogo} className="logo" alt="Sigil-Life-Logo" />
-            <div className='rowbox'>
-              <h1 className="glasscard" style={{ height: "10vh", width: "80vw", color: "white", padding: "15px", margin: "5px", borderRadius: "12px" }}>
-                SigiLife is a location-based ritual platform where users transform personal intentions into digital sigils
-              </h1>
-            </div>
-            <div className='displaypitch '>
-              <Carousel setApi={setCarouselApi} opts={{ loop: true }} orientation="vertical" className="slidebox" style={{height: "30vh"}}>
-                <CarouselContent className="h-72" style={{height: "23vh"}}>
-                  {slides.map((content, i) => (
-                    <CarouselItem key={i} onClick={handleSlideClick} className="cursor-pointer select-none" style={{fontSize: 48}}>
-                      {content}
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            </div>
-          </>
+        <div className='scrollcontainer'>
+          <div className="landingpage">
+            <>
 
-          <div className='landingrowbox'>
-            <GoogleAuth />
+              <img src={SigiLifeLogo} className="logo" alt="Sigil-Life-Logo" />
+              <div className="logo " style={{ height: "fit-content", color: "white", padding: "5px", margin: "5px", borderRadius: "12px", }}>
+                <p >
+                  SigiLife is a location-based ritual platform where you can transform personal intentions into digital sigils.
+                </p>
+              </div>
+              <div className='displaypitch '>
+                <Carousel setApi={setCarouselApi}
+                  opts={{ loop: true }}
+                  orientation="vertical"
+                  className="slidebox"
+                  style={{ height: "28vh", margin: "0" }}>
+                  <CarouselContent style={{
+                    height: "25vh",
+                    fontSize: "clamp(18px, 5vw, 26px)",
+                    fontFamily: "Pompiere",
+                    textAlign: "center",
+                    alignSelf: "center",
+                    color: "white",
+                  }}>
+                    {slides.map((content, i) => (
+                      <CarouselItem key={i} onClick={handleSlideClick} className="cursor-pointer select-none" >
+                        {content}
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious />
+                  <CarouselNext />
+                </Carousel>
+              </div>
+              <GoogleAuth />
+
+            </>
           </div>
         </div>
       </div>

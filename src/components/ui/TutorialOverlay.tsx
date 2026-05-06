@@ -105,10 +105,8 @@ export default function TutorialOverlay({ onComplete }: { onComplete: () => void
 
   return (
     <div className="fixed inset-0 z-2000 overflow-hidden pointer-events-none">
-      {/* Premium Backdrop: Radial gradient for depth */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_40%,rgba(0,0,0,0.8)_100%)] pointer-events-auto transition-opacity duration-1000" />
 
-      {/* Spotlight highlight with multiple glows */}
       <div
         className="absolute rounded-2xl transition-all duration-700 ease-out pointer-events-none"
         style={highlightStyle}
@@ -117,14 +115,13 @@ export default function TutorialOverlay({ onComplete }: { onComplete: () => void
         <div className="absolute -inset-2 animate-pulse bg-yellow-400/10 rounded-3xl blur-md" />
       </div>
 
-      {/* Content Card: High-end glassmorphism */}
       <div className="absolute inset-0 flex items-center justify-center p-6 pointer-events-none">
         <div className="bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] max-w-md w-full pointer-events-auto border border-white/20 transform transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8">
 
           <div className="flex justify-between items-start mb-6">
             <button
               onClick={handleComplete}
-              className="group flex items-center gap-2 text-white/60 hover:text-white transition-all bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-xl border border-white/10"
+              className="glassbutton"
               title="Skip Tutorial"
             >
               <span className="text-xs font-semibold uppercase tracking-wider">Skip</span>
@@ -156,14 +153,14 @@ export default function TutorialOverlay({ onComplete }: { onComplete: () => void
               {currentStep > 0 && (
                 <button
                   onClick={handlePrev}
-                  className="p-3 rounded-2xl border border-white/10 text-white hover:bg-white/10 transition-all backdrop-blur-sm"
+                  className="glassbutton"
                 >
                   <ChevronLeft size={24} />
                 </button>
               )}
               <button
                 onClick={handleNext}
-                className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-2xl font-bold transition-all shadow-[0_10px_20px_rgba(168,85,247,0.4)] hover:shadow-purple-500/60 hover:-translate-y-0.5 active:translate-y-0"
+                className="pinkbutton"
               >
                 {currentStep === steps.length - 1 ? "Begin Journey" : "Next Step"}
                 <ChevronRight size={20} />

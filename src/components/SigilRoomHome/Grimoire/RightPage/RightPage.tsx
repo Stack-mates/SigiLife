@@ -8,12 +8,28 @@ export default function RightPage() {
   const [sigils, setSigils] = useState([])
   const { user } = useUser();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [dims, setDims] = useState({ width: 2160, height: 1260 });
+
+  useEffect(() => {
+    const calculate = () => {
+      const scale = window.innerHeight / 1260;
+      setDims({
+        width: Math.round(2160 * scale),
+        height: window.innerHeight,
+      });
+    };
+    calculate();
+    window.addEventListener('resize', calculate);
+    return () => window.removeEventListener('resize', calculate);
+  }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-  }, []);
+    setTimeout(() => {
+      el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
+    }, 50);
+  }, [dims]);
 
   useEffect(() => {
     if (!user) return;
@@ -27,16 +43,30 @@ export default function RightPage() {
   return (
     <div className='maincontainer'>
       <div ref={scrollRef} className='scrollcontainer'>
-        <div className="rightpage">
+        <div className="rightpage2" style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
           <Menu />
-          <div className='glasscard rightpage2'>
-            <h1>{user.username}'s Sigils </h1>
-          <SigiLibrary items={sigils} user={user} />
+          <div className='glasscard' style={{
+            position: 'absolute',
+            top: '5dvh',
+            left: '58dvh',
+            width: '55dvh',
+            height: '88dvh',
+            overflowY: 'auto',
+          }}>
+            <h1>{user.username}'s Sigils</h1>
+            <SigiLibrary items={sigils} user={user} />
           </div>
-          <Link className="btn" to="/make-sigil">🪶 MakeSigil</Link>
+          <Link className="btn" style={{
+            position: 'absolute',
+            bottom: '3dvh',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: '#9e38fd',
+            fontSize: "clamp(13px, 2vw, 20px)",
+            padding: "8px 20px"
+          }} to="/make-sigil">🪶 MakeSigil</Link>
         </div>
       </div>
     </div>
-    
   )
 }

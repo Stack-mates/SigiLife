@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { PrismaClient } from '../prisma/generated/client.js';
+import { PrismaClient } from './generated/client.js';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 
 const dbUrl = process.env.NODE_ENV === 'production'

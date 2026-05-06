@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '@/context/UserContext'
 import MapSearchBox from '../../Grimoire/LeftPage/Map/MapSearchBox';
+import Menu from '../../../Parts/Menu'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
@@ -133,67 +134,97 @@ export default function StyleSigil() {
 
 
 
-  return (
-    <div className='maincontainer'>
-      <div className="scrollcontainer" ref={scrollCallbackRef}>
-        <div className='stylesigilcontainer'>
-          <h1>Share & Save your Sigil</h1>
-
-          <div className="glasscard" style={{ minHeight: "75dvh", display: "flex", flex: 1 }}>
-            <h1>Name:<br /> {sigilData.name}</h1>
-            {sigilData.intention && <p>Intention: {sigilData.intention}</p>}
-            {sigilData.imageData && (
-              <img src={sigilData.imageData} alt={sigilData.name} style={{width: '100%', height: '100%' }} />
-            )}
-          </div>
-          <div className="glasscard" style={{ padding: '5px', minHeight: "23dvh", position: 'relative', zIndex: 20 , flex: 0, display: "flex", justifyContent: "start"}}>
-            <h2>Location</h2>
-            {location ? (
-              <p>
-                📍 {location.locationName}{' '}
-                <button
-                  onClick={() => setLocation(null)}
-                  style={{ marginLeft: 8, cursor: 'pointer', background: 'none', border: 'none', color: 'inherit' }}
-                >
-                  ✕ Remove
-                </button>
-              </p>
-            ) : (
-              <MapSearchBox
-                accessToken={MAPBOX_TOKEN}
-                onRetrieve={handleLocationRetrieve}
-              />
-            )}
-          </div>
-          <div className="glasscard" style={{ minHeight: "23dvh" }}>
-            <h2>Share with your SigiFriends</h2>
-            <h3>Select users to share your sigil to, if they have a slot available.</h3>
-            <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
-              {friends.length === 0 ? (
-                <p>You are not following anyone yet.</p>
-              ) : (
-                friends.map(friend => (
-                  <div key={friend.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 0' }}>
-                    <input
-                      type="checkbox"
-                      id={`friend-${friend.id}`}
-                      checked={selectedFriends.includes(friend.id)}
-                      onChange={() => toggleFriend(friend.id)}
-                      style={{ cursor: 'pointer' }}
-                    />
-                    <label htmlFor={`friend-${friend.id}`} style={{ cursor: 'pointer' }}>
-                      {friend.username}
-                    </label>
-                  </div>
-                ))
+return (
+  <div className='maincontainer'>
+    <div className="scrollcontainer" ref={scrollCallbackRef}>
+      <div className='stylesigilcontainer'>
+        <Menu/>
+        <div className="flex flex-col bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] pointer-events-auto border border-white/20 transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8"
+          style={{
+            width: "88dvw",
+            maxWidth: "700px",
+            height: "88dvh",
+            overflowY: "auto",
+            gap: "1rem",
+            display: "flex",
+            flexDirection: "column",
+          }}>
+          <h1 style={{ fontSize: "clamp(22px, 4vw, 36px)", textAlign: "center" }}>
+            Share & Save your Sigil
+          </h1>
+            {/* Sigil preview */}
+            <div style={{ textAlign: "center" }}>
+              <h2 style={{ fontSize: "clamp(18px, 3vw, 26px)" }}>{sigilData.name}</h2>
+              {sigilData.intention && (
+                <p style={{ fontSize: "clamp(13px, 2vw, 16px)", color: "#666", margin: "4px 0 8px" }}>
+                 {sigilData.intention}
+                </p>
+              )}
+              {sigilData.imageData && (
+                <img
+                  src={sigilData.imageData}
+                  alt={sigilData.name}
+                  style={{
+                    width: 'min(100%, 50vh)',
+                    height: 'min(100%, 50vh)',
+                    aspectRatio: '1 / 1',     /* ← square, no stretch */
+                    objectFit: 'contain',
+                    margin: '0 auto',
+                    display: 'block',
+                  }}
+                />
               )}
             </div>
-          </div>
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          <button className="btn" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save to Library"}
-          </button>
+            {/* Location — compact */}
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '1rem' }}>
+              <h2 style={{ fontSize: "clamp(16px, 2.5vw, 22px)", marginBottom: "0.5rem" }}>📍 Location</h2>
+              {location ? (
+                <p style={{ fontSize: "clamp(13px, 2vw, 16px)", display: "flex", alignItems: "center", gap: "8px", }}>
+                  {location.locationName}
+                  <button onClick={() => setLocation(null)}
+                    style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'inherit' }}>
+                    ✕
+                  </button>
+                </p>
+              ) : (
+                <div style={{ maxWidth: "50dvw", margin: "0 auto", width: "100%" }}>
+                  <MapSearchBox accessToken={MAPBOX_TOKEN} onRetrieve={handleLocationRetrieve} />
+                </div>
+              )}
+            </div>
+
+            {/* Friends */}
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '1rem' }}>
+              <h2 style={{ fontSize: "clamp(16px, 2.5vw, 22px)", marginBottom: "0.25rem" }}>Share with SigiFriends</h2>
+              <p style={{ fontSize: "clamp(12px, 1.8vw, 15px)", color: "#888", marginBottom: "0.5rem" }}>
+                Select users to share your sigil to, if they have a slot available.
+              </p>
+              <div style={{ maxHeight: '120px', overflowY: 'auto' }}>
+                {friends.length === 0 ? (
+                  <p style={{ fontSize: "clamp(13px, 2vw, 16px)" }}>You are not following anyone yet.</p>
+                ) : (
+                  friends.map(friend => (
+                    <div key={friend.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 0' }}>
+                      <input type="checkbox" id={`friend-${friend.id}`}
+                        checked={selectedFriends.includes(friend.id)}
+                        onChange={() => toggleFriend(friend.id)}
+                        style={{ cursor: 'pointer' }} />
+                      <label htmlFor={`friend-${friend.id}`} style={{ cursor: 'pointer', fontSize: "clamp(13px, 2vw, 16px)" }}>
+                        {friend.username}
+                      </label>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {error && <p style={{ color: 'red', fontSize: "14px" }}>{error}</p>}
+            <button className="btn" onClick={handleSave} disabled={isSaving}
+              style={{ backgroundColor: '#9e38fd', fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px", alignSelf: "center" }}>
+              {isSaving ? "Saving..." : "Save to Library"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
