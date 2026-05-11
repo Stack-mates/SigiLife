@@ -37,7 +37,7 @@ export default function Grimoire() {
   return (
     <div className='maincontainer'>
       <div ref={scrollRef} className='scrollcontainer'>
-        <div className='grimoire' style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
+        <div className='grimoire art-page-base' style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
           <Menu />
           <Link
             className="grimoiremaplink"

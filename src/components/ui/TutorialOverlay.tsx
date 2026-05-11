@@ -10,8 +10,8 @@ interface TutorialStep {
 
 const steps: TutorialStep[] = [
   {
-    title: "Welcome to SigiLife",
-    description: "Embrace the magic of sigils. Let's take a quick tour of your home room."
+    title: "Welcome to The Office",
+    description: "Embrace the magic of sigils. Let's take a quick tour of the Office."
   },
   {
     targetId: 'makesigil-btn',
@@ -20,8 +20,8 @@ const steps: TutorialStep[] = [
   },
   {
     targetId: 'grimoire-btn',
-    title: "Grimoire",
-    description: "Your digital book of shadows. View your collection of sigils and their meanings here."
+    title: "Your Bookshelf, containing your Map, Your SigiLites, and your Grimoire",
+    description: "Your bookshelf contains a globe, and two books- your SigiLites book, and your Grimoire- your digital book of sigils."
   },
   {
     targetId: 'charge-btn',
@@ -45,8 +45,11 @@ export default function TutorialOverlay({ onComplete }: { onComplete: () => void
   const { user, setUser } = useUser();
   const [highlightStyle, setHighlightStyle] = useState<React.CSSProperties>({});
 
+
+
   useEffect(() => {
     const step = steps[currentStep];
+    if (!step) return;
     if (step.targetId) {
       const element = document.getElementById(step.targetId);
       if (element) {

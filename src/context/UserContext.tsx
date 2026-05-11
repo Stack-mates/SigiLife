@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
@@ -23,6 +24,14 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | null>(null);
 
+function applyThemeClasses(theme: number, colorTheme: string) {
+  const html = document.documentElement;
+  html.classList.toggle("dark", theme === 1);
+  html.classList.remove("theme-cyber", "theme-foliage");
+  if (colorTheme === "foliage") html.classList.add("theme-foliage");
+  if (colorTheme === "cyber") html.classList.add("theme-cyber");
+}
+
 export function UserProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -31,13 +40,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
     fetch("/api/auth/me", { credentials: "include" })
       .then(res => res.json())
       .then(data => {
-        console.log('[UserContext] /api/auth/me response:', data)
         if (data.user) {
           setUser(data.user);
+          applyThemeClasses(data.user.theme, data.user.color_theme);
         }
       })
       .catch(() => { })
-      .finally(() => { setIsLoading(false) });
+      .finally(() => { setIsLoading(false); });
   }, []);
 
   return (
@@ -45,13 +54,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
       {children}
     </UserContext.Provider>
   );
-
-
 }
+
 export function useUser() {
   const ctx = useContext(UserContext);
-  if (!ctx) {
-    throw new Error("contextError!")
-  }
+  if (!ctx) throw new Error("contextError!");
   return ctx;
 }

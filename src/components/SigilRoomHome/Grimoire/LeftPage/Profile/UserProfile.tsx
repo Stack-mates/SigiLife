@@ -29,7 +29,7 @@ export default function UserProfile() {
   return (
     <div className="maincontainer">
       <div ref={scrollRef} className='scrollcontainer'>
-        <div className="profilepage">
+        <div className="profilepage art-page-base">
           <Menu />
             <h1 className='profilepagename'>
               <AvatarFace /> {user.username}</h1>

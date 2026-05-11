@@ -1,28 +1,49 @@
-
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useUser } from '@/context/UserContext'
 import MapSearchBox from '../../Grimoire/LeftPage/Map/MapSearchBox';
 import Menu from '../../../Parts/Menu'
+import { usePageTutorial } from '../../../../context/TutorialContext';
+import TutorialCharacters from '../../../Tutorial/Tutorialcharacters';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
-
 export default function StyleSigil() {
-  const { user } = useUser()
-
+  const { user } = useUser();
   const navigate = useNavigate();
   const [sigilData, setSigilData] = useState<any>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [friends, setFriends] = useState<any[]>([]);
   const [selectedFriends, setSelectedFriends] = useState<number[]>([]);
+  const [dims, setDims] = useState({ width: 2160, height: 1260 });
   const scrollRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const [location, setLocation] = useState<{
     locationName: string;
     latitude: number;
     longitude: number;
   } | null>(null);
+
+  const { currentStep: tutorialStep, isActive, advance, skip } = usePageTutorial('style');
+  const showTutorialNext = isActive && tutorialStep?.advanceOn === 'next';
+  const showTutorialSkip = isActive && (tutorialStep?.skippable ?? false);
+
+  useEffect(() => {
+    const calculate = () => {
+      const scale = window.innerHeight / 1260;
+      setDims({ width: Math.max(Math.round(2160 * scale), window.innerWidth), height: window.innerHeight });
+    };
+    calculate();
+    window.addEventListener('resize', calculate);
+    return () => window.removeEventListener('resize', calculate);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setTimeout(() => { el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2; }, 50);
+  }, [dims]);
 
   const handleLocationRetrieve = (res: any) => {
     if (res.features && res.features.length > 0) {
@@ -36,22 +57,11 @@ export default function StyleSigil() {
     }
   };
 
-  const scrollCallbackRef = (el: HTMLDivElement | null) => {
-    if (el) {
-      el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-      scrollRef.current = el;
-    }
-  };
-
-
-
   useEffect(() => {
-    // Load data from localStorage
     const name = localStorage.getItem('sigilName') || 'My New Sigil';
     const intention = localStorage.getItem('sigilIntention') || '';
     const canvasData = localStorage.getItem('sigilCanvasData') || '';
     const imageData = localStorage.getItem('sigilImageData') || '';
-
     setSigilData({ name, intention, canvasData, imageData });
   }, []);
 
@@ -70,22 +80,18 @@ export default function StyleSigil() {
     );
   };
 
-
   const handleSave = async () => {
     if (!user || !user.id) {
       setError("You must be logged in to save a sigil.");
       return;
     }
-
     setIsSaving(true);
     setError('');
 
     try {
       const response = await fetch('/api/sigils', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: sigilData.name,
           userId: user.id,
@@ -96,33 +102,28 @@ export default function StyleSigil() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to save sigil');
-      }
-
+      if (!response.ok) throw new Error('Failed to save sigil');
       const result = await response.json();
-      console.log(result)
 
       if (selectedFriends.length > 0) {
         await fetch('/api/sigils/share', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sigilId: result.id,
-            targetUserIds: selectedFriends
-          })
+          body: JSON.stringify({ sigilId: result.id, targetUserIds: selectedFriends })
         });
       }
 
-      // Clear localStorage
       localStorage.removeItem('sigilName');
       localStorage.removeItem('sigilIntention');
       localStorage.removeItem('sigilUniqueChars');
       localStorage.removeItem('sigilCanvasData');
       localStorage.removeItem('sigilImageData');
-
-      // Navigate to library to see the newly saved sigil
-      navigate('/library');
+      console.log('isActive:', isActive)
+      if (isActive) {
+        navigate(`/charge-sigil?sigilId=${result.id}`);
+      } else {
+        navigate('/home');
+      }
     } catch (err: any) {
       setError(err.message || 'An error occurred while saving.');
     } finally {
@@ -131,61 +132,54 @@ export default function StyleSigil() {
   };
 
   if (!sigilData) return <div>Loading...</div>;
+ console.log(JSON.stringify(sessionStorage))
+  return (
+    <div className='maincontainer'>
+      <div ref={scrollRef} className='scrollcontainer'>
+        <div className='writesigil art-page-base' style={{
+          width: `${dims.width}px`,
+          height: `${dims.height}px`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Menu />
+          <div ref={cardRef}
+            className="flex flex-col bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] pointer-events-auto border border-white/20"
+            style={{
+              width: 'min(55dvh, 85dvw)',
+              height: '88dvh',
+              overflowY: 'auto',
+              gap: '1rem',
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
+            <h1 style={{ fontSize: "clamp(22px, 4vw, 36px)", textAlign: "center" }}>
+              Share & Save your Sigil
+            </h1>
 
-
-
-return (
-  <div className='maincontainer'>
-    <div className="scrollcontainer" ref={scrollCallbackRef}>
-      <div className='stylesigilcontainer'>
-        <Menu/>
-        <div className="flex flex-col bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] pointer-events-auto border border-white/20 transition-all duration-500 animate-in fade-in zoom-in slide-in-from-bottom-8"
-          style={{
-            width: "88dvw",
-            maxWidth: "700px",
-            height: "88dvh",
-            overflowY: "auto",
-            gap: "1rem",
-            display: "flex",
-            flexDirection: "column",
-          }}>
-          <h1 style={{ fontSize: "clamp(22px, 4vw, 36px)", textAlign: "center" }}>
-            Share & Save your Sigil
-          </h1>
-            {/* Sigil preview */}
             <div style={{ textAlign: "center" }}>
               <h2 style={{ fontSize: "clamp(18px, 3vw, 26px)" }}>{sigilData.name}</h2>
               {sigilData.intention && (
                 <p style={{ fontSize: "clamp(13px, 2vw, 16px)", color: "#666", margin: "4px 0 8px" }}>
-                 {sigilData.intention}
+                  Intention: {sigilData.intention}
                 </p>
               )}
               {sigilData.imageData && (
-                <img
-                  src={sigilData.imageData}
-                  alt={sigilData.name}
-                  style={{
-                    width: 'min(100%, 50vh)',
-                    height: 'min(100%, 50vh)',
-                    aspectRatio: '1 / 1',     /* ← square, no stretch */
-                    objectFit: 'contain',
-                    margin: '0 auto',
-                    display: 'block',
-                  }}
-                />
+                <img src={sigilData.imageData} alt={sigilData.name} style={{
+                  width: 'min(100%, 50vh)', height: 'min(100%, 50vh)',
+                  aspectRatio: '1 / 1', objectFit: 'contain', margin: '0 auto', display: 'block',
+                }} />
               )}
             </div>
 
-            {/* Location — compact */}
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '1rem' }}>
               <h2 style={{ fontSize: "clamp(16px, 2.5vw, 22px)", marginBottom: "0.5rem" }}>📍 Location</h2>
               {location ? (
-                <p style={{ fontSize: "clamp(13px, 2vw, 16px)", display: "flex", alignItems: "center", gap: "8px", }}>
+                <p style={{ fontSize: "clamp(13px, 2vw, 16px)", display: "flex", alignItems: "center", gap: "8px" }}>
                   {location.locationName}
                   <button onClick={() => setLocation(null)}
-                    style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'inherit' }}>
-                    ✕
-                  </button>
+                    style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'inherit' }}>✕</button>
                 </p>
               ) : (
                 <div style={{ maxWidth: "50dvw", margin: "0 auto", width: "100%" }}>
@@ -194,7 +188,6 @@ return (
               )}
             </div>
 
-            {/* Friends */}
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '1rem' }}>
               <h2 style={{ fontSize: "clamp(16px, 2.5vw, 22px)", marginBottom: "0.25rem" }}>Share with SigiFriends</h2>
               <p style={{ fontSize: "clamp(12px, 1.8vw, 15px)", color: "#888", marginBottom: "0.5rem" }}>
@@ -227,6 +220,17 @@ return (
           </div>
         </div>
       </div>
+
+      {isActive && tutorialStep && !user?.hasCompletedTutorial && (
+        <TutorialCharacters
+          step={tutorialStep}
+          onNext={advance}
+          onSkip={skip}
+          showNext={showTutorialNext}
+          showSkip={showTutorialSkip}
+          cardRef={cardRef}
+        />
+      )}
     </div>
-  )
+  );
 }

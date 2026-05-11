@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { useUser } from '@/context/UserContext'
 import Menu from '../../Parts/Menu'
-
+ 
 export default function MakeSigil() {
   const { user } = useUser()
   const navigate = useNavigate()
@@ -15,11 +15,11 @@ export default function MakeSigil() {
   const [dims, setDims] = useState({ width: 2160, height: 1260 })
   const scrollRef = useRef<HTMLDivElement>(null)
   const MAX_SIGILS = 12
-
+ 
   useEffect(() => {
     if (user) checkSigilCount()
   }, [user])
-
+ 
   useEffect(() => {
     const calculate = () => {
       const scale = window.innerHeight / 1260
@@ -32,7 +32,7 @@ export default function MakeSigil() {
     window.addEventListener('resize', calculate)
     return () => window.removeEventListener('resize', calculate)
   }, [])
-
+ 
   useEffect(() => {
     const el = scrollRef.current
     if (!el) return
@@ -40,7 +40,7 @@ export default function MakeSigil() {
       el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2
     }, 50)
   }, [dims])
-
+ 
   const checkSigilCount = async () => {
     if (!user) return null
     try {
@@ -58,7 +58,7 @@ export default function MakeSigil() {
       setLoading(false)
     }
   }
-
+ 
   const handleCreateSigil = () => {
     if (canCreateMore) {
       navigate('/make-sigil/write')
@@ -66,18 +66,17 @@ export default function MakeSigil() {
       alert('You have reached the maximum limit of 12 sigils.\n\nPlease destroy an existing sigil before creating a new one.')
     }
   }
-
+ 
   if (!user) return null
-
+ 
   return (
     <div className='maincontainer'>
-      <div ref={scrollRef} className='scrollcontainer'>
-        <div className='makesigil' style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
+      <div ref={scrollRef} className='scrollcontainer' style={{ alignItems: 'center' }}>
+        <div className='makesigil art-page-base' style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
           <Menu />
           <div style={{
-            position: 'absolute',
-            top: '5dvh',
-            left: '50dvh',
+            position: 'relative',
+            zIndex: 2,
             width: '55dvh',
             height: '88dvh',
             display: 'flex',
@@ -86,11 +85,12 @@ export default function MakeSigil() {
             justifyContent: 'space-between',
             padding: '2rem',
             borderRadius: '2rem',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            background: 'rgba(255, 255, 255, 0.15)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
           }}>
             <h1 style={{ fontSize: "clamp(22px, 4vw, 36px)" }}>Make a Sigil</h1>
-
+ 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%' }}>
               <p style={{ fontSize: "clamp(14px, 2.5vw, 20px)" }}>Current Sigils: {sigilCount}/{MAX_SIGILS}</p>
               {remainingSlots < 3 && (
@@ -101,17 +101,17 @@ export default function MakeSigil() {
               )}
               {error && <p className="info-text error">{error}</p>}
             </div>
-
+ 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
               <button
                 className="btn"
                 onClick={handleCreateSigil}
                 disabled={loading || !canCreateMore}
-                style={{ backgroundColor: '#9e38fd', fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}>
+                style={{ fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}>
                 {loading ? 'Loading...' : canCreateMore ? 'Create New Sigil' : 'Max Limit Reached'}
               </button>
               <Link className="btn" to="/library"
-                style={{ backgroundColor: '#9e38fd', fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}>
+                style={{ fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}>
                 Sigil Library
               </Link>
             </div>
@@ -121,3 +121,4 @@ export default function MakeSigil() {
     </div>
   )
 }
+ 

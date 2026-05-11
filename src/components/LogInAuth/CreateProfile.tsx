@@ -49,11 +49,11 @@ export default function CreateProfile() {
       <div className='scrollcontainer'>
         <div className="landingpage">
           <div className="glasscard" style={{
-            width: "95dvw",
+            width: "min(70dvh, 88dvw)"
           }}>
-            <h1 style={{ color: "black" }}>Create Your Profile:</h1>
+            <h1 style={{ color: "black" }}>Welcome, Agent!</h1>
             <p style={{ textAlign: "center", width: "100%" }}>
-              Choose a unique SigiLife Username:
+              Choose your unique SigiLife Agent Name:
               <input
                 style={{ color: "black" }}
                 className="textinput"
@@ -63,12 +63,12 @@ export default function CreateProfile() {
               />
             </p>
 
-            <label className='avatarchoicebox'><h2 style={{ color: "black" }}>Choose a SigiLord:</h2>
+            <label className='avatarchoicebox'><h2 style={{ color: "black" }}>Choose a Costume:</h2>
               <div className='avatarimgbox'>
                 <img className='avatar' src='Avatar1.png' alt='trench-coat-detective' onClick={() => setAvatar('0')}
-                  style={{ outline: avatar === '0' ? '2px solid #2b0681' : 'none', cursor: 'pointer', height: 100, borderRadius: "20px" }} />
+                  style={{ outline: avatar === '0' ? '4px solid #2b0681' : 'none', cursor: 'pointer', height: 250, borderRadius: "20px" }} />
                 <img className='avatar' src='Avatar2.png' alt='dress-detective' onClick={() => setAvatar('1')}
-                  style={{ outline: avatar === '1' ? '2px solid #136d2a' : 'none', cursor: 'pointer', height: 100, borderRadius: "20px" }} />
+                  style={{ outline: avatar === '1' ? '4px solid #136d2a' : 'none', cursor: 'pointer', height: 250, borderRadius: "20px" }} />
               </div>
             </label>
 

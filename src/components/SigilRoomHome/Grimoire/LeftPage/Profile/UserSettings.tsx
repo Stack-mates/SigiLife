@@ -4,15 +4,27 @@ import { useUser } from '@/context/UserContext'
 import { useNavigate, Link } from 'react-router-dom'
 import Menu from '../../../../Parts/Menu'
 
+function applyThemeClasses(theme: number, colorTheme: string) {
+  const html = document.documentElement;
+  html.classList.toggle("dark", theme === 1);
+  html.classList.remove("theme-cyber", "theme-foliage");
+  if (colorTheme === "foliage") html.classList.add("theme-foliage");
+  if (colorTheme === "cyber") html.classList.add("theme-cyber");
+}
 
 const AvatarSelector = ({ avatarId, onSelect }: { avatarId: string, onSelect: (id: string) => void }) => {
   return (
-    <div className="flex gap-4">
+    <div style={{ display: 'flex', gap: '1rem' }}>
       {["0", "1"].map((id) => (
         <img
           key={id}
           src={`Avatar${parseInt(id) + 1}.png`}
-          className={`avatar cursor-pointer border-4 rounded-full ${avatarId === id ? "border-purple-500" : "border-transparent"}`}
+          className="avatar"
+          style={{
+            cursor: 'pointer',
+            borderRadius: '50%',
+            border: avatarId === id ? '4px solid var(--theme-btn)' : '4px solid transparent',
+          }}
           onClick={() => onSelect(id)}
         />
       ))}
@@ -20,61 +32,82 @@ const AvatarSelector = ({ avatarId, onSelect }: { avatarId: string, onSelect: (i
   )
 }
 
-const Themebox = () => {
-  const { user } = useUser()
-  if (!user) { return null }
-  const theme = user.theme;
-  const colorTheme = user.color_theme ?? 'cyber'
-  const isDark = theme === 1
-  const labels = {
-    'cyber-light': 'You have theme: Glacial · Setting: Light',
-    'cyber-dark': 'You have theme: Glacial · Setting: Dark',
-    'foliage-light': 'You have theme: Verdant · Setting: Light',
-    'foliage-dark': 'You have theme: Verdant · Setting: Dark',
-  }
+const SWATCHES = {
+  'cyber-light': {
+    label: 'Glacial · Light',
+    colors: ['#f0f8ff', '#dbeafe', '#1a6fff', 'rgba(26,111,255,0.45)'],
+    names: ['Background', 'Surface', 'Button', 'Glow'],
+  },
+  'cyber-dark': {
+    label: 'Glacial · Dark',
+    colors: ['#000000', '#050d1a', '#4169e1', 'rgba(65,105,225,0.75)'],
+    names: ['Background', 'Surface', 'Button', 'Glow'],
+  },
+  'foliage-light': {
+    label: 'Verdant · Light',
+    colors: ['#f0fff4', '#d1fae5', '#2e8b57', 'rgba(46,139,87,0.45)'],
+    names: ['Background', 'Surface', 'Button', 'Glow'],
+  },
+  'foliage-dark': {
+    label: 'Verdant · Dark',
+    colors: ['#000000', '#030f07', '#50c878', 'rgba(80,200,120,0.75)'],
+    names: ['Background', 'Surface', 'Button', 'Glow'],
+  },
+  'default-light': {
+    label: 'Default · Light',
+    colors: ['#ffffff', '#f0f0f0', '#9e38fd', 'rgba(158,56,253,0.4)'],
+    names: ['Background', 'Surface', 'Button', 'Glow'],
+  },
+  'default-dark': {
+    label: 'Default · Dark',
+    colors: ['#0a0a0a', '#141414', '#9e38fd', 'rgba(158,56,253,0.6)'],
+    names: ['Background', 'Surface', 'Button', 'Glow'],
+  },
+}
 
-  const swatches = {
-    'cyber-light': [
-      '#e9edf5', // --theme-bg-1 (light base)
-      '#d8e0ef', // --theme-bg-2
-      '#4b5563', // --theme-accent (UI neutral layer)
-      '#00d4ff', // --theme-glow / cyber accent
-    ],
+const Themebox = ({ colorTheme, isDark }: { colorTheme: string, isDark: boolean }) => {
+  const suffix = isDark ? 'dark' : 'light'
+  const key = colorTheme === 'foliage' || colorTheme === 'cyber'
+    ? `${colorTheme}-${suffix}` as keyof typeof SWATCHES
+    : `default-${suffix}` as keyof typeof SWATCHES
+  const swatch = SWATCHES[key]
 
-    'cyber-dark': [
-      '#0f1117', // --theme-bg-1 (dark base)
-      '#1a1d26', // --theme-bg-2
-      '#9ca3af', // muted accent
-      '#00d4ff', // neon glow
-    ],
-
-    'foliage-light': [
-      '#e4efe0', // --theme-bg-1
-      '#cfe3c8', // --theme-bg-2
-      '#4f6f52', // --theme-accent
-      '#66bb6a', // --theme-glow
-    ],
-
-    'foliage-dark': [
-      '#081c0c', // --theme-bg-1
-      '#0f2a14', // --theme-bg-2
-      '#66bb6a', // accent
-      '#a5d6a7', // glow highlight
-    ],
-  }
-  const key = `${colorTheme}-${isDark ? 'dark' : 'light'}` as keyof typeof swatches
   return (
-    <div className="themebox" style={{ color: 'black' }}>
-      {labels[key]}
-      <div className="flex gap-2 mt-2">
-        {swatches[key].map((color, i) => (
-          <div key={i} style={{ backgroundColor: color, width: 32, height: 32, borderRadius: 6, borderWidth: "2px", borderColor: "black", alignSelf: "center" }} />
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '0.5rem',
+      padding: '1rem',
+      borderRadius: '12px',
+      background: 'rgba(255,255,255,0.08)',
+      border: '1px solid rgba(255,255,255,0.15)',
+      backdropFilter: 'blur(12px)',
+      minWidth: '200px',
+    }}>
+      <span style={{ fontFamily: 'New Rocker, system-ui', fontSize: 'clamp(14px,2vw,18px)', color: 'var(--theme-text)' }}>
+        {swatch.label}
+      </span>
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        {swatch.colors.map((color, i) => (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <div style={{
+              backgroundColor: color,
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              border: '2px solid rgba(255,255,255,0.3)',
+              boxShadow: `0 0 8px ${color}`,
+            }} />
+            <span style={{ fontSize: '9px', color: 'var(--theme-text)', opacity: 0.7, fontFamily: 'Special Elite, system-ui' }}>
+              {swatch.names[i]}
+            </span>
+          </div>
         ))}
       </div>
     </div>
   )
 }
-
 
 export default function UserSettings() {
   const { user, setUser } = useUser()
@@ -83,10 +116,9 @@ export default function UserSettings() {
   const [avatarId, setAvatarId] = useState(String(user?.avatar ?? 0))
   const [colorTheme, setColorTheme] = useState(user?.color_theme ?? 'cyber')
 
-
   const handleThemeChange = (checked: boolean) => {
     setIsDark(checked)
-    document.documentElement.classList.toggle("dark", checked)
+    applyThemeClasses(checked ? 1 : 0, colorTheme)
     fetch(`/api/users/${user!.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -99,8 +131,7 @@ export default function UserSettings() {
   const handleColorThemeChange = (checked: boolean) => {
     const next = checked ? 'foliage' : 'cyber'
     setColorTheme(next)
-    document.documentElement.classList.remove('theme-foliage')
-    if (next === 'foliage') document.documentElement.classList.add('theme-foliage');
+    applyThemeClasses(isDark ? 1 : 0, next)
     fetch(`/api/users/${user!.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -109,7 +140,6 @@ export default function UserSettings() {
       .then(res => res.json())
       .then(updated => setUser(updated))
   }
-
 
   const handleAvatarChange = async (id: string) => {
     setAvatarId(id)
@@ -139,16 +169,17 @@ export default function UserSettings() {
     navigate('/home')
   }
 
+  if (!user) return null
+
   return (
     <div className="maincontainer">
-      <div className="usersettings">
+      <div className="usersettings art-page-base">
         <Menu />
-        <h1 style={{ fontSize: 32 }}>User Settings</h1>
-        <br />
-        <AvatarSelector avatarId={avatarId} onSelect={handleAvatarChange} />
-        <br />
+        <h1>User Settings</h1>
 
-        <label className="flex items-center gap-2">
+        <AvatarSelector avatarId={avatarId} onSelect={handleAvatarChange} />
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           Theme:
           <SwitchPrimitive.Root
             checked={isDark}
@@ -159,8 +190,8 @@ export default function UserSettings() {
           </SwitchPrimitive.Root>
           {isDark ? "Dark" : "Light"}
         </label>
-        <br />
-        <label className="flex items-center gap-">
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           Colour Theme:
           <SwitchPrimitive.Root
             checked={colorTheme === 'foliage'}
@@ -169,25 +200,23 @@ export default function UserSettings() {
           >
             <SwitchPrimitive.Thumb className="block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform data-[state=checked]:translate-x-6" />
           </SwitchPrimitive.Root>
-          {colorTheme === 'foliage' ? "Foliage" : "Cyber"}
+          {colorTheme === 'foliage' ? "Verdant" : "Glacial"}
         </label>
-        <br />
-        <div className='avatarandtheme'>
 
-          <Themebox />
+        <div className="avatarandtheme">
+          <Themebox colorTheme={colorTheme} isDark={isDark} />
         </div>
 
-        <div className="flex flex-col gap-4 items-center just">
-          <button style={{  borderRadius: "12px" }}
-            className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95"
-            onClick={handleReplayTutorial}
-          >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center' }}>
+          <button className="btn" onClick={handleReplayTutorial}>
             Replay Tutorial
           </button>
-          <button style={{ margin: "5px", borderRadius: "12px" }} className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95" onClick={handleLogout}>
+          <button className="btn" onClick={handleLogout}>
             Log Out
           </button>
-          <Link style={{ margin: "5px", borderRadius: "12px" }} className="px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 active:scale-95" to="/profile">Go to Profile </Link>
+          <Link className="btn" to="/profile">
+            Go to Profile
+          </Link>
         </div>
       </div>
     </div>

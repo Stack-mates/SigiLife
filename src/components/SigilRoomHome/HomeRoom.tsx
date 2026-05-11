@@ -48,7 +48,7 @@ export default function HomeRoom() {
     <div className='maincontainer'>
       <div ref={scrollRef} className='scrollcontainer'>
         <div
-          className='homeroom'
+          className='homeroom art-page-base'
           style={{ width: `${dims.width}px`, height: `${dims.height}px` }}
         >
           <Menu />

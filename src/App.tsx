@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 //import { useState, useEffect } from 'react'
 import { useUser } from '@/context/UserContext';
-
+import { TutorialProvider } from '@/context/TutorialContext';
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Landing Page & Log in
 import ProtectedRoute from './components/LogInAuth/ProtectedRoute'
 import LandingPage from './components/LogInAuth/LandingPage'
@@ -38,24 +38,7 @@ import SigilPage from './components/SigilRoomHome/Grimoire/RightPage/SigiLibrary
 
 
 function App() {
-  // const [user, setUser] = useState(null);
-  // const [authStatus, setAuthStatus]= useState<"loading"|"done">("loading");
 
-  // useEffect(()=> {
-  //   fetch("/api/auth/me", { credentials: "include" })
-  //   .then(res => res.json())
-  //   .then(data => {
-  //     if(data.user){
-  //       setUser(data.user);
-  //     }
-  //     setAuthStatus("done");
-  //   })
-  //   .catch(()=> setAuthStatus("done"));
-  // }, []);
-
-  // if (authStatus === "loading"){
-  //   return <div> Loading Auth... </div>
-  // }
   const { isLoading } = useUser()
 
   if (isLoading) {
@@ -64,6 +47,7 @@ function App() {
 
 console.log('App render - isLoading:', isLoading, 'path:', window.location.pathname)
   return (
+    <TutorialProvider>
     <Routes>
       {/* Auth flow */}
       <Route path="/login" element={<LandingPage />} />
@@ -97,6 +81,7 @@ console.log('App render - isLoading:', isLoading, 'path:', window.location.pathn
       <Route path="/sigil-page" element={<ProtectedRoute><SigilPage /></ProtectedRoute>} />
 
     </Routes>
+    </TutorialProvider>
   )
 }
 

@@ -45,15 +45,19 @@ export default function GoogleAuth() {
         console.log(data)
         setTimeout(() => {
           if (data.needsProfile) {
+            sessionStorage.removeItem('sigilTutorialStep');
+            sessionStorage.removeItem('sigilTutorialSkipped');
             navigate('/create-profile');
           } else {
-             navigate('/home');
+            navigate('/home');
           }
         }, 300);
       } catch (error) {
         console.error('[GoogleAuth] Error in handleSuccess:', error);
       }
     };
+
+
 
     const initializeGoogle = () => {
       if (initialized.current) { return; }

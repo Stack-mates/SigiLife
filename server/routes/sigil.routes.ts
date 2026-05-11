@@ -24,24 +24,29 @@ router.get('/user/:userId/count', async (req, res) => {
   }
 });
 
-
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Get All Sigils
 router.get('/allsigils', async (req, res) => {
   try {
-
     const sigils = await prisma.sigil.findMany({
       orderBy: { createdAt: 'desc' },
       include: { sigilGroups: true },
     });
-    res.json(sigils);
-
+    const userId = (req.session as any).userId;
+    if (userId) {
+      const votes = await prisma.sigilVote.findMany({
+        where: { userId, sigilId: { in: sigils.map(s => s.id) } },
+      });
+      const voteMap = Object.fromEntries(votes.map(v => [v.sigilId, v.voteType]));
+      return res.json(sigils.map(s => ({ ...s, userVote: voteMap[s.id] ?? null })));
+    }
+    res.json(sigils.map(s => ({ ...s, userVote: null })));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: (error as Error).message });
   }
 });
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Get User Sigils
 router.get('/user/:userId/sigils', async (req, res) => {
   try {
     const sigils = await prisma.sigil.findMany({
@@ -49,43 +54,142 @@ router.get('/user/:userId/sigils', async (req, res) => {
       orderBy: { createdAt: 'desc' },
       include: { sigilGroups: true },
     });
-    res.json(sigils);
-
+    const userId = (req.session as any).userId;
+    if (userId) {
+      const votes = await prisma.sigilVote.findMany({
+        where: { userId, sigilId: { in: sigils.map(s => s.id) } }
+      });
+      const voteMap = Object.fromEntries(votes.map(v => [v.sigilId, v.voteType]));
+      return res.json(sigils.map(s => ({ ...s, userVote: voteMap[s.id] ?? null })));
+    }
+    res.json(sigils.map(s => ({ ...s, userVote: null })));
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: (error as Error).message });
   }
 });
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Content Filter
+router.post('/filter-content', async (req: Request, res: Response) => {
+  const { text } = req.body;
+  if (!text) return res.json({ censored: text });
+
+  try {
+    const response = await fetch('https://api.apilayer.com/bad_words', {
+      method: 'POST',
+      headers: {
+        'apikey': process.env.BAD_WORDS_API_KEY || '',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+    });
+    const data = await response.json() as any;
+    const censored = data?.censored_content
+      ? data.censored_content.slice(9, -2)
+      : text;
+    res.json({ censored });
+  } catch (error) {
+    res.json({ censored: text });
+  }
+});
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Vote on Sigil
+router.post('/:sigilId/vote', async (req: Request, res: Response) => {
+  try {
+    const userId = (req.session as any).userId;
+    if (!userId) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const sigilId = parseInt(req.params.sigilId as string);
+    const { voteType } = req.body; // "charge" | "destroy"
+
+    if (!voteType || !['charge', 'destroy'].includes(voteType)) {
+      return res.status(400).json({ error: 'voteType must be "charge" or "destroy"' });
+    }
+
+    const existingVote = await prisma.sigilVote.findUnique({
+      where: { sigilId_userId: { sigilId, userId } },
+    });
+
+    let updatedSigil;
+
+    if (!existingVote) {
+      // New vote — create and increment
+      await prisma.sigilVote.create({
+        data: { sigilId, userId, voteType },
+      });
+      updatedSigil = await prisma.sigil.update({
+        where: { id: sigilId },
+        data: {
+          chargeScore: voteType === 'charge' ? { increment: 1 } : undefined,
+          destroyScore: voteType === 'destroy' ? { increment: 1 } : undefined,
+        },
+      });
+    } else if (existingVote.voteType === voteType) {
+      // Same vote — toggle off
+      await prisma.sigilVote.delete({
+        where: { sigilId_userId: { sigilId, userId } },
+      });
+      updatedSigil = await prisma.sigil.update({
+        where: { id: sigilId },
+        data: {
+          chargeScore: voteType === 'charge' ? { decrement: 1 } : undefined,
+          destroyScore: voteType === 'destroy' ? { decrement: 1 } : undefined,
+        },
+      });
+    } else {
+      // Different vote — switch
+      await prisma.sigilVote.update({
+        where: { sigilId_userId: { sigilId, userId } },
+        data: { voteType },
+      });
+      updatedSigil = await prisma.sigil.update({
+        where: { id: sigilId },
+        data:
+          voteType === 'charge'
+            ? { chargeScore: { increment: 1 }, destroyScore: { decrement: 1 } }
+            : { destroyScore: { increment: 1 }, chargeScore: { decrement: 1 } },
+      });
+    }
+
+    const newVote = await prisma.sigilVote.findUnique({
+      where: { sigilId_userId: { sigilId, userId } },
+    });
+
+    res.json({
+      chargeScore: updatedSigil.chargeScore,
+      destroyScore: updatedSigil.destroyScore,
+      userVote: newVote?.voteType ?? null,
+    });
+  } catch (error) {
+    console.error('Vote error:', error);
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Get One Sigil
+// NOTE: this wildcard must stay AFTER all specific routes above
 router.get(`/:id`, async (req, res) => {
   try {
     const sigil = await prisma.sigil.findUnique({
-      where : { id: parseInt(req.params.id)}
+      where: { id: parseInt(req.params.id) }
     });
-    if (!sigil){
-      return res.status(404).json({message: 'sigil not found'})
+    if (!sigil) {
+      return res.status(404).json({ message: 'sigil not found' })
     }
     res.json(sigil);
-  } catch (error){
+  } catch (error) {
     console.error(error);
-    res.status(500).json({error: (error as Error).message})
+    res.status(500).json({ error: (error as Error).message })
   }
-})
-
-
-
-
-
-
-
-
-
+});
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Save Sigil
 router.post('/', async (req: Request, res: Response) => {
   try {
     const { name, intention, canvasData, imageData, locationName, latitude, longitude } = req.body;
-    const userId = req.session.userId;
+    const userId = (req.session as any).userId;
 
     if (!userId) {
       return res.status(401).json({ error: 'User not authenticated. Please log in to save sigils.' });
@@ -162,17 +266,14 @@ router.post('/share', async (req, res) => {
   }
 });
 
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Charge Sigil
 router.patch('/:id/charge', async (req, res) => {
   try {
-
     const sigil = await prisma.sigil.update({
       where: { id: parseInt(req.params.id) },
       data: { isCharged: true }
     });
-    res.json(sigil)
-
+    res.json(sigil);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
@@ -185,14 +286,9 @@ router.patch('/:id/location', async (req, res) => {
 
     const sigil = await prisma.sigil.update({
       where: { id: parseInt(req.params.id) },
-      data: {
-        locationName,
-        latitude,
-        longitude
-      }
+      data: { locationName, latitude, longitude }
     });
-    res.json(sigil)
-
+    res.json(sigil);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
@@ -206,9 +302,9 @@ router.delete('/:id', async (req, res) => {
     await prisma.sigil.deleteMany({ where: { id } });
     res.json({ message: 'destroyed sigil' });
   } catch (error) {
-    console.error('prisma delete error:', error);  // add this
+    console.error('prisma delete error:', error);
     res.status(500).json({ error: (error as Error).message });
   }
-})
+});
 
 export default router;

@@ -2,13 +2,13 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
-/*---break---*/
 @custom-variant dark (&:is(.dark *));
 
 .nav-button,
 .navbutton,
 .button {
-  font-size: medium;
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(16px, 2vw, 22px);
   width: fit-content;
   height: fit-content;
   background-color: rgba(0, 0, 0, 0.5);
@@ -19,20 +19,23 @@
   text-decoration: none;
   display: inline-block;
   text-align: center;
+  color: #000000;
 }
 
 textinput,
 .textinput {
+  font-family: 'Pompiere', sans-serif;
+  font-size: clamp(14px, 4vw, 16px);
   background-color: #f1f1f1;
   border-radius: 12px;
   border-color: #2b0681;
   border-width: 1px;
   width: min(260px, 75vw);
   text-align: center;
-  font-size: clamp(14px, 4vw, 16px);
   padding: 6px 10px;
   display: block;
-  margin: 4px auto 0 auto; 
+  margin: 4px auto 0 auto;
+  color: #000000;
 }
 
 menu,
@@ -47,60 +50,94 @@ menu,
 
 navmenu,
 .navmenu {
-  display: flex;
-  flex-direction: column;
   position: fixed;
-  z-index: 10000;
   top: 10px;
   left: 10px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
   border-radius: 12px;
   padding: 5px;
+  width: fit-content;
+  pointer-events: auto;
 }
 
 h1,
 .h1 {
-  font-size: 32px;
-  font-family: 'New Rocker';
-}
-h2,
-.h2 {
-  font-size: 24px;
-  font-family: 'New Rocker';
-}
-h3,
-.h3 {
-  font-size: 16px;
-  font-family: 'New Rocker';
+  font-family: 'New Rocker', system-ui;
+  font-size: clamp(32px, 5vw, 56px);
+  color: var(--theme-text);
 }
 
+h2,
+.h2 {
+  font-family: 'New Rocker', system-ui;
+  font-size: clamp(24px, 3.5vw, 42px);
+  color: var(--theme-text);
+}
+
+h3,
+.h3 {
+  font-family: 'New Rocker', system-ui;
+  font-size: clamp(18px, 2.5vw, 30px);
+  color: var(--theme-text);
+}
+
+p,
 p1,
 .p1 {
-  font-family: 'Pom';
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(16px, 2vw, 22px);
+  color: var(--theme-text);
+}
+
+label {
+  font-family: 'Pompiere', sans-serif;
+  font-size: clamp(18px, 2.5vw, 26px);
+  color: var(--theme-text);
 }
 
 btn,
 .btn {
-  background-color: #6915c9;
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(16px, 2vw, 22px);
+  background-color: var(--theme-btn);
+  color: var(--theme-btn-text);
   width: fit-content;
   border-radius: 12px;
   align-self: center;
-  padding: 5px;
+  padding: 5px 12px;
   margin: 5px;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.15s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn:hover {
+  filter: brightness(1.15);
 }
 
 .btn:active {
   transform: scale(0.95);
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .pinkbutton {
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(16px, 2vw, 22px);
   padding: 0.5rem 1.5rem;
   background: linear-gradient(to right, #a855f7, #ec4899);
   color: white;
   font-weight: 700;
   border-radius: 0.75rem;
-  box-shadow:
-    0 10px 15px -3px rgb(0 0 0 / 0.1),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -114,25 +151,27 @@ btn,
 }
 
 .glassbutton {
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(16px, 2vw, 22px);
   padding: 0.5rem 1.5rem;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: white;
   font-weight: 700;
   border-radius: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    0 10px 15px -3px rgb(0 0 0 / 0.1),
-    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  color: #000000;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .glassbutton:hover {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.5);
   transform: scale(1.05);
-  color: black;
+  color: #000000;
 }
 
 .glassbutton:active {
@@ -144,8 +183,8 @@ btn,
   flex-direction: column;
   justify-content: flex-start;
   gap: 1rem;
- height: auto;
- max-height: 92dvh;
+  height: auto;
+  max-height: 92dvh;
   background-color: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -156,12 +195,11 @@ btn,
   margin: 1.5rem;
   pointer-events: auto;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  transform: translateZ(0);
   transition: all 500ms ease;
   overflow-y: auto;
   overflow-x: hidden;
-
-  /* animate-in fade-in zoom-in slide-in-from-bottom-8 */
+  position: relative;
+  z-index: 2;
   animation: glass-card-in 500ms ease forwards;
 }
 
@@ -178,8 +216,9 @@ btn,
 
 .glasscard label,
 .glasscard p {
-  font-size: clamp(16px, 5vw, 20px);
-  color: white;
+  font-family: 'Pompiere', sans-serif;
+  font-size: clamp(18px, 4vw, 24px);
+  color: var(--theme-text);
   text-align: center;
   width: 100%;
   display: flex;
@@ -189,22 +228,23 @@ btn,
 }
 
 .glasscard h1 {
-  font-size: clamp(26px, 7vw, 36px);
+  font-size: clamp(28px, 6vw, 42px);
   text-align: center;
+  color: var(--theme-text);
 }
 
 .glasscard h2 {
-  font-size: clamp(20px, 6vw, 28px);
+  font-size: clamp(22px, 5vw, 34px);
   text-align: center;
+  color: var(--theme-text);
 }
 
 .glasscard .p1 {
-  font-size: clamp(13px, 3.5vw, 16px);
+  font-size: clamp(15px, 3vw, 20px);
   text-align: center;
-  color: rgba(255,255,255,0.85);
+  color: var(--theme-text);
+  opacity: 0.85;
 }
-
-
 
 .special-elite-regular {
   font-family: 'Special Elite', system-ui;
@@ -218,8 +258,6 @@ btn,
   font-style: normal;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Main Container*/
-mainContainer,
 .maincontainer {
   display: flex;
   flex-direction: column;
@@ -231,7 +269,7 @@ mainContainer,
   align-items: center;
   overflow-y: auto;
   overflow-x: hidden;
-  scrollbar-color: #6915c9 #136d2a;
+  scrollbar-color: var(--theme-btn) var(--theme-bg-2);
   scrollbar-width: thick;
   font-family: 'Special Elite', system-ui;
   background-color: var(--theme-bg-1);
@@ -239,26 +277,22 @@ mainContainer,
   text-align: center;
 }
 
-maincontainer::-webkit-scrollbar,
 .maincontainer::-webkit-scrollbar {
   height: 12px;
 }
 
-maincontainer::-webkit-scrollbar-track,
 .maincontainer::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--theme-bg-2);
   border-radius: 10px;
 }
 
-maincontainer::-webkit-scrollbar-thumb,
 .maincontainer::-webkit-scrollbar-thumb {
-  background: #2b0681;
+  background: var(--theme-btn);
   border-radius: 10px;
 }
 
-maincontainer::-webkit-scrollbar-thumb:hover,
 .maincontainer::-webkit-scrollbar-thumb:hover {
-  background: #7f64be;
+  filter: brightness(1.2);
 }
 
 scrollcontainer,
@@ -269,8 +303,12 @@ scrollcontainer,
   width: 100vw;
   height: 100dvh;
   align-self: stretch;
-    isolation: auto; 
+  isolation: auto;
   -webkit-overflow-scrolling: touch;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 noscroll,
@@ -290,7 +328,18 @@ rowbox,
   flex-direction: row;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Landing Page*/
+.homeroom,
+.chargesigil,
+.destroysigil,
+.grimoire,
+.rightpage,
+.rightpage2,
+.sigilpage,
+.makesigil,
+.writesigil,
+.drawsigil {
+  scroll-snap-align: center;
+}
 
 landingpage,
 .landingpage {
@@ -308,6 +357,8 @@ landingpage,
   padding: 1rem;
   gap: 1rem;
   box-sizing: border-box;
+  flex-shrink: 0;
+  scroll-snap-align: center;
 }
 
 logo,
@@ -320,7 +371,7 @@ logo,
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-  width: 95vw;
+  width: min(70dvh, 88dvw) !important;
   max-height: 35dvh;
   margin: 0;
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -335,7 +386,8 @@ slidebox,
   position: relative;
   padding: 0;
   align-items: center;
-  font-size: clamp(18px, 5vw, 28px);
+  font-size: clamp(16px, 4vw, 26px);
+  font-family: 'Special Elite', system-ui;
   align-self: center;
   justify-self: center;
 }
@@ -366,13 +418,16 @@ landingrowbox,
 
 createaccountbutton,
 .createaccountbutton {
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(16px, 2vw, 22px);
   border-radius: 20px;
   background-color: white;
-  border-color: #e0e0e0;
-  border-width: 1 px;
+  border: 1px solid #e0e0e0;
   height: 40px;
+  padding: 0 16px;
+  color: #000000;
+  cursor: pointer;
 }
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Make Profile*/
 
 makeprofile,
 .makeprofile {
@@ -384,6 +439,13 @@ makeprofile,
   background-color: transparent;
   border-radius: 12px;
   height: auto;
+}
+
+.makeprofile label,
+.makeprofile p,
+.makeprofile span {
+  font-family: 'Pompiere', sans-serif;
+  color: var(--theme-text);
 }
 
 avatarchoicebox,
@@ -402,17 +464,146 @@ avatarimgbox,
   margin-top: 0.5rem;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  HomeRoom*/
-.homeroom {
-  background-image: url('./assets/InsideLino.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
+.art-page-base {
   position: relative;
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
   flex-shrink: 0;
   overflow: visible;
   scroll-snap-align: center;
+  isolation: isolate;
+}
+
+.art-page-base::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 0 18px var(--theme-glow)) drop-shadow(0 0 40px var(--theme-glow));
+  transition: filter 0.6s ease;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.homeroom {
+  background-image: none;
+  display: block;
+}
+
+.homeroom::before {
+  background-image: url('./assets/InsideLino.svg');
+}
+
+.chargesigil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: none;
+}
+
+.chargesigil::before {
+  background-image: url('./assets/AltarLino.svg');
+}
+
+.destroysigil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-image: none;
+}
+
+.destroysigil::before {
+  background-image: url('./assets/PyreLino.svg');
+}
+
+.grimoire {
+  background-image: none;
+  display: block;
+}
+
+.grimoire::before {
+  background-image: url('./assets/Bookshelf.svg');
+}
+
+.rightpage {
+  background-image: none;
+  display: block;
+}
+
+.rightpage::before {
+  background-image: url('./assets/Bookshelf.svg');
+}
+
+.rightpage2 {
+  background-image: none;
+  display: block;
+}
+
+.rightpage2::before {
+  background-image: url('./assets/SigiLibrary.svg');
+}
+
+sigilpage,
+.sigilpage {
+  background-image: none;
+  font-family: 'New Rocker', system-ui;
+}
+
+.sigilpage::before {
+  background-image: url('./assets/SigiRightPage.svg');
+  background-position: left center;
+}
+
+.makesigil {
+  background-image: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'New Rocker', system-ui;
+}
+
+.makesigil::before {
+  background-image: url('./assets/WritingLino.svg');
+}
+
+writesigil,
+.writesigil {
+  background-image: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.writesigil::before {
+  background-image: url('./assets/WritingLino.svg');
+}
+
+drawsigil,
+.drawsigil {
+  background-image: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawsigil::before {
+  background-image: url('./assets/WritingLino.svg');
+}
+
+.mapbox {
+  background-image: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mapbox::before {
+  background-image: url('./assets/MapbookLino.svg');
 }
 
 .destroy-btn,
@@ -423,11 +614,11 @@ avatarimgbox,
   left: 1dvh;
 }
 
-
 .destroybutton img {
   height: 69dvh;
   display: block;
 }
+
 .charge-btn,
 .chargebutton {
   position: absolute;
@@ -458,7 +649,7 @@ avatarimgbox,
 .makesigilbutton {
   position: absolute;
   bottom: -2dvh;
-  right:15dvh;
+  right: 15dvh;
   z-index: 10;
 }
 
@@ -472,9 +663,7 @@ avatarimgbox,
 .grimoirebutton img,
 .makesigilbutton img {
   cursor: pointer;
-  transition:
-    filter 0.3s ease,
-    transform 0.3s ease;
+  transition: filter 0.3s ease, transform 0.3s ease;
   display: block;
 }
 
@@ -488,24 +677,6 @@ avatarimgbox,
 .makesigilbutton.touched img {
   transform: scale(1.05);
   filter: drop-shadow(0 0 8px gold) drop-shadow(0 0 20px goldenrod);
-}
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Charge Sigil*/
-
-.chargesigil {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-image: url('./assets/AltarLino.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
 }
 
 .chargesigil .sigilbox {
@@ -523,17 +694,32 @@ avatarimgbox,
   width: fit-content;
   border-radius: 12px;
   position: relative;
-  background-color: transparent; 
+  background-color: transparent;
+  z-index: 2;
 }
 
 @keyframes rainbow-pulse {
-  0%   { filter: drop-shadow(0 0 20px #ff0080) drop-shadow(0 0 40px #ff0080); }
-  16%  { filter: drop-shadow(0 0 20px #ff8000) drop-shadow(0 0 40px #ff8000); }
-  33%  { filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 40px #ffff00); }
-  50%  { filter: drop-shadow(0 0 20px #00ff80) drop-shadow(0 0 40px #00ff80); }
-  66%  { filter: drop-shadow(0 0 20px #0080ff) drop-shadow(0 0 40px #0080ff); }
-  83%  { filter: drop-shadow(0 0 20px #8000ff) drop-shadow(0 0 40px #8000ff); }
-  100% { filter: drop-shadow(0 0 20px #ff0080) drop-shadow(0 0 40px #ff0080); }
+  0% {
+    filter: drop-shadow(0 0 20px #ff0080) drop-shadow(0 0 40px #ff0080);
+  }
+  16% {
+    filter: drop-shadow(0 0 20px #ff8000) drop-shadow(0 0 40px #ff8000);
+  }
+  33% {
+    filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 40px #ffff00);
+  }
+  50% {
+    filter: drop-shadow(0 0 20px #00ff80) drop-shadow(0 0 40px #00ff80);
+  }
+  66% {
+    filter: drop-shadow(0 0 20px #0080ff) drop-shadow(0 0 40px #0080ff);
+  }
+  83% {
+    filter: drop-shadow(0 0 20px #8000ff) drop-shadow(0 0 40px #8000ff);
+  }
+  100% {
+    filter: drop-shadow(0 0 20px #ff0080) drop-shadow(0 0 40px #ff0080);
+  }
 }
 
 .sigil-charging {
@@ -541,10 +727,22 @@ avatarimgbox,
 }
 
 @keyframes float-up-pause {
-  0%   { opacity: 0; transform: translateX(-50%) translateY(60px); }
-  15%  { opacity: 1; transform: translateX(-50%) translateY(0px); }
-  70%  { opacity: 1; transform: translateX(-50%) translateY(0px); }
-  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(60px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
 }
 
 .floating-instruction {
@@ -554,49 +752,17 @@ avatarimgbox,
   z-index: 500;
   text-align: center;
   font-family: 'New Rocker', system-ui;
-  font-size: clamp(16px, 3dvh, 26px);
+  font-size: clamp(20px, 3dvh, 32px);
   color: white;
-  text-shadow: 0 0 20px rgba(255,255,255,0.8), 0 0 40px rgba(160,100,255,0.6);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(160, 100, 255, 0.6);
   pointer-events: none;
   animation: float-up-pause 4s ease forwards;
   width: 80dvw;
 }
 
-
-
-
-
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Destroy Sigil*/
-
-.destroysigil {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-image: url('./assets/PyreLino.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
-}
-
 .destroysigil > *:not(.evileye):not(.ghost-cursor) {
   position: relative;
   z-index: 3;
-}
-
-.destroysigil::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  z-index: 0;
 }
 
 .evileye {
@@ -613,20 +779,6 @@ avatarimgbox,
   inset: 0;
   pointer-events: none;
   z-index: 1;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Grimoire*/
-
-.grimoire {
-  background-image: url('./assets/Bookshelf.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
 }
 
 .grimoiremaplink {
@@ -655,7 +807,7 @@ avatarimgbox,
 
 .grimoireliblink {
   position: absolute;
-  bottom:  4dvh;
+  bottom: 4dvh;
   left: 44.5dvh;
   z-index: 10;
 }
@@ -669,9 +821,7 @@ avatarimgbox,
 .grimoireprofilelink img,
 .grimoireliblink img {
   cursor: pointer;
-  transition:
-    filter 0.3s ease,
-    transform 0.3s ease;
+  transition: filter 0.3s ease, transform 0.3s ease;
   display: block;
 }
 
@@ -685,32 +835,6 @@ avatarimgbox,
   filter: drop-shadow(0 0 8px gold) drop-shadow(0 0 20px goldenrod);
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Right Page*/
-.rightpage {
-
-  background-image: url('./assets/Bookshelf.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
-}
-
-.rightpage2 {
-  background-image: url('./assets/SigiLibrary.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
-}
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Library*/
 .sigilibrary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 220px));
@@ -721,6 +845,8 @@ avatarimgbox,
   padding: 16px;
   gap: 16px;
   background: transparent;
+  position: relative;
+  z-index: 1;
 }
 
 .sigilthumb {
@@ -737,7 +863,7 @@ avatarimgbox,
 }
 
 .sigilthumb img {
-  width: 100%;  
+  width: 100%;
   height: auto;
   aspect-ratio: 1 / 1;
   object-fit: contain;
@@ -747,12 +873,15 @@ avatarimgbox,
 .sigilthumb span,
 .sigilthumb p,
 .sigilthumb div {
+  font-family: 'Special Elite', system-ui;
   width: 100%;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: clamp(9px, 2vw, 13px);}
+  font-size: clamp(12px, 2vw, 16px);
+  color: var(--theme-text);
+}
 
 .sigilthumb:hover {
   transform: scale(1.05);
@@ -768,27 +897,14 @@ avatarimgbox,
   animation: rainbow-pulse 4s linear infinite;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Sigil Page*/
-sigilpage,
-.sigilpage {
-  background-image: url('./assets/SigiRightPage.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: left center;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
-  font-family: 'New Rocker', system-ui;
-}
 .sigildetails {
   width: 90vw;
   align-items: center;
   display: flex;
   flex-direction: column;
   justify-self: center;
+  position: relative;
+  z-index: 2;
 }
 
 .sigilbuttonstack {
@@ -797,6 +913,8 @@ sigilpage,
   align-items: center;
   gap: 12px;
   margin-top: 20px;
+  position: relative;
+  z-index: 2;
 }
 
 sigildetailslocation,
@@ -824,28 +942,10 @@ sigilpageaddlocation,
   align-items: center;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  LeftPage*/
 leftpage,
 .leftpage {
   display: flex;
   flex-direction: column;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  MakeSigil*/
-.makesigil {
-  background-image: url('./assets/WritingLino.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
-  font-family: 'New Rocker', system-ui;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .sigilinfo {
@@ -857,8 +957,10 @@ leftpage,
 }
 
 .info-text {
-  font-size: 14px;
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(15px, 1.8vw, 18px);
   margin: 10px 0;
+  color: var(--theme-text);
 }
 
 .info-text.warning {
@@ -875,42 +977,6 @@ leftpage,
   border-radius: 4px;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Write Sigil*/
-writesigil,
-.writesigil {
-  background-image: url('./assets/WritingLino.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
-  font-family: 'New Rocker', system-ui;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Draw Sigil*/
-drawsigil,
-.drawsigil {
-  background-image: url('./assets/WritingLino.svg');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  position: relative;
-  background-color: var(--theme-bg-1);
-  transition: background-color 0.6s ease;
-  flex-shrink: 0;
-  overflow: visible;
-  scroll-snap-align: center;
-  font-family: 'New Rocker', system-ui;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 drawsigilmenu,
 .drawsigilmenu {
   display: flex;
@@ -920,18 +986,17 @@ drawsigilmenu,
   justify-content: center;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Style Sigil*/
-.stylesigilcontainer {
-  background-image: linear-gradient(160deg, var(--theme-bg-1), var(--theme-bg-2));
+.stylesigil {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100dvw;
   height: 100dvh;
+  background-image: linear-gradient(160deg, var(--theme-bg-1), var(--theme-bg-2));
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
-  overflow-y: auto; 
+  overflow-y: auto;
   overflow-x: hidden;
   padding: 1rem 0;
 }
@@ -942,9 +1007,13 @@ drawsigilmenu,
   align-items: center;
   position: relative;
   width: 30%;
-  background-color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   padding: 15px;
+  z-index: 10;
 }
 
 .sharebox {
@@ -952,18 +1021,16 @@ drawsigilmenu,
   flex-direction: column;
   padding: 25px;
   position: relative;
-  background-color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 12px;
   width: 275px;
+  z-index: 10;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  MapBox*/
-mapbox,
 .mapbox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   position: relative;
   width: 100dvw;
   height: 100dvh;
@@ -972,9 +1039,18 @@ mapbox,
   gap: 0.75rem;
   padding: 1rem;
   box-sizing: border-box;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Profile*/
+.mapbox > * {
+  position: relative;
+  z-index: 1;
+}
+
 profilepage,
 .profilepage {
   display: flex;
@@ -984,13 +1060,10 @@ profilepage,
   position: relative;
   justify-content: space-around;
   overflow: visible;
-  min-width: 1024px;
-  height: 100vh;
-  position: relative;
-
+  width: 100dvw;
+  min-height: 100dvh;
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
-  background-size: 1024px 100vh;
 }
 
 profilepagename,
@@ -998,30 +1071,35 @@ profilepagename,
   display: flex;
   flex-direction: row;
   margin: 50px;
-  background-color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 12px;
-  color: black;
+  color: var(--theme-text);
   position: relative;
-  border-color: black;
-  border-width: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 5px;
   justify-content: space-around;
+  font-family: 'New Rocker', system-ui;
+  font-size: clamp(20px, 4vw, 32px);
 }
+
 profilebox,
 .profilebox {
   border-radius: 12px;
-  border-color: black;
-  border-width: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   height: 100%;
   width: 29vw;
   text-align: center;
   position: relative;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  color: var(--theme-text);
 }
 
 avatar,
 .avatar {
-  height: 150px;
+  height: 250px;
   object-fit: cover;
 }
 
@@ -1049,6 +1127,7 @@ userfriendsbox,
   height: 100%;
   justify-content: space-evenly;
 }
+
 usercard,
 .usercard {
   display: flex;
@@ -1056,7 +1135,9 @@ usercard,
   padding: 5px;
   width: 30%;
   position: relative;
-  font-size: 9px;
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(12px, 1.5vw, 16px);
+  color: var(--theme-text);
 }
 
 friendcontainer,
@@ -1077,11 +1158,11 @@ avatarandtheme,
   align-self: center;
   width: fit-content;
   padding: 5px;
-  bottom: 15px;
-  background-color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 12px;
-  border-color: black;
-  border-width: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   margin: 25px;
 }
 
@@ -1091,17 +1172,17 @@ usersettings,
   flex-direction: column;
   padding: 25px;
   justify-content: space-between;
+  gap: 1rem;
+  font-family: 'Special Elite', system-ui;
+  color: var(--theme-text);
 }
 
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Sigil Art */
 .sigil-art {
   position: relative;
   z-index: 2;
   filter: drop-shadow(0 0 8px var(--theme-glow));
   transition: filter 0.6s ease;
 }
-
-/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  Themes */
 
 @theme inline {
   --font-heading: var(--font-sans);
@@ -1146,135 +1227,130 @@ usersettings,
 }
 
 :root {
-  /* LIGHT (default) — soft neutral */
-  --background: #f7f7fb;
-  --foreground: #1a1a1a;
-
-  --card: #ffffff;
-  --card-foreground: #1a1a1a;
-
-  --primary: #6b7280;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #f5f5f5;
+  --card-foreground: #000000;
+  --primary: #9e38fd;
   --primary-foreground: #ffffff;
-
   --accent: #e5e7eb;
-  --accent-foreground: #1a1a1a;
-
+  --accent-foreground: #000000;
   --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #9ca3af;
+  --input: #f1f1f1;
+  --ring: #9e38fd;
 
-  /* Theme identity */
-  --theme-text: #6b3fa0;
-  --theme-bg-1: #e9edf5;
-  --theme-bg-2: #d8e0ef;
-  --theme-accent: #4b5563;
-  --theme-glow: rgba(120, 120, 120, 0.25);
+  --theme-text: #000000;
+  --theme-bg-1: #ffffff;
+  --theme-bg-2: #f0f0f0;
+  --theme-btn: #9e38fd;
+  --theme-btn-text: #ffffff;
+  --theme-glow: rgba(158, 56, 253, 0.5);
 }
 
-/* DARK — true contrast */
 .dark {
-  --background: #0f1117;
-  --foreground: #f5f5f5;
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --card: #141414;
+  --card-foreground: #ffffff;
+  --primary: #9e38fd;
+  --primary-foreground: #ffffff;
+  --accent: #1f1f1f;
+  --accent-foreground: #ffffff;
+  --border: #2a2a2a;
+  --input: #f1f1f1;
+  --ring: #9e38fd;
 
-  --card: #1a1d26;
-  --card-foreground: #f5f5f5;
-
-  --primary: #d1d5db;
-  --primary-foreground: #111827;
-
-  --accent: #2a2f3a;
-  --accent-foreground: #f5f5f5;
-
-  --border: #2a2f3a;
-  --input: #2a2f3a;
-  --ring: #6b7280;
-
-  /* subtle glow, not themed */
-  --theme-text: #f5f5f5;
-  --theme-bg-1: #0f1117;
-  --theme-bg-2: #1a1d26;
-  --theme-accent: #9ca3af;
-  --theme-glow: rgba(255, 255, 255, 0.08);
+  --theme-text: #ffffff;
+  --theme-bg-1: #0a0a0a;
+  --theme-bg-2: #141414;
+  --theme-btn: #9e38fd;
+  --theme-btn-text: #ffffff;
+  --theme-glow: rgba(158, 56, 253, 0.7);
 }
 
-/* CYBER — neon blue, high contrast */
 .theme-cyber {
-  --background: #060912;
-  --foreground: #dbeafe;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #f0f6ff;
+  --card-foreground: #000000;
+  --primary: #1a6fff;
+  --primary-foreground: #ffffff;
+  --accent: #dbeafe;
+  --accent-foreground: #000000;
+  --border: #bfdbfe;
+  --input: #f1f1f1;
+  --ring: #1a6fff;
 
-  --card: #0b1220;
-  --card-foreground: #dbeafe;
-
-  --primary: #00d4ff;
-  --primary-foreground: #001018;
-
-  --accent: #0a1a2f;
-  --accent-foreground: #dbeafe;
-
-  --border: #0a2540;
-  --input: #0a2540;
-  --ring: #00d4ff;
-
-  --theme-bg-1: #050816;
-  --theme-bg-2: #0a1a3a;
-  --theme-accent: #00d4ff;
-  --theme-glow: rgba(0, 212, 255, 0.6);
+  --theme-text: #000000;
+  --theme-bg-1: #ffffff;
+  --theme-bg-2: #e8f4ff;
+  --theme-btn: #1a6fff;
+  --theme-btn-text: #ffffff;
+  --theme-glow: rgba(135, 206, 235, 0.7);
 }
 
 .theme-cyber.dark {
-  --theme-bg-1: #02040a;
-  --theme-bg-2: #07122b;
-  --theme-glow: rgba(0, 212, 255, 0.8);
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #050d1a;
+  --card-foreground: #ffffff;
+  --primary: #4169e1;
+  --primary-foreground: #ffffff;
+  --accent: #0a1a2f;
+  --accent-foreground: #ffffff;
+  --border: #0a2540;
+  --input: #f1f1f1;
+  --ring: #4169e1;
+
+  --theme-text: #ffffff;
+  --theme-bg-1: #000000;
+  --theme-bg-2: #050d1a;
+  --theme-btn: #4169e1;
+  --theme-btn-text: #ffffff;
+  --theme-glow: rgba(65, 105, 225, 0.8);
 }
 
-/* FOLIAGE — sage / moss, soft and grounded */
 .theme-foliage {
-  --background: #f4f7f2;
-  --foreground: #1f2a1f;
-
-  --card: #e6efe3;
-  --card-foreground: #1f2a1f;
-
-  --primary: #5f7c5f;
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #f0fff4;
+  --card-foreground: #000000;
+  --primary: #2e8b57;
   --primary-foreground: #ffffff;
+  --accent: #d1fae5;
+  --accent-foreground: #000000;
+  --border: #a7f3d0;
+  --input: #f1f1f1;
+  --ring: #2e8b57;
 
-  --accent: #d6e4d2;
-  --accent-foreground: #1f2a1f;
-
-  --border: #c8d8c4;
-  --input: #c8d8c4;
-  --ring: #7fa37f;
-
-  --theme-bg-1: #e4efe0;
-  --theme-bg-2: #cfe3c8;
-  --theme-accent: #4f6f52;
-  --theme-glow: rgba(120, 160, 120, 0.35);
+  --theme-text: #000000;
+  --theme-bg-1: #ffffff;
+  --theme-bg-2: #f0fff4;
+  --theme-btn: #2e8b57;
+  --theme-btn-text: #ffffff;
+  --theme-glow: rgba(100, 220, 100, 0.65);
 }
 
 .theme-foliage.dark {
-  --background: #0c1a0f;
-  --foreground: #d8f3dc;
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #030f07;
+  --card-foreground: #ffffff;
+  --primary: #50c878;
+  --primary-foreground: #000000;
+  --accent: #0a1f10;
+  --accent-foreground: #ffffff;
+  --border: #0d2e18;
+  --input: #f1f1f1;
+  --ring: #50c878;
 
-  --card: #122417;
-  --card-foreground: #d8f3dc;
-
-  --primary: #66bb6a;
-  --primary-foreground: #081c0c;
-
-  --accent: #1b2f1f;
-  --accent-foreground: #d8f3dc;
-
-  --border: #1b2f1f;
-  --input: #1b2f1f;
-  --ring: #66bb6a;
-
-  --theme-bg-1: #081c0c;
-  --theme-bg-2: #0f2a14;
-  --theme-accent: #66bb6a;
-  --theme-glow: rgba(102, 187, 106, 0.5);
+  --theme-text: #ffffff;
+  --theme-bg-1: #000000;
+  --theme-bg-2: #030f07;
+  --theme-btn: #50c878;
+  --theme-btn-text: #000000;
+  --theme-glow: rgba(80, 200, 120, 0.8);
 }
-
-/*---break---*/
 
 @layer base {
   * {
@@ -1283,6 +1359,7 @@ usersettings,
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Special Elite', system-ui;
   }
   html {
     @apply font-sans;

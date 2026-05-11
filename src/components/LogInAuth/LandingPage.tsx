@@ -70,18 +70,26 @@ export default function LandingPage() {
           <div className="landingpage">
             <>
 
-              <img src={SigiLifeLogo} className="logo" alt="Sigil-Life-Logo" />
-              <div className="logo " style={{ height: "fit-content", color: "white", padding: "5px", margin: "5px", borderRadius: "12px", }}>
-                <p >
+              <img src={SigiLifeLogo} className="logo" alt="Sigil-Life-Logo" style={{ width: "min(70dvh, 88dvw)" }} />
+              <div className="logo" style={{
+                height: "fit-content",
+                color: "white",
+                padding: "5px",
+                margin: "5px",
+                borderRadius: "12px",
+                width: "min(70dvh, 88dvw)",
+                textWrap: "wrap",
+                minWidth: "300px"
+              }}>                <p >
                   SigiLife is a location-based ritual platform where you can transform personal intentions into digital sigils.
                 </p>
               </div>
-              <div className='displaypitch '>
+              <div className='displaypitch' style={{ height: "30vh", margin: "0", width: "min(70dvh, 88dvw)", paddingTop: ".3rem" }}>
                 <Carousel setApi={setCarouselApi}
                   opts={{ loop: true }}
                   orientation="vertical"
                   className="slidebox"
-                  style={{ height: "28vh", margin: "0" }}>
+                  style={{ height: "28vh", margin: "0", width: "min(70dvh, 88dvw)" }}>
                   <CarouselContent style={{
                     height: "25vh",
                     fontSize: "clamp(18px, 5vw, 26px)",

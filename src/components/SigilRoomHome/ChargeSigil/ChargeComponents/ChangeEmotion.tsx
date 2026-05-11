@@ -12,10 +12,10 @@ export default function changeEmotion({ emotion, setEmotion }: { emotion: string
 
 
   return (
-    <div className="changeemotion">
+    <div className="changeemotion" style={{ background: "transparent", padding: '55px', height: 'fit-content'}}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="glassbutton" style={{ background: "transparent" }}>
+          <Button className="glassbutton" style={{ background: "transparent", padding: '15px', height: 'fit-content', margin: '10'}}>
             {emotion ? emotion : "Choose Emotion"}
           </Button>
         </DropdownMenuTrigger>
