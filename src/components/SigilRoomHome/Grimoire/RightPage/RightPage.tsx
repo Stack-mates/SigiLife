@@ -60,7 +60,6 @@ export default function RightPage() {
             bottom: '3dvh',
             left: '47%',
             transform: 'translateX(-50%)',
-            backgroundColor: '#9e38fd',
             fontSize: "clamp(13px, 2vw, 20px)",
             padding: "8px 20px"
           }} to="/make-sigil">🪶 MakeSigil</Link></div>

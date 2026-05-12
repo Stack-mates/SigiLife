@@ -11,15 +11,16 @@ export default function MapSearchBox({ onRetrieve, accessToken }: { onRetrieve: 
         }}
         placeholder="Search for a location..."
         theme={{
-            variables: {
-                fontFamily: '"New Rocker", system-ui',
-                unit: '14px',
-                borderRadius: '12px',
-                colorPrimary: '#9e38fd',
-                colorBackground: 'rgba(255, 255, 255, 0.95)', // Nearly white for max visibility
-                colorText: '#000000',
-            }
+          variables: {
+            fontFamily: '"New Rocker", system-ui',
+            unit: '22px',
+            borderRadius: '12px',
+            colorPrimary: '#9e38fd',
+            colorBackground: 'rgba(255, 255, 255, 0.95)', // Nearly white for max visibility
+            colorText: '#000000',
+          }
         }}
+        
       />
     </div>
   )

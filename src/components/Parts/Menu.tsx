@@ -55,6 +55,7 @@ export default function Menu() {
   return (
     <div
       className="navmenu"
+      id='menu-btn'
       style={{
         position: 'fixed',
         top: '10px',

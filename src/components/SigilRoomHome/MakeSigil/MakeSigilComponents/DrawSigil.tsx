@@ -335,8 +335,8 @@ export default function DrawSigil() {
             <div className="drawsigilmenu" style={{ fontSize: "clamp(13px, 2vw, 17px)" }}>
               {step === 'draw' ? (
                 <>
-                  <button className="btn" onClick={() => setIsDrawingMode(!isDrawingMode)}
-                    style={{ backgroundColor: '#9e38fd', fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px", color: isDrawingMode ? 'white' : 'black', cursor: 'pointer' }}>
+                  <button className="pinkbutton" onClick={() => setIsDrawingMode(!isDrawingMode)}
+                    style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px", color: isDrawingMode ? 'white' : 'black', cursor: 'pointer' }}>
                     {isDrawingMode ? "🖐 Manipulate Mode" : "✍️ Draw Mode"}
                   </button>
                   {user.isAdmin === true &&
@@ -352,9 +352,9 @@ export default function DrawSigil() {
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
                     <p>select <br />color:</p>
                     <input type="color" value={styleColor} onChange={(e) => setStyleColor(e.target.value)} style={{ cursor: 'pointer', width: '80px', height: '80px', alignSelf: "center" }} />
-                    <button className="btn" onClick={handleChangeColor} style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}>🎨 Color</button>
-                    <button className="btn" onClick={handleAddRing} style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}>⭕ Ring</button>
-                    <button className="btn" onClick={handleAddGlow} style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}>✨ Glow</button>
+                    <button className="pinkbutton" onClick={handleChangeColor} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>🎨 Color</button>
+                    <button className="pinkbutton" onClick={handleAddRing} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>⭕ Ring</button>
+                    <button className="pinkbutton" onClick={handleAddGlow} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>✨ Glow</button>
                   </div>
                 </div>
               )}
@@ -377,25 +377,25 @@ export default function DrawSigil() {
             </div>
             {!isDrawingMode && (
               <div className='rowbox' style={{ justifyContent: "center", gap: "8px" }}>
-                <button className="btn" onClick={handleDeleteSelected} style={{ backgroundColor: '#9e38fd', opacity: canUndo ? 1 : 0.5, fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}>🗑️ Delete</button>
-                <button className="btn" onClick={undo} disabled={!canUndo} style={{ backgroundColor: '#9e38fd', opacity: canUndo ? 1 : 0.5, fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}>↶ Undo</button>
-                <button className="btn" onClick={redo} disabled={!canRedo} style={{ backgroundColor: '#9e38fd', opacity: canRedo ? 1 : 0.5, fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 16px" }}>↷ Redo</button>
+                <button className="pinkbutton" onClick={handleDeleteSelected} style={{  opacity: canUndo ? 1 : 0.5, fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>🗑️ Delete</button>
+                <button className="pinkbutton" onClick={undo} disabled={!canUndo} style={{  opacity: canUndo ? 1 : 0.5, fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>↶ Undo</button>
+                <button className="pinkbutton" onClick={redo} disabled={!canRedo} style={{  opacity: canRedo ? 1 : 0.5, fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>↷ Redo</button>
               </div>
             )}
             {step === 'draw' ? (
               <div className='rowbox' style={{ justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
-                <button className="btn" onClick={handleClear} style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 20px" }}>Clear All</button>
-                <button className="btn" onClick={() => {
+                <button className="pinkbutton" onClick={handleClear} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Clear All</button>
+                <button className="pinkbutton" onClick={() => {
                   setStep('style');
                   setIsDrawingMode(false);
                   const skipped = sessionStorage.getItem('sigilTutorialSkipped');
                   if (!skipped && !user.hasCompletedTutorial) setShowStyleTip(true);
-                }} style={{ backgroundColor: '#9e38fd', fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Next: Style Sigil</button>
+                }} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Next: Style Sigil</button>
               </div>
             ) : (
               <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
-                <button className="btn" onClick={() => setStep('draw')} style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 20px" }}>⬅ Back</button>
-                <button className="btn" onClick={handleNextToStyle} style={{ backgroundColor: '#9e38fd', fontSize: "clamp(13px, 2vw, 20px)", padding: "8px 20px" }}>Review</button>
+                <button className="pinkbutton" onClick={() => setStep('draw')} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>⬅ Back</button>
+                <button className="pinkbutton" onClick={handleNextToStyle} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Review</button>
               </div>
             )}
           </div>

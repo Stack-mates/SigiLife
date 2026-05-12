@@ -22,7 +22,7 @@ import MakeSigil from './components/SigilRoomHome/MakeSigil/MakeSigil'
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Make Sigil
 import DrawSigil from './components/SigilRoomHome/MakeSigil/MakeSigilComponents/DrawSigil'
 import WriteSigil from './components/SigilRoomHome/MakeSigil/MakeSigilComponents/WriteSigil'
-import StyleSigil from './components/SigilRoomHome/MakeSigil/MakeSigilComponents/StyleSigil'
+import SaveSigil from './components/SigilRoomHome/MakeSigil/MakeSigilComponents/SaveSigil'
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Grimoire
 
@@ -69,7 +69,7 @@ console.log('App render - isLoading:', isLoading, 'path:', window.location.pathn
       {/* Make Sigil flow */}
       <Route path="/make-sigil/draw" element={<ProtectedRoute><DrawSigil /></ProtectedRoute>} />
       <Route path="/make-sigil/write" element={<ProtectedRoute><WriteSigil /></ProtectedRoute>} />
-      <Route path="/make-sigil/style" element={<ProtectedRoute><StyleSigil /></ProtectedRoute>} />
+      <Route path="/make-sigil/style" element={<ProtectedRoute><SaveSigil /></ProtectedRoute>} />
 
       {/* Grimoire flow */}
 

@@ -1,3 +1,4 @@
+
 export default function SigilThumb({
   sigilData,
   onClick,
@@ -21,16 +22,12 @@ export default function SigilThumb({
       </p>
 
       {sigilData.imageData ? (
-        <img
-          src={sigilData.imageData}
-          alt={sigilData.name}
-
-        />
+        <img src={sigilData.imageData} alt={sigilData.name} />
       ) : (
         <p>{sigilData.img}</p>
       )}
 
-      <p>{sigilData.sigilGroups?.map((g: any) => g.groupMember.join(','))}</p>
+      <p>{sigilData.sigilGroups?.map((g: any) => g.groupMember).join(', ')}</p>
     </div>
   )
 }

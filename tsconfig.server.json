@@ -11,7 +11,8 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "noEmitOnError": true,
+    "typeRoots": ["./server/types", "./node_modules/@types"],
     "skipLibCheck": true
   },
-  "include": ["server/**/*"]
+  "include": ["server/**/*", "server/types/session.d.ts"]
 }

@@ -8,7 +8,7 @@ import TutorialCharacters from '../../../Tutorial/Tutorialcharacters';
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || '';
 
-export default function StyleSigil() {
+export default function SaveSigil() {
   const { user } = useUser();
   const navigate = useNavigate();
   const [sigilData, setSigilData] = useState<any>(null);
@@ -81,58 +81,70 @@ export default function StyleSigil() {
   };
 
   const handleSave = async () => {
-    if (!user || !user.id) {
-      setError("You must be logged in to save a sigil.");
-      return;
-    }
-    setIsSaving(true);
-    setError('');
+  if (!user || !user.id) {
+    setError("You must be logged in to save a sigil.");
+    return;
+  }
+  setIsSaving(true);
+  setError('');
 
-    try {
-      const response = await fetch('/api/sigils', {
+  const groupMembers = [
+    user.username,
+    ...friends.filter(f => selectedFriends.includes(f.id)).map(f => f.username),
+  ];
+
+  try {
+    const response = await fetch('/api/sigils', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: sigilData.name,
+        userId: user.id,
+        intention: sigilData.intention,
+        canvasData: sigilData.canvasData,
+        imageData: sigilData.imageData,
+        groupMembers,
+        ...(location ?? {}),
+      }),
+    });
+
+    if (!response.ok) throw new Error('Failed to save sigil');
+    const result = await response.json();
+
+    if (selectedFriends.length > 0) {
+      await fetch('/api/sigils/share', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: sigilData.name,
-          userId: user.id,
-          intention: sigilData.intention,
-          canvasData: sigilData.canvasData,
-          imageData: sigilData.imageData,
-          ...(location ?? {}),
-        }),
+        body: JSON.stringify({ sigilId: result.id, targetUserIds: selectedFriends })
       });
-
-      if (!response.ok) throw new Error('Failed to save sigil');
-      const result = await response.json();
-
-      if (selectedFriends.length > 0) {
-        await fetch('/api/sigils/share', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sigilId: result.id, targetUserIds: selectedFriends })
-        });
-      }
-
-      localStorage.removeItem('sigilName');
-      localStorage.removeItem('sigilIntention');
-      localStorage.removeItem('sigilUniqueChars');
-      localStorage.removeItem('sigilCanvasData');
-      localStorage.removeItem('sigilImageData');
-      console.log('isActive:', isActive)
-      if (isActive) {
-        navigate(`/charge-sigil?sigilId=${result.id}`);
-      } else {
-        navigate('/home');
-      }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred while saving.');
-    } finally {
-      setIsSaving(false);
     }
-  };
+
+    await fetch(`/api/users/${user.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sigilCount: (user.sigilCount ?? 0) + 1 })
+    });
+
+    localStorage.removeItem('sigilName');
+    localStorage.removeItem('sigilIntention');
+    localStorage.removeItem('sigilUniqueChars');
+    localStorage.removeItem('sigilCanvasData');
+    localStorage.removeItem('sigilImageData');
+
+    if (isActive) {
+      navigate(`/charge-sigil?sigilId=${result.id}`);
+    } else {
+      navigate('/home');
+    }
+  } catch (err: any) {
+    setError(err.message || 'An error occurred while saving.');
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   if (!sigilData) return <div>Loading...</div>;
- console.log(JSON.stringify(sessionStorage))
+  console.log(JSON.stringify(sessionStorage))
   return (
     <div className='maincontainer'>
       <div ref={scrollRef} className='scrollcontainer'>
@@ -154,14 +166,14 @@ export default function StyleSigil() {
               display: 'flex',
               flexDirection: 'column',
             }}>
-            <h1 style={{ fontSize: "clamp(22px, 4vw, 36px)", textAlign: "center" }}>
+            <h1 style={{ fontSize: "clamp(22px, 4vw, 48px)", textAlign: "center" }}>
               Share & Save your Sigil
             </h1>
 
             <div style={{ textAlign: "center" }}>
-              <h2 style={{ fontSize: "clamp(18px, 3vw, 26px)" }}>{sigilData.name}</h2>
+              <h2 style={{ fontSize: "clamp(18px, 3.5vw, 36px)" }}>{sigilData.name}</h2>
               {sigilData.intention && (
-                <p style={{ fontSize: "clamp(13px, 2vw, 16px)", color: "#666", margin: "4px 0 8px" }}>
+                <p style={{ fontSize: "clamp(13px, 3.5vw, 28px)", color: "black", margin: "4px 0 8px" }}>
                   Intention: {sigilData.intention}
                 </p>
               )}
@@ -176,7 +188,7 @@ export default function StyleSigil() {
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '1rem' }}>
               <h2 style={{ fontSize: "clamp(16px, 2.5vw, 22px)", marginBottom: "0.5rem" }}>📍 Location</h2>
               {location ? (
-                <p style={{ fontSize: "clamp(13px, 2vw, 16px)", display: "flex", alignItems: "center", gap: "8px" }}>
+                <p style={{ fontSize: "clamp(16px, 23.5vw, 36px)", display: "flex", textAlign: "center", gap: "8px" }}>
                   {location.locationName}
                   <button onClick={() => setLocation(null)}
                     style={{ cursor: 'pointer', background: 'none', border: 'none', color: 'inherit' }}>✕</button>
@@ -189,13 +201,13 @@ export default function StyleSigil() {
             </div>
 
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '1rem' }}>
-              <h2 style={{ fontSize: "clamp(16px, 2.5vw, 22px)", marginBottom: "0.25rem" }}>Share with SigiFriends</h2>
-              <p style={{ fontSize: "clamp(12px, 1.8vw, 15px)", color: "#888", marginBottom: "0.5rem" }}>
+              <h2 style={{ fontSize: "clamp(16px, 2.5vw, 36px)", marginBottom: "0.25rem" }}>Share with SigiFriends</h2>
+              <p style={{ fontSize: "clamp(18px, 2.5vw, 28px)", color: "black", marginBottom: "0.5rem" }}>
                 Select users to share your sigil to, if they have a slot available.
               </p>
               <div style={{ maxHeight: '120px', overflowY: 'auto' }}>
                 {friends.length === 0 ? (
-                  <p style={{ fontSize: "clamp(13px, 2vw, 16px)" }}>You are not following anyone yet.</p>
+                  <p style={{ fontSize: "clamp(14px, 2.5vw, 36px)" }}>You are not following anyone yet.</p>
                 ) : (
                   friends.map(friend => (
                     <div key={friend.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 0' }}>
@@ -203,7 +215,7 @@ export default function StyleSigil() {
                         checked={selectedFriends.includes(friend.id)}
                         onChange={() => toggleFriend(friend.id)}
                         style={{ cursor: 'pointer' }} />
-                      <label htmlFor={`friend-${friend.id}`} style={{ cursor: 'pointer', fontSize: "clamp(13px, 2vw, 16px)" }}>
+                      <label htmlFor={`friend-${friend.id}`} style={{ cursor: 'pointer', fontSize: "clamp(14px, 2vw, 36px)" }}>
                         {friend.username}
                       </label>
                     </div>
@@ -213,7 +225,7 @@ export default function StyleSigil() {
             </div>
 
             {error && <p style={{ color: 'red', fontSize: "14px" }}>{error}</p>}
-            <button className="btn" onClick={handleSave} disabled={isSaving}
+            <button className="pinkbutton" onClick={handleSave} disabled={isSaving}
               style={{ backgroundColor: '#9e38fd', fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px", alignSelf: "center" }}>
               {isSaving ? "Saving..." : "Save to Library"}
             </button>

@@ -92,7 +92,7 @@ export default function LandingPage() {
                   style={{ height: "28vh", margin: "0", width: "min(70dvh, 88dvw)" }}>
                   <CarouselContent style={{
                     height: "25vh",
-                    fontSize: "clamp(18px, 5vw, 26px)",
+                    fontSize: "clamp(18px, 5vw, 42px)",
                     fontFamily: "Pompiere",
                     textAlign: "center",
                     alignSelf: "center",

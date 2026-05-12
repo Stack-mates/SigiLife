@@ -20,6 +20,7 @@ export default function DestroySigil() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate()
   const scrollRef = useRef<HTMLDivElement>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     const calculate = () => {
@@ -60,19 +61,28 @@ export default function DestroySigil() {
     setMousePos({ x, y })
   }
 
-  const handleDestroy = async () => {
-    if (isSubmitting) return
-    try {
-      const res = await fetch(`/api/sigils/${sigilData.id}`, { method: 'DELETE' })
-      if (!res.ok) { throw new Error('Failed to destroy sigil') }
-      setIsDestroying(true)
-      setShowInstruction(true)
-      setTimeout(() => setShowInstruction(false), 6000)
-    } catch (error) {
-      console.error('destroy error:', error)
-      setIsSubmitting(false)
-    }
+const handleDestroy = async () => {
+  if (isSubmitting) return;
+  setIsDeleting(true);
+  try {
+    const res = await fetch(`/api/sigils/${sigilData.id}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Failed to destroy sigil');
+    if (!user) return;
+    await fetch(`/api/users/${user.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ destroyCount: (user.destroyCount ?? 0) + 1 })
+    });
+    setIsDestroying(true);
+    setShowInstruction(true);
+    setTimeout(() => setShowInstruction(false), 6000);
+  } catch (error) {
+    console.error('destroy error:', error);
+    setIsSubmitting(false);
+  } finally {
+    setIsDeleting(false);
   }
+}
 
   if (!user) { return null }
   if (!sigilData) { return <p>Loading sigil...</p> }
@@ -183,14 +193,14 @@ export default function DestroySigil() {
                   Destroy Sigil
                 </button>
               )}
-              {isDestroying && (
+              {isDestroying && !isDeleting && (
                 <button className="glassbutton"
                   style={{ position: 'relative', zIndex: 20, fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}
                   onClick={() => {
                     setIsDestroying(false)
-                    setTimeout(() => navigate('/home'), 200)
+                    setTimeout(() => navigate('/home'), 0)
                   }}>
-                  Go Home
+                  {isDeleting ? 'Destroying...' : 'Go Home'}
                 </button>
               )}
             </div>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Menu from '../../../../Parts/Menu'
 // THREE is provided by the XR8 standalone engine at runtime via XR8.Threejs.xrScene()
 // Do NOT import three from npm here - that would create a second instance and break AR rendering.
 declare const THREE: any;
@@ -123,8 +124,10 @@ export default function PlaceSigilInWorld() {
 
           // Setup Pointcloud visualizer
           pointCloudGeom = new THREE.BufferGeometry();
+          if (!pointCloudGeom) return;
           const maxPoints = 3000;
           const positions = new Float32Array(maxPoints * 3);
+          
           pointCloudGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
           pointCloudGeom.setDrawRange(0, 0);
 
@@ -152,8 +155,8 @@ export default function PlaceSigilInWorld() {
 
           let targetPosition = new THREE.Vector3();
           let targetQuaternion = new THREE.Quaternion();
-          let lastRefineFrame = 0;
-          const REFINE_INTERVAL_FRAMES = 60; // Refine anchor every 1s (at 60fps)
+          //const lastRefineFrame = 0;
+          //const REFINE_INTERVAL_FRAMES = 60; // Refine anchor every 1s (at 60fps)
 
           const getOrCreateMesh = () => {
             if (!placedSigilMesh) {
@@ -216,7 +219,7 @@ export default function PlaceSigilInWorld() {
             let clientX, clientY;
             if ('touches' in e) {
               if ((e as TouchEvent).touches.length > 1) return;
-              clientX = (e as TouchEvent).touches[0].clientX;
+              clientX = (e as TouchEvent).touches[0].clientX ;
               clientY = (e as TouchEvent).touches[0].clientY;
             } else {
               clientX = (e as MouseEvent).clientX;
@@ -372,6 +375,7 @@ export default function PlaceSigilInWorld() {
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', backgroundColor: 'black' }}>
+      <Menu/>
       <canvas
         ref={canvasRef}
         style={{ width: '100%', height: '100%', display: 'block', position: 'absolute', top: 0, left: 0 }}

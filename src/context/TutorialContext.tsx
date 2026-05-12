@@ -55,33 +55,41 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
   }, [user]);
 
 
-  const advance = useCallback(() => {
-    if (!currentStepId) return;
-    const currentIndex = TUTORIAL_STEPS.findIndex(s => s.id === currentStepId);
-    const nextIndex = currentIndex + 1;
+const advance = useCallback(() => {
+  if (!currentStepId) return;
+  const currentIndex = TUTORIAL_STEPS.findIndex(s => s.id === currentStepId);
+  const nextIndex = currentIndex + 1;
 
-    if (nextIndex >= TUTORIAL_STEPS.length) {
-      setIsActive(false);
-      setCurrentStepId(null);
-      clearTutorialSession();
-      if (user) {
-        fetch(`/api/users/${user.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ hasCompletedTutorial: true }),
-        })
-          .then(res => res.json())
-          .then(updated => setUser(updated));
-      }
-      return;
+  if (nextIndex >= TUTORIAL_STEPS.length) {
+    setIsActive(false);
+    setCurrentStepId(null);
+    clearTutorialSession();
+    if (user) {
+      fetch(`/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hasCompletedTutorial: true }),
+      })
+        .then(res => res.json())
+        .then(updated => setUser(updated));
     }
+    return;
+  }
 
-    const nextStep = TUTORIAL_STEPS[nextIndex];
-    if (nextStep) {
-      setCurrentStepId(nextStep.id);
-      saveTutorialStepToSession(nextStep.id);
-    }
-  }, [currentStepId, user, setUser]);
+  const currentPage = TUTORIAL_STEPS[currentIndex]?.page;
+  const nextStep = TUTORIAL_STEPS[nextIndex];
+  if (!nextStep) return;
+
+  if (nextStep.page !== currentPage) {
+    setIsActive(false);
+    setCurrentStepId(null);
+    saveTutorialStepToSession(nextStep.id);
+    return;
+  }
+
+  setCurrentStepId(nextStep.id);
+  saveTutorialStepToSession(nextStep.id);
+}, [currentStepId, user, setUser]);
 
 
   const skip = useCallback(async () => {

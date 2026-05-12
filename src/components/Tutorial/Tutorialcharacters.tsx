@@ -48,9 +48,10 @@ interface PortraitProps {
   xPos: number;
   width: number;
   height: number;
+  slideIn?: boolean;
 }
 
-function Portrait({ src, side, visible, stepId, delay = 0, xPos, width, height }: PortraitProps) {
+function Portrait({ src, side, visible, stepId, delay = 0, xPos, width, height, slideIn = true }: PortraitProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     if (!visible) return;
@@ -70,8 +71,8 @@ function Portrait({ src, side, visible, stepId, delay = 0, xPos, width, height }
       height,
       zIndex: 8500,
       pointerEvents: 'none',
-      transform: mounted ? 'translateX(0)' : `translateX(${translateX})`,
-      transition: 'transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+      transform: (slideIn && !mounted) ? `translateX(${translateX})` : 'translateX(0)',
+      transition: slideIn ? 'transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
       willChange: 'transform',
     }}>
       <img src={src} alt="" style={{
@@ -80,7 +81,9 @@ function Portrait({ src, side, visible, stepId, delay = 0, xPos, width, height }
         objectFit: 'contain',
         objectPosition: 'bottom',
         display: 'block',
-        filter: 'drop-shadow(0 -4px 20px rgba(158,56,253,0.4))',
+        filter: side === 'left'
+          ? 'drop-shadow(0 -4px 24px rgba(50, 205, 50, 0.7))'
+          : 'drop-shadow(0 -4px 24px rgba(65, 105, 225, 0.7))',
       }} />
     </div>
   );
@@ -129,7 +132,7 @@ function SpeechBubblePanel({ text, side, stepId }: SpeechBubbleProps) {
         }}>
           <p style={{
             margin: 0, fontFamily: 'Pompiere, cursive',
-            fontSize: 'clamp(15px, 2.2vw, 22px)', lineHeight: 1.4,
+            fontSize: 'clamp(15px, 3.5vw, 36px)', lineHeight: 1.4,
             textAlign: 'center', color: '#1a0a2e',
             wordBreak: 'break-word', hyphens: 'auto',
           }}>
@@ -221,7 +224,6 @@ export default function TutorialCharacters({
           height={portraitHeight}
         />
       )}
-
       {showBennet && (
         <Portrait
           src={BennetPortrait}
@@ -232,6 +234,7 @@ export default function TutorialCharacters({
           xPos={bennetX}
           width={portraitWidth}
           height={portraitHeight}
+          slideIn={step.id === 2}
         />
       )}
 
@@ -257,7 +260,7 @@ export default function TutorialCharacters({
           zIndex: 9001, background: 'rgba(158,56,253,0.15)', backdropFilter: 'blur(10px)',
           border: '1px solid rgba(158,56,253,0.5)', borderRadius: '2rem',
           padding: '0.5rem 1.2rem', fontFamily: 'Pompiere, cursive',
-          fontSize: 'clamp(13px, 1.8vw, 16px)', color: 'rgba(255,255,255,0.85)',
+          fontSize: 'clamp(13px, 2.5vw, 26px)', color: 'rgba(255,255,255,0.85)',
           textAlign: 'center', pointerEvents: 'none', whiteSpace: 'nowrap',
         }}>
           ✦ {step.actionHint}
@@ -274,7 +277,7 @@ export default function TutorialCharacters({
               background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(8px)',
               border: '1px solid rgba(255,255,255,0.2)', borderRadius: '2rem',
               padding: '0.5rem 1.2rem', color: 'rgba(255,255,255,0.5)',
-              fontFamily: 'Pompiere, cursive', fontSize: 'clamp(13px, 1.8vw, 16px)',
+              fontFamily: 'Pompiere, cursive', fontSize: 'clamp(13px, 2.5vw, 26px)',
               cursor: 'pointer', transition: 'all 200ms ease',
             }}
               onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)')}
@@ -287,7 +290,7 @@ export default function TutorialCharacters({
             <button onClick={onNext} style={{
               background: 'linear-gradient(135deg, #9e38fd, #c56aff)', border: 'none',
               borderRadius: '2rem', padding: '0.55rem 1.6rem', color: 'white',
-              fontFamily: 'Pompiere, cursive', fontSize: 'clamp(14px, 2vw, 18px)',
+              fontFamily: 'Pompiere, cursive', fontSize: 'clamp(14px, 2.5vw, 26px)',
               cursor: 'pointer', boxShadow: '0 4px 20px rgba(158,56,253,0.5)',
               transition: 'all 200ms ease', letterSpacing: '0.03em',
             }}

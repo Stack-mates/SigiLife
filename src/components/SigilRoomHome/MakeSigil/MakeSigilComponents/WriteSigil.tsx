@@ -87,31 +87,24 @@ export default function WriteSigil() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <Menu />
-          <div ref={cardRef} style={{
+          <div className= 'glasscard' ref={cardRef} style={{
             width: 'min(55dvh, 85dvw)',
             height: '88dvh',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-evenly',
             padding: '2rem',
-            borderRadius: '2rem',
-            background: 'rgba(255, 255, 255, 0.1)',
-            backdropFilter: 'blur(24px)',
-            WebkitBackdropFilter: 'blur(24px)',
-            boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            position: 'relative',
             zIndex: showOverlay ? 1 : 'auto',
           }}>
             <h1>Write Your Sigil</h1>
-            <p style={{ fontSize: "clamp(14px, 2.5vw, 22px)", marginTop: "0.5rem" }}>
+            <p style={{ fontSize: "clamp(14px, 3.5vw, 32px)", marginTop: "0.5rem" }}>
               Your current intention:
             </p>
             <textarea
               className="textinput"
               style={{
                 width: "100%", flex: "1", minHeight: "120px", padding: "15px", color: 'black',
-                resize: "none", fontSize: "clamp(15px, 2vw, 18px)",
+                resize: "none", fontSize: "clamp(15px, 3.5vw, 42px)",
                 opacity: showOverlay ? 0.3 : 1, transition: 'opacity 600ms ease',
               }}
               value={intention}
@@ -120,10 +113,10 @@ export default function WriteSigil() {
               disabled={showOverlay}
             />
             <div className="clmnbox">
-              <span style={{ color: '#666', fontSize: 'clamp(13px, 2vw, 20px)' }}>
+              <span style={{ color: 'black', fontSize: 'clamp(10px, 1.8vw, 26px)' }}>
                 Unique letters: {uniqueChars}
               </span>
-              <button className="btn" onClick={handleNext}
+              <button className="pinkbutton" onClick={handleNext}
                 disabled={isProcessing || showOverlay}
                 style={{
                   backgroundColor: (isProcessing || showOverlay) ? '#ccc' : '#9e38fd',

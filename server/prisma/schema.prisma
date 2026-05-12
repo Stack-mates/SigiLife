@@ -17,12 +17,15 @@ model User {
   avatar                Int          @default(0)
   theme                 Int          @default(1)
   color_theme           String       @default("cyber") @db.VarChar(50)
+  homeTeam              Int          @default(0)
+  lightOrDark           Int          @default(1)
   isAdmin               Boolean      @default(false)
   createdAt             DateTime     @default(now())
   updatedAt             DateTime     @updatedAt
   homeLocation          String?      @db.VarChar(500)
   hasCompletedTutorial  Boolean      @default(false)
   sigilCount            Int          @default(0)
+  destroyCount          Int          @default(0)
   sigils                Sigil[]
   sigilVotes            SigilVote[]
   following             Follow[]     @relation("follower")

@@ -18,6 +18,10 @@ export default function SigilPage() {
   const [dims, setDims] = useState({ width: 2160, height: 1260 });
   const { user } = useUser()
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const [isSavingName, setIsSavingName] = useState(false);
+
 
   useEffect(() => {
     const calculate = () => {
@@ -87,6 +91,26 @@ export default function SigilPage() {
     }
   };
 
+  const handleSaveName = async () => {
+    if (!editedName.trim() || !sigilData) return;
+    setIsSavingName(true);
+    try {
+      const res = await fetch(`/api/sigils/${sigilData.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editedName.trim() }),
+      });
+      if (!res.ok) throw new Error('Failed to save name');
+      const updated = await res.json();
+      setSigilData((prev: any) => ({ ...prev, name: updated.name }));
+      setIsEditingName(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSavingName(false);
+    }
+  };
+
   if (!sigilData) return <p>Loading sigil...</p>;
 
   return (
@@ -100,7 +124,7 @@ export default function SigilPage() {
               position: 'absolute',
               top: '5dvh',
               left: '58dvh',
-              width: '55dvh',
+              width: '70dvh',
               height: '88dvh',
               gap: '0.75rem',
               display: 'flex',
@@ -115,7 +139,7 @@ export default function SigilPage() {
                 alt={sigilData.name}
                 className={sigilData.isCharged ? 'sigil-charging' : ''}
                 style={{
-                  width: 'min(100%, 25dvh)',
+                  width: 'min(100%, 50dvh)',
                   aspectRatio: '1 / 1',
                   objectFit: 'contain',
                   borderRadius: '1rem',
@@ -123,31 +147,97 @@ export default function SigilPage() {
               />
             )}
 
-            <h1 style={{ fontSize: "clamp(16px, 3dvh, 28px)", textAlign: "center" }}>
-              {sigilData.name}
-            </h1>
-            <p style={{ fontSize: "clamp(11px, 1.5dvh, 15px)", opacity: 0.7 }}>
+            {isEditingName ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', width: '100%' }}>
+                <textarea
+                  className="glass-input"
+                  value={editedName}
+                  onChange={e => setEditedName(e.target.value)}
+                  rows={2}
+                  style={{
+                    width: '100%',
+                    resize: 'none',
+                    background: 'rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: '0.75rem',
+                    color: 'inherit',
+                    fontFamily: 'New Rocker, system-ui',
+                    fontSize: '1.25rem',
+                    textAlign: 'center',
+                    padding: '0.5rem',
+                    outline: 'none',
+                  }}
+                />
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
+                    onClick={handleSaveName}
+                    disabled={isSavingName || !editedName.trim()}
+                    className="btn"
+                  >
+                    {isSavingName ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    onClick={() => setIsEditingName(false)}
+                    className="btn"
+                    style={{ opacity: 0.6 }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
+                <h2 style={{ margin: 0 }}>{sigilData.name}</h2>
+                <button
+                  onClick={() => { setEditedName(sigilData.name); setIsEditingName(true); }}
+                  className="btn"
+                  style={{ fontSize: '0.75rem', opacity: 0.7 }}
+                >
+                  Change Name
+                </button>
+              </div>
+            )}
+            <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)", opacity: 0.7 }}>
               Created: {new Date(sigilData.createdAt).toLocaleDateString()}
             </p>
             {sigilData.isCharged && (
-              <p style={{ color: "gold", fontSize: "clamp(12px, 1.8dvh, 16px)" }}>⚡ Charged</p>
+              <p style={{ color: "gold", fontSize: "clamp(16px, 2.5dvh, 24px)" }}>⚡ Charged</p>
             )}
 
             {sigilData.sigilGroups && sigilData.sigilGroups.length > 0 && (
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '0.5rem', width: '100%', textAlign: 'center' }}>
-                <h3 style={{ fontSize: "clamp(12px, 1.8dvh, 16px)" }}>Group</h3>
-                <p style={{ fontSize: "clamp(11px, 1.5dvh, 14px)", opacity: 0.8 }}>
-                  {sigilData.sigilGroups.map((g: any) => g.groupMember?.join(', ')).join(' · ')}
-                </p>
+              <div style={{
+                borderTop: '1px solid rgba(255,255,255,0.2)',
+                paddingTop: '0.5rem',
+                width: '100%',
+                textAlign: 'center',
+              }}>
+                <h3 style={{ fontSize: "clamp(16px, 2.5dvh, 24px)", marginBottom: '0.5rem' }}>Group</h3>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+                  {sigilData.sigilGroups.map((g: any) => (
+                    <span
+                      key={g.id}
+                      style={{
+                        background: 'rgba(168, 85, 247, 0.2)',
+                        border: '1px solid rgba(168, 85, 247, 0.4)',
+                        borderRadius: '999px',
+                        padding: '2px 12px',
+                        fontSize: 'clamp(13px, 2dvh, 18px)',
+                        color: '#c4b5fd',
+                      }}
+                    >
+                      {g.groupMember}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
 
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '0.5rem', width: '100%', textAlign: 'center' }}>
               {sigilData.locationName ? (
-                <p style={{ fontSize: "clamp(11px, 1.5dvh, 14px)" }}>📍 {sigilData.locationName}</p>
+                <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)" }}>📍 {sigilData.locationName}</p>
               ) : (
                 <div>
-                  <p style={{ fontSize: "clamp(11px, 1.5dvh, 14px)", marginBottom: "0.5rem" }}>Set a location:</p>
+                  <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)", marginBottom: "0.5rem" }}>Set a location:</p>
                   {isSavingLocation ? <p>Saving...</p> : (
                     <div style={{ maxWidth: "100%", margin: "0 auto" }}>
                       <MapSearchBox accessToken={MAPBOX_TOKEN} onRetrieve={handleLocationRetrieve} />
@@ -163,10 +253,10 @@ export default function SigilPage() {
               paddingTop: '0.75rem',
               width: '100%',
             }}>
-              <p style={{ fontSize: "clamp(11px, 1.5dvh, 13px)", opacity: 0.6, textAlign: 'center', marginBottom: '0.5rem' }}>
+              <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)", opacity: 0.6, textAlign: 'center', marginBottom: '0.5rem' }}>
                 Community Energy
               </p>
-              <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+              <div style={{ display: 'flex', gap: '2rem', width: '100%' }}>
                 <button
                   onClick={() => handleVote("charge")}
                   disabled={voting}
@@ -180,9 +270,9 @@ export default function SigilPage() {
                     background: sigilData.userVote === "charge"
                       ? 'rgba(168, 85, 247, 0.35)'
                       : 'rgba(168, 85, 247, 0.1)',
-                    color: sigilData.userVote === "charge" ? '#e9d5ff' : '#c4b5fd',
+                    color: sigilData.userVote === "charge" ? 'black' : '#c4b5fd',
                     fontWeight: 600,
-                    fontSize: 'clamp(11px, 1.5dvh, 14px)',
+                    fontSize: 'clamp(18px, 2dvh, 34px)',
                     cursor: voting ? 'not-allowed' : 'pointer',
                     opacity: voting ? 0.6 : 1,
                     transition: 'all 0.15s ease',
@@ -204,9 +294,9 @@ export default function SigilPage() {
                     background: sigilData.userVote === "destroy"
                       ? 'rgba(239, 68, 68, 0.25)'
                       : 'rgba(239, 68, 68, 0.08)',
-                    color: sigilData.userVote === "destroy" ? '#fca5a5' : '#f87171',
+                    color: sigilData.userVote === "destroy" ? 'black' : '#f87171',
                     fontWeight: 600,
-                    fontSize: 'clamp(11px, 1.5dvh, 14px)',
+                    fontSize: 'clamp(18px, 2dvh, 34px)',
                     cursor: voting ? 'not-allowed' : 'pointer',
                     opacity: voting ? 0.6 : 1,
                     transition: 'all 0.15s ease',
@@ -220,18 +310,22 @@ export default function SigilPage() {
             <div className="sigilbuttonstack" style={{ width: '100%' }}>
               {!sigilData.isCharged && (
                 <Link className="btn" to={`/charge-sigil?sigilId=${sigilData.id}`}
-                  style={{ backgroundColor: '#9e38fd', fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
+                  style={{ fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
                   ⚡ Charge Sigil
                 </Link>
               )}
               <Link className="btn" to={`/destroy-sigil?sigilId=${sigilData.id}`}
-                style={{ backgroundColor: '#9e38fd', fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
+                style={{  fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
                 💀 Destroy Sigil
+              </Link>
+              <Link className="btn" to={`/library`}
+                style={{  fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
+                📚 To the Library
               </Link>
               {user?.isAdmin && (
                 <Link className="btn" to="/place-sigil-world" state={{ sigilData }}
-                  style={{ backgroundColor: '#9e38fd', fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
-                  🌍 View in AR
+                  style={{ fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
+                  🌍 Place in World
                 </Link>
               )}
             </div>

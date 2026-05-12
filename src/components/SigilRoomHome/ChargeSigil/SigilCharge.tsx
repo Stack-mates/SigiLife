@@ -114,7 +114,7 @@ export default function ChargeSigil() {
             border: '1px solid rgba(255, 255, 255, 0.2)',
             boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
           }}>
-            <h1 style={{ fontSize: "clamp(22px, 4vw, 36px)" }}>Charge Sigil</h1>
+            <h1 style={{ fontSize: "clamp(22px, 4vw, 56px)", color: "black", backgroundColor: '#e0e0e0', borderRadius: '12px', padding: '10px' }}>Charge Sigil</h1>
             {sigilData.imageData && (
               <img
                 src={sigilData.imageData}

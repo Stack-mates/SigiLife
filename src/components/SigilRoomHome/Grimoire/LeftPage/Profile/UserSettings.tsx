@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import * as SwitchPrimitive from "@radix-ui/react-switch"
 import { useUser } from '@/context/UserContext'
 import { useNavigate, Link } from 'react-router-dom'
@@ -34,32 +34,32 @@ const AvatarSelector = ({ avatarId, onSelect }: { avatarId: string, onSelect: (i
 
 const SWATCHES = {
   'cyber-light': {
-    label: 'Glacial · Light',
+    label: 'Glacial Colours & Light Background',
     colors: ['#f0f8ff', '#dbeafe', '#1a6fff', 'rgba(26,111,255,0.45)'],
     names: ['Background', 'Surface', 'Button', 'Glow'],
   },
   'cyber-dark': {
-    label: 'Glacial · Dark',
+    label: 'Glacial Colours & Dark Background',
     colors: ['#000000', '#050d1a', '#4169e1', 'rgba(65,105,225,0.75)'],
     names: ['Background', 'Surface', 'Button', 'Glow'],
   },
   'foliage-light': {
-    label: 'Verdant · Light',
+    label: 'Verdant Colours & Light Background',
     colors: ['#f0fff4', '#d1fae5', '#2e8b57', 'rgba(46,139,87,0.45)'],
     names: ['Background', 'Surface', 'Button', 'Glow'],
   },
   'foliage-dark': {
-    label: 'Verdant · Dark',
+    label: 'Verdant Colours & Dark Background',
     colors: ['#000000', '#030f07', '#50c878', 'rgba(80,200,120,0.75)'],
     names: ['Background', 'Surface', 'Button', 'Glow'],
   },
   'default-light': {
-    label: 'Default · Light',
+    label: 'Default Colours & Light Background',
     colors: ['#ffffff', '#f0f0f0', '#9e38fd', 'rgba(158,56,253,0.4)'],
     names: ['Background', 'Surface', 'Button', 'Glow'],
   },
   'default-dark': {
-    label: 'Default · Dark',
+    label: 'Default Colours & Dark Background',
     colors: ['#0a0a0a', '#141414', '#9e38fd', 'rgba(158,56,253,0.6)'],
     names: ['Background', 'Surface', 'Button', 'Glow'],
   },
@@ -80,12 +80,10 @@ const Themebox = ({ colorTheme, isDark }: { colorTheme: string, isDark: boolean 
       gap: '0.5rem',
       padding: '1rem',
       borderRadius: '12px',
-      background: 'rgba(255,255,255,0.08)',
-      border: '1px solid rgba(255,255,255,0.15)',
-      backdropFilter: 'blur(12px)',
       minWidth: '200px',
+      width: '50dvw',
     }}>
-      <span style={{ fontFamily: 'New Rocker, system-ui', fontSize: 'clamp(14px,2vw,18px)', color: 'var(--theme-text)' }}>
+      <span style={{ fontFamily: 'New Rocker, system-ui', fontSize: 'clamp(14px, 2.5vw, 36px)', color: 'var(--theme-text)' }}>
         {swatch.label}
       </span>
       <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -99,7 +97,7 @@ const Themebox = ({ colorTheme, isDark }: { colorTheme: string, isDark: boolean 
               border: '2px solid rgba(255,255,255,0.3)',
               boxShadow: `0 0 8px ${color}`,
             }} />
-            <span style={{ fontSize: '9px', color: 'var(--theme-text)', opacity: 0.7, fontFamily: 'Special Elite, system-ui' }}>
+            <span style={{ fontSize: 'clamp(14px,2vw,18px)', color: 'var(--theme-text)', opacity: 0.7, fontFamily: 'Special Elite, system-ui' }}>
               {swatch.names[i]}
             </span>
           </div>
@@ -115,6 +113,24 @@ export default function UserSettings() {
   const [isDark, setIsDark] = useState(user!.theme === 1)
   const [avatarId, setAvatarId] = useState(String(user?.avatar ?? 0))
   const [colorTheme, setColorTheme] = useState(user?.color_theme ?? 'cyber')
+  const [dims, setDims] = useState({ width: 2160, height: 1260 })
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const calculate = () => {
+      const scale = window.innerHeight / 1260
+      setDims({ width: Math.round(2160 * scale), height: window.innerHeight })
+    }
+    calculate()
+    window.addEventListener('resize', calculate)
+    return () => window.removeEventListener('resize', calculate)
+  }, [])
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    setTimeout(() => { el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2 }, 50)
+  }, [dims])
 
   const handleThemeChange = (checked: boolean) => {
     setIsDark(checked)
@@ -173,50 +189,74 @@ export default function UserSettings() {
 
   return (
     <div className="maincontainer">
-      <div className="usersettings art-page-base">
-        <Menu />
-        <h1>User Settings</h1>
+      <div ref={scrollRef} className="scrollcontainer">
+        <div
+          className="usersettings-page art-page-base"
+          style={{ width: `${dims.width}px`, height: `${dims.height}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <Menu />
+          <div className='glasscard' style={{
+            position: 'relative',
+            zIndex: 10,
+            width: 'min(55dvh, 85dvw)',
+            height: '88dvh',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-evenly',
+            padding: '2rem',
+            borderRadius: '2rem',
 
-        <AvatarSelector avatarId={avatarId} onSelect={handleAvatarChange} />
+            overflowY: 'auto',
+            gap: '1rem',
+          }}>
+            <h1>Agent Settings</h1>
+            <div>
+              <p>Choose Costume:</p>
+              <AvatarSelector avatarId={avatarId} onSelect={handleAvatarChange} /></div>
+            <div>
+              <p>Darkness Settings:</p>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                Theme:
+                <SwitchPrimitive.Root
+                  checked={isDark}
+                  onCheckedChange={handleThemeChange}
+                  className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300 data-[state=checked]:bg-purple-500"
+                >
+                  <SwitchPrimitive.Thumb className="block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform data-[state=checked]:translate-x-6" />
+                </SwitchPrimitive.Root>
+                {isDark ? "Dark" : "Light"}
+              </label></div>
+            <div>
+              <p>Choose Colour:</p>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                Theme:
+                <SwitchPrimitive.Root
+                  checked={colorTheme === 'foliage'}
+                  onCheckedChange={handleColorThemeChange}
+                  className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-400 data-[state=checked]:bg-green-500"
+                >
+                  <SwitchPrimitive.Thumb className="block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform data-[state=checked]:translate-x-6" />
+                </SwitchPrimitive.Root>
+                {colorTheme === 'foliage' ? "Verdant" : "Glacial"}
+              </label>
+            </div>
+            <div className="avatarandtheme">
+              <Themebox colorTheme={colorTheme} isDark={isDark} />
+            </div>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          Theme:
-          <SwitchPrimitive.Root
-            checked={isDark}
-            onCheckedChange={handleThemeChange}
-            className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300 data-[state=checked]:bg-purple-500"
-          >
-            <SwitchPrimitive.Thumb className="block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform data-[state=checked]:translate-x-6" />
-          </SwitchPrimitive.Root>
-          {isDark ? "Dark" : "Light"}
-        </label>
-
-        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          Colour Theme:
-          <SwitchPrimitive.Root
-            checked={colorTheme === 'foliage'}
-            onCheckedChange={handleColorThemeChange}
-            className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-400 data-[state=checked]:bg-green-500"
-          >
-            <SwitchPrimitive.Thumb className="block h-4 w-4 translate-x-1 rounded-full bg-white transition-transform data-[state=checked]:translate-x-6" />
-          </SwitchPrimitive.Root>
-          {colorTheme === 'foliage' ? "Verdant" : "Glacial"}
-        </label>
-
-        <div className="avatarandtheme">
-          <Themebox colorTheme={colorTheme} isDark={isDark} />
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center' }}>
-          <button className="btn" onClick={handleReplayTutorial}>
-            Replay Tutorial
-          </button>
-          <button className="btn" onClick={handleLogout}>
-            Log Out
-          </button>
-          <Link className="btn" to="/profile">
-            Go to Profile
-          </Link>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center' }}>
+              <button className="btn" onClick={handleReplayTutorial}>
+                Replay Tutorial
+              </button>
+              <button className="btn" onClick={handleLogout}>
+                Log Out
+              </button>
+              <Link className="btn" to="/profile">
+                Go to Profile
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>

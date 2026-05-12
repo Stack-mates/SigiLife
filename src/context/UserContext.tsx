@@ -11,9 +11,12 @@ interface User {
   avatar: number;
   theme: number;
   color_theme: string;
+  homeTeam: string;
   homeLocation: string | null;
   isAdmin: boolean;
   hasCompletedTutorial: boolean;
+  sigilCount: number;
+  destroyCount: number;
 }
 
 interface UserContextType {
@@ -48,6 +51,10 @@ export function UserProvider({ children }: { children: ReactNode }) {
       .catch(() => { })
       .finally(() => { setIsLoading(false); });
   }, []);
+
+  useEffect(() => {
+    if (user) applyThemeClasses(user.theme, user.color_theme);
+  }, [user]);
 
   return (
     <UserContext.Provider value={{ user, setUser, isLoading }}>

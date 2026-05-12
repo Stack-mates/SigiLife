@@ -27,6 +27,8 @@ export default function CreateProfile() {
           username,
           avatar: parseInt(avatar),
           theme: isDark ? 1 : 0,
+          lightOrDark: isDark ? 1 : 0,
+          homeTeam: parseInt(avatar),
           homeLocation: homeLocation ? JSON.stringify(homeLocation) : null
         })
       });
@@ -72,7 +74,7 @@ export default function CreateProfile() {
               </div>
             </label>
 
-            <label>Choose your Home Sigil Location:
+            <label style={{width: '100%', maxWidth: '30%', alignSelf: 'center'}}>Choose your Home Sigil Location:
               <MapSearchBox
                 accessToken={import.meta.env.VITE_MAPBOX_TOKEN || ''}
                 onRetrieve={(res) => {
@@ -85,7 +87,8 @@ export default function CreateProfile() {
                       || '';
                     setHomeLocation({ name, latitude: lat, longitude: lng });
                   }
-                }}
+                }} 
+
               />
             </label>
 
@@ -103,7 +106,7 @@ export default function CreateProfile() {
               </label></label>
             <br />
             <button
-              className="btn"
+              className="pinkbutton"
               disabled={!username || !homeLocation}
               onClick={handleCreate}
             >

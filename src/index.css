@@ -25,12 +25,13 @@
 textinput,
 .textinput {
   font-family: 'Pompiere', sans-serif;
-  font-size: clamp(14px, 4vw, 16px);
+  font-size: clamp(14px, 3vw, 56px);
   background-color: #f1f1f1;
   border-radius: 12px;
   border-color: #2b0681;
   border-width: 1px;
-  width: min(260px, 75vw);
+  width: fit-content;
+  min-width: (260px, 75vw);
   text-align: center;
   padding: 6px 10px;
   display: block;
@@ -65,42 +66,42 @@ navmenu,
 h1,
 .h1 {
   font-family: 'New Rocker', system-ui;
-  font-size: clamp(32px, 5vw, 56px);
+  font-size: clamp(36px, 6.5vw, 64px);
   color: var(--theme-text);
 }
 
 h2,
 .h2 {
   font-family: 'New Rocker', system-ui;
-  font-size: clamp(24px, 3.5vw, 42px);
+  font-size: clamp(24px, 4.5vw, 42px);
   color: var(--theme-text);
 }
 
 h3,
 .h3 {
-  font-family: 'New Rocker', system-ui;
-  font-size: clamp(18px, 2.5vw, 30px);
+  font-family: 'Special Elite', system-ui;
+  font-size: clamp(18px, 3.5vw, 38px);
   color: var(--theme-text);
 }
 
 p,
 p1,
 .p1 {
-  font-family: 'Special Elite', system-ui;
-  font-size: clamp(16px, 2vw, 22px);
+  font-family: 'Pompiere', sans-serif;
+  font-size: clamp(16px, 3.5vw, 36px);
   color: var(--theme-text);
 }
 
 label {
   font-family: 'Pompiere', sans-serif;
-  font-size: clamp(18px, 2.5vw, 26px);
+  font-size: clamp(18px, 3vw, 36px);
   color: var(--theme-text);
 }
 
 btn,
 .btn {
   font-family: 'Special Elite', system-ui;
-  font-size: clamp(16px, 2vw, 22px);
+  font-size: clamp(16px, 2.5vw, 22px);
   background-color: var(--theme-btn);
   color: var(--theme-btn-text);
   width: fit-content;
@@ -131,12 +132,14 @@ btn,
 
 .pinkbutton {
   font-family: 'Special Elite', system-ui;
-  font-size: clamp(16px, 2vw, 22px);
+  font-size: clamp(16px, 2.5vw, 22px);
   padding: 0.5rem 1.5rem;
   background: linear-gradient(to right, #a855f7, #ec4899);
   color: white;
   font-weight: 700;
   border-radius: 0.75rem;
+  width: fit-content;
+  align-self: center;
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -152,7 +155,7 @@ btn,
 
 .glassbutton {
   font-family: 'Special Elite', system-ui;
-  font-size: clamp(16px, 2vw, 22px);
+  font-size: clamp(16px, 2.5vw, 22px);
   padding: 0.5rem 1.5rem;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
@@ -214,45 +217,14 @@ btn,
   }
 }
 
-.glasscard label,
-.glasscard p {
-  font-family: 'Pompiere', sans-serif;
-  font-size: clamp(18px, 4vw, 24px);
-  color: var(--theme-text);
-  text-align: center;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
 
-.glasscard h1 {
-  font-size: clamp(28px, 6vw, 42px);
-  text-align: center;
-  color: var(--theme-text);
-}
-
-.glasscard h2 {
-  font-size: clamp(22px, 5vw, 34px);
-  text-align: center;
-  color: var(--theme-text);
-}
-
-.glasscard .p1 {
-  font-size: clamp(15px, 3vw, 20px);
-  text-align: center;
-  color: var(--theme-text);
-  opacity: 0.85;
-}
-
-.special-elite-regular {
+.specialeliteregular {
   font-family: 'Special Elite', system-ui;
   font-weight: 400;
   font-style: normal;
 }
 
-.pompiere-regular {
+.pompiereregular {
   font-family: 'Pompiere', sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -441,12 +413,6 @@ makeprofile,
   height: auto;
 }
 
-.makeprofile label,
-.makeprofile p,
-.makeprofile span {
-  font-family: 'Pompiere', sans-serif;
-  color: var(--theme-text);
-}
 
 avatarchoicebox,
 .avatarchoicebox {
@@ -1051,6 +1017,17 @@ drawsigilmenu,
   z-index: 1;
 }
 
+.mapboxgl-popup-content {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+}
+
+.mapboxgl-popup-tip {
+  display: none !important;
+}
+
 profilepage,
 .profilepage {
   display: flex;
@@ -1058,12 +1035,28 @@ profilepage,
   background-position: center;
   align-items: center;
   position: relative;
-  justify-content: space-around;
+  justify-content: space-evenly;
   overflow: visible;
   width: 100dvw;
   min-height: 100dvh;
   background-color: var(--theme-bg-1);
   transition: background-color 0.6s ease;
+}
+
+.profilepage {
+  background-image: none;
+}
+
+.profilepage::before {
+  background-image: url('./assets/ScryeLino.svg');
+}
+
+.usersettings-page {
+  background-image: none;
+}
+
+.usersettings-page::before {
+  background-image: url('./assets/ScryeLino.svg');
 }
 
 profilepagename,
@@ -1081,7 +1074,7 @@ profilepagename,
   padding: 5px;
   justify-content: space-around;
   font-family: 'New Rocker', system-ui;
-  font-size: clamp(20px, 4vw, 32px);
+  font-size: clamp(20px, 4vw, 48);
 }
 
 profilebox,
@@ -1105,7 +1098,7 @@ avatar,
 
 avatarface,
 .avatarface {
-  height: 50px;
+  height: 100px;
   object-fit: cover;
 }
 
@@ -1132,8 +1125,8 @@ usercard,
 .usercard {
   display: flex;
   flex-direction: row;
-  padding: 5px;
-  width: 30%;
+  padding: 7px;
+  width: 100%;
   position: relative;
   font-family: 'Special Elite', system-ui;
   font-size: clamp(12px, 1.5vw, 16px);
@@ -1171,7 +1164,7 @@ usersettings,
   display: flex;
   flex-direction: column;
   padding: 25px;
-  justify-content: space-between;
+  justify-content: space-evenly;
   gap: 1rem;
   font-family: 'Special Elite', system-ui;
   color: var(--theme-text);
