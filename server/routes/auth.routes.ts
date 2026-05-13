@@ -2,6 +2,11 @@ import { Router } from 'express';
 import { OAuth2Client } from 'google-auth-library';
 import prisma from '../prisma/prisma.client.js';
 import 'express-session';
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 
 const router = Router();
@@ -134,5 +139,22 @@ router.post('/google', async (req, res) => {
     res.status(500).json({ error: (error as Error).message });
   }
 });
+
+
+
+router.post('/email-signup', (req, res) => {
+  const { email } = req.body
+  if (!email) return res.status(400).json({ error: 'No email' })
+  const line = `${new Date().toISOString()},${email}\n`
+  fs.appendFileSync(path.join(__dirname, 'signups.csv'), line)
+  res.json({ success: true })
+})
+
+
+router.get('/email-signup/download', (req, res) => {
+  const filePath = path.join(__dirname, 'signups.csv')
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'No signups yet' })
+  res.download(filePath, 'signups.csv')
+})
 
 export default router;

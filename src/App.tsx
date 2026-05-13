@@ -2,6 +2,9 @@ import { Routes, Route } from 'react-router-dom'
 //import { useState, useEffect } from 'react'
 import { useUser } from '@/context/UserContext';
 import { TutorialProvider } from '@/context/TutorialContext';
+import PresentationQR from './components/SigilRoomHome/Grimoire/LeftPage/Profile/PresentationQR'
+import PresentationSignup from './components/SigilRoomHome/Grimoire/LeftPage/Profile/PresentationSignup'
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Landing Page & Log in
 import ProtectedRoute from './components/LogInAuth/ProtectedRoute'
 import LandingPage from './components/LogInAuth/LandingPage'
@@ -45,40 +48,45 @@ function App() {
     return <div className='maincontainer'></div>
   }
 
-console.log('App render - isLoading:', isLoading, 'path:', window.location.pathname)
+  console.log('App render - isLoading:', isLoading, 'path:', window.location.pathname)
   return (
     <TutorialProvider>
-    <Routes>
-      {/* Auth flow */}
-      <Route path="/login" element={<LandingPage />} />
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/create-profile" element={<ProtectedRoute><CreateProfile /></ProtectedRoute>} />
+      <Routes>
+        {/* Auth flow */}
+        <Route path="/login" element={<LandingPage />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/create-profile" element={<ProtectedRoute><CreateProfile /></ProtectedRoute>} />
 
-      {/* User */}
-      <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
-      <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+        {/* User */}
+        <Route path="/settings" element={<ProtectedRoute><UserSettings /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
 
-      {/* Main Room Nav */}
-      <Route path="/destroy-sigil" element={<ProtectedRoute><SigilDestroy /></ProtectedRoute>} />
-      <Route path="/home" element={<ProtectedRoute><HomeRoom /></ProtectedRoute>} />
-      <Route path="/charge-sigil" element={<ProtectedRoute><SigilCharge /></ProtectedRoute>} />
-      <Route path="/grimoire" element={<ProtectedRoute><Grimoire /></ProtectedRoute>} />
-      <Route path="/make-sigil" element={<ProtectedRoute><MakeSigil /></ProtectedRoute>} />
+        {/* Main Room Nav */}
+        <Route path="/destroy-sigil" element={<ProtectedRoute><SigilDestroy /></ProtectedRoute>} />
+        <Route path="/home" element={<ProtectedRoute><HomeRoom /></ProtectedRoute>} />
+        <Route path="/charge-sigil" element={<ProtectedRoute><SigilCharge /></ProtectedRoute>} />
+        <Route path="/grimoire" element={<ProtectedRoute><Grimoire /></ProtectedRoute>} />
+        <Route path="/make-sigil" element={<ProtectedRoute><MakeSigil /></ProtectedRoute>} />
 
 
-      {/* Make Sigil flow */}
-      <Route path="/make-sigil/draw" element={<ProtectedRoute><DrawSigil /></ProtectedRoute>} />
-      <Route path="/make-sigil/write" element={<ProtectedRoute><WriteSigil /></ProtectedRoute>} />
-      <Route path="/make-sigil/style" element={<ProtectedRoute><SaveSigil /></ProtectedRoute>} />
+        {/* Make Sigil flow */}
+        <Route path="/make-sigil/draw" element={<ProtectedRoute><DrawSigil /></ProtectedRoute>} />
+        <Route path="/make-sigil/write" element={<ProtectedRoute><WriteSigil /></ProtectedRoute>} />
+        <Route path="/make-sigil/style" element={<ProtectedRoute><SaveSigil /></ProtectedRoute>} />
 
-      {/* Grimoire flow */}
+        {/* Grimoire flow */}
 
-      <Route path="/map" element={<ProtectedRoute><MapBox /></ProtectedRoute>} />
-      <Route path="/place-sigil-world" element={<ProtectedRoute><PlaceSigilInWorld /></ProtectedRoute>} />
-      <Route path="/scrye-friends" element={<ProtectedRoute><ScryeFriends /></ProtectedRoute>} />
-      <Route path="/right-page" element={<ProtectedRoute><RightPage /></ProtectedRoute>} />
-      <Route path="/library" element={<ProtectedRoute><RightPage /></ProtectedRoute>} />
-      <Route path="/sigil-page" element={<ProtectedRoute><SigilPage /></ProtectedRoute>} />
+        <Route path="/map" element={<ProtectedRoute><MapBox /></ProtectedRoute>} />
+        <Route path="/place-sigil-world" element={<ProtectedRoute><PlaceSigilInWorld /></ProtectedRoute>} />
+        <Route path="/scrye-friends" element={<ProtectedRoute><ScryeFriends /></ProtectedRoute>} />
+        <Route path="/right-page" element={<ProtectedRoute><RightPage /></ProtectedRoute>} />
+        <Route path="/library" element={<ProtectedRoute><RightPage /></ProtectedRoute>} />
+        <Route path="/sigil-page" element={<ProtectedRoute><SigilPage /></ProtectedRoute>} />
+
+        {/*Email Sign Up*/}
+        ──
+        <Route path='/presentation' element={<PresentationQR />} />
+        <Route path='/presentation-signup' element={<PresentationSignup />} />
 
     </Routes>
     </TutorialProvider>

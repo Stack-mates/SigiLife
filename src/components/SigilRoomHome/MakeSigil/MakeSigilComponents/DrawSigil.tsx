@@ -327,7 +327,7 @@ export default function DrawSigil() {
           display: 'flex', alignItems: 'center', justifyContent: 'center'
         }}>
           <Menu />
-          <div ref={cardRef} className="flex flex-col justify-evenly bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] pointer-events-auto border border-white/20 transition-all duration-500"
+          <div ref={cardRef} className="glasscard"
             style={{ width: 'min(55dvh, 85dvw)', height: '88dvh' }}>
             <h1 style={{ fontSize: "clamp(26px, 4vw, 42px)", textAlign: "center" }}>
               {step === 'draw' ? 'Draw Your Sigil' : 'Style Your Sigil'}
