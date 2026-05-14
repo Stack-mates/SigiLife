@@ -134,7 +134,7 @@ export default function SaveSigil() {
     if (isActive) {
       navigate(`/charge-sigil?sigilId=${result.id}`);
     } else {
-      navigate('/home');
+      navigate('/library');
     }
   } catch (err: any) {
     setError(err.message || 'An error occurred while saving.');

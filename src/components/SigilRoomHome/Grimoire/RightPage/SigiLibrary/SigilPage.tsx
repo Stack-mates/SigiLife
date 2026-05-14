@@ -119,15 +119,16 @@ export default function SigilPage() {
         <div className="sigilpage art-page-base" style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
           <Menu />
 
-          <div className="flex flex-col bg-white/10 backdrop-blur-xl p-6 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] pointer-events-auto border border-white/20 transition-all duration-500"
+          <div className="glasscard"
             style={{
-              position: 'absolute',
+              position: 'relative',
               top: '5dvh',
               left: '58dvh',
-              width: '70dvh',
+              width: '50dvh',
               height: '88dvh',
               gap: '0.75rem',
               display: 'flex',
+              opacity: '.20',
               flexDirection: 'column',
               alignItems: 'center',
               overflowY: 'auto',
@@ -211,7 +212,7 @@ export default function SigilPage() {
                 width: '100%',
                 textAlign: 'center',
               }}>
-                <h3 style={{ fontSize: "clamp(16px, 2.5dvh, 24px)", marginBottom: '0.5rem' }}>Group</h3>
+                <h3 style={{ fontSize: "clamp(16px, 2.5dvh, 24px)", marginBottom: '0.5rem' }}>SigiLites</h3>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
                   {sigilData.sigilGroups.map((g: any) => (
                     <span
@@ -233,8 +234,9 @@ export default function SigilPage() {
             )}
 
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '0.5rem', width: '100%', textAlign: 'center' }}>
-              {sigilData.locationName ? (
-                <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)" }}>📍 {sigilData.locationName}</p>
+              {sigilData.locationName ? (<div>
+                <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)" }}>🗺️{sigilData.locationName}</p>
+                <Link className="pinkbutton " style={{ border: '0px', width: '100%', textAlign: 'left', fontFamily: 'Pompiere', borderRadius: '12px'}} to="/map">SigilMap</Link></div>
               ) : (
                 <div>
                   <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)", marginBottom: "0.5rem" }}>Set a location:</p>
@@ -278,7 +280,7 @@ export default function SigilPage() {
                     transition: 'all 0.15s ease',
                   }}
                 >
-                  ✨ Charge&nbsp; {sigilData.chargeScore ?? 0}
+                  ✨ Votes to Charge&nbsp; {sigilData.chargeScore ?? 0}
                 </button>
 
                 <button
@@ -302,12 +304,12 @@ export default function SigilPage() {
                     transition: 'all 0.15s ease',
                   }}
                 >
-                  🔥 Destroy&nbsp; {sigilData.destroyScore ?? 0}
+                  🔥 Votes to Destroy&nbsp; {sigilData.destroyScore ?? 0}
                 </button>
               </div>
             </div>
 
-            <div className="sigilbuttonstack" style={{ width: '100%' }}>
+            <div style={{ width: '100%' }}>
               {!sigilData.isCharged && (
                 <Link className="btn" to={`/charge-sigil?sigilId=${sigilData.id}`}
                   style={{ fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
@@ -315,11 +317,11 @@ export default function SigilPage() {
                 </Link>
               )}
               <Link className="btn" to={`/destroy-sigil?sigilId=${sigilData.id}`}
-                style={{  fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
+                style={{ fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
                 💀 Destroy Sigil
               </Link>
               <Link className="btn" to={`/library`}
-                style={{  fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
+                style={{ fontSize: "clamp(12px, 1.8dvh, 18px)", padding: "8px 20px", textAlign: 'center' }}>
                 📚 To the Library
               </Link>
               {user?.isAdmin && (

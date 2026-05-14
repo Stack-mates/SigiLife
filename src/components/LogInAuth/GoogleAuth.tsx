@@ -57,8 +57,6 @@ export default function GoogleAuth() {
       }
     };
 
-
-
     const initializeGoogle = () => {
       if (initialized.current) { return; }
       console.log('[GoogleAuth] Found window.google. Initializing...');

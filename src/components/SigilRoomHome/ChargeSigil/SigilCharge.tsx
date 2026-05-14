@@ -24,6 +24,7 @@ export default function ChargeSigil() {
   const showTutorialNext = isActive && tutorialStep?.advanceOn === 'next';
   const showTutorialSkip = isActive && (tutorialStep?.skippable ?? false);
   const isLastStep = tutorialStep?.id === 14;
+  const [showActions, setShowActions] = useState(false);
 
   useEffect(() => {
     const calculate = () => {
@@ -55,6 +56,13 @@ export default function ChargeSigil() {
       .catch(err => console.error(err))
   }, [sigilId])
 
+
+  useEffect(() => {
+    if (!isCharging) return;
+    const t = setTimeout(() => setShowActions(true), 5000);
+    return () => clearTimeout(t);
+  }, [isCharging]);
+
   const handleSave = async () => {
     try {
       const res = await fetch(`/api/sigils/${sigilData.id}/charge`, { method: 'PATCH' });
@@ -75,10 +83,11 @@ export default function ChargeSigil() {
       <div ref={scrollRef} className='scrollcontainer' style={{ overflowX: isCharging ? 'hidden' : 'scroll' }}>
         {showInstruction && (
           <div className="floating-instruction">
-            Trace your sigil to imbue it with your chosen emotion
+            Hold down and lightly trace your sigil to charge!
           </div>
         )}
-        <div className='chargesigil art-page-base' style={{
+
+        <div className={`chargesigil art-page-base${isCharging ? ' hide-bg' : ''}`} style={{
           width: `${dims.width}px`,
           height: `${dims.height}px`,
           backgroundColor: isCharging ? '#000000' : undefined,
@@ -87,7 +96,9 @@ export default function ChargeSigil() {
           alignItems: 'center',
           justifyContent: 'center',
         }}>
-          <Menu />
+          {!isCharging && <Menu />}
+          <h1 className={'title-charging'} style={{ fontSize: "clamp(22px, 4vw, 56px)" }}>Charge Sigil</h1>
+
           {isCharging && (
             <SplashCursor
               BACK_COLOR={{ r: 0, g: 0, b: 0 }}
@@ -114,7 +125,7 @@ export default function ChargeSigil() {
             border: '1px solid rgba(255, 255, 255, 0.2)',
             boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
           }}>
-            <h1 style={{ fontSize: "clamp(22px, 4vw, 56px)", color: "black", backgroundColor: '#e0e0e0', borderRadius: '12px', padding: '10px' }}>Charge Sigil</h1>
+            {!isCharging && <ChangeEmotion emotion={emotion} setEmotion={setEmotion} />}
             {sigilData.imageData && (
               <img
                 src={sigilData.imageData}
@@ -140,16 +151,9 @@ export default function ChargeSigil() {
               width: '100%',
               overflow: 'hidden',
             }}>
-              <div style={{
-                transform: 'scale(1.6)',
-                transformOrigin: 'center top',
-                marginBottom: '1rem',
-                width: '60%',
-                display: 'flex',
-                justifyContent:'center',
-              }}>
-                <ChangeEmotion emotion={emotion} setEmotion={setEmotion} />
-              </div>
+
+
+
               {!isCharging && emotion && (
                 <button className='glassbutton'
                   style={{ fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}
@@ -162,7 +166,7 @@ export default function ChargeSigil() {
                   Charge Sigil
                 </button>
               )}
-              {isCharging && (
+              {isCharging && showActions && (
                 <>
                   <button className='glassbutton'
                     style={{ fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}

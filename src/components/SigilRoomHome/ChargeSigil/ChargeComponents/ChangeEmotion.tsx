@@ -12,7 +12,7 @@ export default function changeEmotion({ emotion, setEmotion }: { emotion: string
 
 
   return (
-    <div className="changeemotion" style={{ background: "transparent", padding: '55px', height: 'fit-content'}}>
+    <div className="emotion" style={{ background: "transparent", padding: '55px', height: 'fit-content'}}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button className="glassbutton" style={{ background: "transparent", padding: '15px', height: 'fit-content', margin: '10'}}>
@@ -35,7 +35,7 @@ export default function changeEmotion({ emotion, setEmotion }: { emotion: string
 
         </DropdownMenuContent>
       </DropdownMenu>
-      <div className="emotion">{emotion}</div>
+
     </div>
   )
 }

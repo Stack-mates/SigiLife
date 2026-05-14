@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from 'react'
-import Menu from '../../../../Parts/Menu'
 import GoogleAuth from '../../../../LogInAuth/GoogleAuth'
 const EMAIL_LIST_ENDPOINT = '/api/email-signup'
 // ─────────────────────────────────────────────────────────────────────────────
@@ -54,8 +53,6 @@ export default function PresentationSignup() {
           className='presentationsignuppage art-page-base'
           style={{ width: `${dims.width}px`, height: `${dims.height}px` }}
         >
-          <Menu />
-
           {/* ── Glass card centered on the page ── */}
           <div style={{
             position: 'absolute',
@@ -82,7 +79,7 @@ export default function PresentationSignup() {
                 margin: 0,
                 color: 'var(--theme-text)',
               }}>
-                Thank you for attending
+                Thank you for Attending!
               </h1>
               <h2 style={{
                 fontFamily: "'Pompiere', system-ui",
@@ -91,7 +88,8 @@ export default function PresentationSignup() {
                 color: 'var(--theme-text)',
                 opacity: 0.9,
               }}>
-                our Presentation of SigiLife!
+                We hope you enjoyed our presentation of SigiLife!<br/>
+                We are so excited to have you join us in finding and connecting with others sigils!
               </h2>
 
               <hr style={{
@@ -128,8 +126,8 @@ export default function PresentationSignup() {
                         cursor: 'pointer',
                       }}
                     />
-                    I would like to sign up for email updates from&nbsp;
-                    <strong>Stakemates</strong> and <strong>SigiLife</strong>
+                    I would like to sign up for email updates from &nbsp;
+                    <strong>Stack-Mates</strong> and <strong>SigiLife</strong>
                   </label>
 
                   {emailConsent && (
@@ -189,6 +187,7 @@ export default function PresentationSignup() {
                 gap: 'clamp(10px, 1.5dvh, 18px)',
                 width: '100%',
               }}>
+
                 <p style={{
                   fontFamily: "'Pompiere', system-ui",
                   fontSize: 'clamp(15px, 2.2dvh, 26px)',
@@ -196,10 +195,10 @@ export default function PresentationSignup() {
                   margin: 0,
                   opacity: 0.85,
                 }}>
-                  Ready to create your profile?
+
+                  Ready to become an Agent of the Office?
                 </p>
 
-                {/* GoogleAuth handles its own navigation to /create-profile */}
                 <GoogleAuth />
               </div>
 

@@ -255,6 +255,12 @@ export default function UserSettings() {
               <Link className="btn" to="/profile">
                 Go to Profile
               </Link>
+
+              {user.isAdmin === true && (
+                <Link className="btn" to="/presentation">
+                  Presentation
+                </Link>
+              )}
             </div>
           </div>
         </div>

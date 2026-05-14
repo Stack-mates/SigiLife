@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-KEY_PATH="/home/alex/Documents/login.pem"
-REMOTE_USER="ubuntu"
-REMOTE_HOST="ec2-18-212-12-3.compute-1.amazonaws.com"
+REMOTE_USER="alex"
+REMOTE_HOST="192.168.1.211"
 REMOTE_DIR="~/SigiLife"
 
 echo "--- Cleaning old builds ---"
@@ -18,7 +17,6 @@ npm run build
 echo "--- Syncing files to server ---"
 # We exclude .env so your working server credentials are not overwritten by your local machine!
 rsync -avz --progress --delete \
-    -e "ssh -i $KEY_PATH -o IdentitiesOnly=yes" \
     --exclude '.env' \
     --exclude 'node_modules' \
     --exclude '.git' \
@@ -33,8 +31,7 @@ rsync -avz --progress --delete \
     ./ $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR/
 
 echo "--- Restarting application on server ---"
-ssh -i "$KEY_PATH" -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o IdentitiesOnly=yes \
-    "$REMOTE_USER@$REMOTE_HOST" "
+ssh "$REMOTE_USER@$REMOTE_HOST" "
     cd $REMOTE_DIR &&
     npm install &&
     npx prisma migrate deploy --schema=server/prisma/schema.prisma &&

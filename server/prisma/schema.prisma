@@ -16,7 +16,7 @@ model User {
   googleId              String?      @unique @db.VarChar(255)
   avatar                Int          @default(0)
   theme                 Int          @default(1)
-  color_theme           String       @default("cyber") @db.VarChar(50)
+  color_theme           String       @default("null") @db.VarChar(50)
   homeTeam              Int          @default(0)
   lightOrDark           Int          @default(1)
   isAdmin               Boolean      @default(false)

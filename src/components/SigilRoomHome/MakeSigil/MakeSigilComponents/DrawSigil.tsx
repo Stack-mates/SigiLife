@@ -352,9 +352,9 @@ export default function DrawSigil() {
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
                     <p>select <br />color:</p>
                     <input type="color" value={styleColor} onChange={(e) => setStyleColor(e.target.value)} style={{ cursor: 'pointer', width: '80px', height: '80px', alignSelf: "center" }} />
-                    <button className="pinkbutton" onClick={handleChangeColor} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>🎨 Color</button>
-                    <button className="pinkbutton" onClick={handleAddRing} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>⭕ Ring</button>
-                    <button className="pinkbutton" onClick={handleAddGlow} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>✨ Glow</button>
+                    <button className="pinkbutton" onClick={handleChangeColor} >🎨 Color</button>
+                    <button className="pinkbutton" onClick={handleAddRing} >⭕ Ring</button>
+                    <button className="pinkbutton" onClick={handleAddGlow} >✨ Glow</button>
                   </div>
                 </div>
               )}
@@ -377,9 +377,9 @@ export default function DrawSigil() {
             </div>
             {!isDrawingMode && (
               <div className='rowbox' style={{ justifyContent: "center", gap: "8px" }}>
-                <button className="pinkbutton" onClick={handleDeleteSelected} style={{  opacity: canUndo ? 1 : 0.5, fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>🗑️ Delete</button>
-                <button className="pinkbutton" onClick={undo} disabled={!canUndo} style={{  opacity: canUndo ? 1 : 0.5, fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>↶ Undo</button>
-                <button className="pinkbutton" onClick={redo} disabled={!canRedo} style={{  opacity: canRedo ? 1 : 0.5, fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>↷ Redo</button>
+                <button className="pinkbutton" onClick={handleDeleteSelected} style={{  opacity: canUndo ? 1 : 0.5,  }}>🗑️Delete</button>
+                <button className="pinkbutton" onClick={undo} disabled={!canUndo} style={{  opacity: canUndo ? 1 : 0.5,  }}>↶Undo</button>
+                <button className="pinkbutton" onClick={redo} disabled={!canRedo} style={{  opacity: canRedo ? 1 : 0.5,   }}>↷Redo</button>
               </div>
             )}
             {step === 'draw' ? (

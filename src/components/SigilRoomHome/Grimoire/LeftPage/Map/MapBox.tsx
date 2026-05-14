@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Map, { NavigationControl, Marker, Popup } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import axios from 'axios';
@@ -25,6 +25,7 @@ type Sigil = {
   userVote: VoteType | null;
   isCharged?: boolean;
   creatorUsername?: string;
+  creatorId?: number;
 };
 
 const DEFAULT_VIEW = { longitude: -95.7129, latitude: 37.0902, zoom: 6 };
@@ -55,7 +56,12 @@ export default function MapBox() {
   const [filterMode, setFilterMode] = useState<"all" | "mine">("all");
   const [voting, setVoting] = useState(false);
   const [dims, setDims] = useState({ width: 2160, height: 1260 });
+  const [followingIds, setFollowingIds] = useState<Set<number>>(new Set());
+  const [following, setFollowing] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [characterPopup, setCharacterPopup] = useState<{ label: string; longitude: number; latitude: number } | null>(null);
+
+  const allowPublicFollows = true;
 
   const [viewState, setViewState] = useState(() => getInitialViewState(user));
 
@@ -92,6 +98,14 @@ export default function MapBox() {
       .catch(err => console.error("Error fetching sigils for map:", err));
   }, [user?.id, filterMode]);
 
+  useEffect(() => {
+    if (!user) return;
+    fetch(`/api/users/${user.id}/following`)
+      .then(res => res.json())
+      .then(data => setFollowingIds(new Set(data.map((u: any) => u.id))))
+      .catch(err => console.error("Error fetching following:", err));
+  }, [user?.id]);
+
   const handleVote = async (voteType: VoteType) => {
     if (!popupInfo || !user || voting) return;
     setVoting(true);
@@ -113,6 +127,23 @@ export default function MapBox() {
     }
   };
 
+  const handleFollow = async (targetId: number) => {
+    if (!user || following) return;
+    setFollowing(true);
+    try {
+      await fetch(`/api/users/follow`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ followerId: user.id, followingId: targetId })
+      });
+      setFollowingIds(prev => new Set(prev).add(targetId));
+    } catch (err) {
+      console.error("Follow failed:", err);
+    } finally {
+      setFollowing(false);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -121,6 +152,7 @@ export default function MapBox() {
         <div className="mapbox art-page-base"
           style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
           <Menu />
+          <Link className="pinkbutton " style={{ border: '0px', width: '5%', textAlign: 'center', fontFamily: 'Pompiere', borderRadius: '12px' }} to="/make-sigil">Create Sigil</Link>
           <div style={{
             width: '88dvw',
             height: '88dvh',
@@ -131,13 +163,12 @@ export default function MapBox() {
             zIndex: 2,
           }}>
             <div style={{
-              width: '100%',
-              flex: '3',
-              borderRadius: '14px',
-              overflow: 'hidden',
+              position: 'absolute',
+              inset: 0,
+              zIndex: 2,
               border: '2px solid var(--theme-btn)',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.4)',
-              minHeight: 0,
+              borderRadius: '12px',
+              overflow: 'hidden',
             }}>
               <Map
                 {...viewState}
@@ -146,6 +177,29 @@ export default function MapBox() {
                 mapboxAccessToken={MAPBOX_TOKEN}
                 style={{ width: '100%', height: '100%' }}
               >
+                <Marker
+                  longitude={-90.08537}
+                  latitude={29.92879}
+                  anchor="bottom"
+                  onClick={e => {
+                    e.originalEvent.stopPropagation();
+                    setCharacterPopup({ label: "Harper's Home Location", longitude: -90.08537, latitude: 29.92879 });
+                  }}
+                >
+                  <div style={{ fontSize: '1.5rem', cursor: 'pointer' }}>🏡</div>
+                </Marker>
+
+                <Marker
+                  longitude={-90.0639}
+                  latitude={29.9574}
+                  anchor="bottom"
+                  onClick={e => {
+                    e.originalEvent.stopPropagation();
+                    setCharacterPopup({ label: "Bennet's Home Location", longitude: -90.0639, latitude: 29.9574 });
+                  }}
+                >
+                  <div style={{ fontSize: '1.5rem', cursor: 'pointer' }}>⛪︎</div>
+                </Marker>
                 {sigils.map((sigil) => {
                   if (sigil.longitude && sigil.latitude) {
                     return (
@@ -198,7 +252,25 @@ export default function MapBox() {
                   }
                   return null;
                 })}
-
+                {characterPopup && (
+                  <Popup
+                    anchor="top"
+                    longitude={characterPopup.longitude}
+                    latitude={characterPopup.latitude}
+                    onClose={() => setCharacterPopup(null)}
+                    maxWidth="200px"
+                  >
+                    <div style={{
+                      padding: '10px 14px',
+                      fontFamily: 'Pompiere, sans-serif',
+                      fontSize: '14px',
+                      color: 'var(--theme-text)',
+                      textAlign: 'center',
+                    }}>
+                      {characterPopup.label}
+                    </div>
+                  </Popup>
+                )}
                 {popupInfo && (
                   <Popup
                     anchor="top"
@@ -270,15 +342,45 @@ export default function MapBox() {
                       </p>
 
                       {popupInfo.creatorUsername && (
-                        <p style={{
-                          margin: '0 0 14px',
-                          fontSize: 'clamp(11px, 1.5vw, 14px)',
-                          color: 'var(--theme-btn)',
-                          textAlign: 'center',
-                          fontFamily: 'Pompiere, sans-serif',
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          marginBottom: '14px',
                         }}>
-                          ✦ by {popupInfo.creatorUsername}
-                        </p>
+                          <p style={{
+                            margin: 0,
+                            fontSize: 'clamp(11px, 1.5vw, 14px)',
+                            color: 'var(--theme-btn)',
+                            fontFamily: 'Pompiere, sans-serif',
+                          }}>
+                            ✦ by {popupInfo.creatorUsername}
+                          </p>
+                          {allowPublicFollows &&
+                            popupInfo.creatorId &&
+                            popupInfo.creatorId !== user.id &&
+                            !followingIds.has(popupInfo.creatorId) && (
+                              <button
+                                onClick={() => handleFollow(popupInfo.creatorId!)}
+                                disabled={following}
+                                style={{
+                                  padding: '2px 10px',
+                                  borderRadius: '8px',
+                                  border: '1px solid var(--theme-btn)',
+                                  background: 'transparent',
+                                  color: 'var(--theme-btn)',
+                                  fontFamily: 'Special Elite, system-ui',
+                                  fontSize: 'clamp(10px, 1.4vw, 12px)',
+                                  cursor: following ? 'not-allowed' : 'pointer',
+                                  opacity: following ? 0.6 : 1,
+                                  transition: 'all 0.15s ease',
+                                }}
+                              >
+                                + Follow
+                              </button>
+                            )}
+                        </div>
                       )}
 
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -304,7 +406,7 @@ export default function MapBox() {
                             opacity: voting ? 0.6 : 1,
                           }}
                         >
-                          ✨ Charge {popupInfo.chargeScore}
+                          ✨ Votes to Charge {popupInfo.chargeScore}
                         </button>
 
                         <button
@@ -329,7 +431,7 @@ export default function MapBox() {
                             opacity: voting ? 0.6 : 1,
                           }}
                         >
-                          🔥 Destroy {popupInfo.destroyScore}
+                          🔥 Votes to Destroy {popupInfo.destroyScore}
                         </button>
                       </div>
 
@@ -360,7 +462,7 @@ export default function MapBox() {
               </Map>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <div style={{ position: 'absolute', bottom: '1rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '0.5rem', alignItems: 'center', zIndex: 10 }}>
               <MapSearchBox
                 accessToken={MAPBOX_TOKEN}
                 onRetrieve={(res) => {
@@ -370,27 +472,15 @@ export default function MapBox() {
                   }
                 }}
               />
-              <button
-                className="btn"
-                onClick={() => setFilterMode("all")}
-                style={{ opacity: filterMode === "all" ? 1 : 0.5 }}
-              >
-                All Sigils
-              </button>
-              <button
-                className="btn"
-                onClick={() => setFilterMode("mine")}
-                style={{ opacity: filterMode === "mine" ? 1 : 0.5 }}
-              >
-                My Sigils
-              </button>
-            </div>
-
-            <div className="glasscard" style={{ flex: '1', minHeight: 0, overflowY: 'auto', width: '100%', margin: 0 }}>
+              <button className="btn" onClick={() => setFilterMode("all")} style={{ opacity: filterMode === "all" ? 1 : 0.5 }}>All Sigils</button>
+              <button className="btn" onClick={() => setFilterMode("mine")} style={{ opacity: filterMode === "mine" ? 1 : 0.5 }}>My Sigils</button>
             </div>
           </div>
+
+
         </div>
       </div>
     </div>
+
   );
 }

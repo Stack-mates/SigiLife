@@ -12,9 +12,10 @@ interface TutorialCharactersProps {
   showNext: boolean;
   showSkip: boolean;
   cardRef: React.RefObject<HTMLDivElement | null>;
+  onBennetFinished?: () => void;
 }
 
-function useTypewriter(text: string, speed = 28) {
+function useTypewriter(text: string, speed = 69, onComplete?: () => void) {
   const [displayed, setDisplayed] = useState('');
   useEffect(() => {
     if (!text) return;
@@ -29,7 +30,10 @@ function useTypewriter(text: string, speed = 28) {
         lastTime = timestamp;
         index += 1;
         setDisplayed(text.slice(0, index));
-        if (index >= text.length) return;
+        if (index >= text.length) {
+          onComplete?.();
+          return;
+        }
       }
       requestAnimationFrame(tick);
     };
@@ -93,11 +97,12 @@ interface SpeechBubbleProps {
   text: string;
   side: 'left' | 'right';
   stepId: number;
+  onComplete?: (() => void) | undefined;
 }
 
-function SpeechBubblePanel({ text, side, stepId }: SpeechBubbleProps) {
+function SpeechBubblePanel({ text, side, stepId, onComplete }: SpeechBubbleProps) {
   const [mounted, setMounted] = useState(false);
-  const displayed = useTypewriter(mounted ? text : '');
+  const displayed = useTypewriter(mounted ? text : '', 69, onComplete);
   useEffect(() => {
     const reset = setTimeout(() => setMounted(false), 0);
     const t = setTimeout(() => setMounted(true), 100);
@@ -117,7 +122,6 @@ function SpeechBubblePanel({ text, side, stepId }: SpeechBubbleProps) {
       opacity: mounted ? 1 : 0,
       transition: 'transform 400ms cubic-bezier(0.34, 1.2, 0.64, 1), opacity 300ms ease',
       width: 'min(55dvh, 85dvw)',
-
       zIndex: 8600,
       pointerEvents: 'none',
     }}>
@@ -150,7 +154,7 @@ function SpeechBubblePanel({ text, side, stepId }: SpeechBubbleProps) {
 }
 
 export default function TutorialCharacters({
-  step, onNext, onSkip, showNext, showSkip, cardRef,
+  step, onNext, onSkip, showNext, showSkip, cardRef, onBennetFinished,
 }: TutorialCharactersProps) {
   const [cardRect, setCardRect] = useState<DOMRect | null>(null);
 
@@ -172,7 +176,7 @@ export default function TutorialCharacters({
     const reset = setTimeout(() => setActiveSpeaker('harper'), 0);
     if (step.speaker === 'both' && step.bennetText) {
       const harperLen = step.harperText?.length ?? 0;
-      const switchDelay = Math.max(3000, harperLen * 30 + 1000);
+      const switchDelay = Math.max(3000, harperLen * 60 + 5000);
       const t = setTimeout(() => setActiveSpeaker('bennet'), switchDelay);
       return () => { clearTimeout(reset); clearTimeout(t); };
     }
@@ -192,7 +196,6 @@ export default function TutorialCharacters({
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // Portrait width scales with viewport — wider percentage on small screens
   const portraitWidth = vw < 500 ? vw * 0.42 : vw < 900 ? vw * 0.28 : vw * 0.20;
   const portraitHeight = vh * 0.55;
 
@@ -251,6 +254,7 @@ export default function TutorialCharacters({
           text={step.bennetText!}
           side="right"
           stepId={step.id * 100}
+          onComplete={onBennetFinished}
         />
       )}
 

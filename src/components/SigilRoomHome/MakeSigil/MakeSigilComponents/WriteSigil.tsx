@@ -12,12 +12,15 @@ export default function WriteSigil() {
   const [intention, setIntention] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [uniqueChars, setUniqueChars] = useState('');
+  const [charactersVisible, setCharactersVisible] = useState(true);
   const [dims, setDims] = useState({ width: 2160, height: 1260 });
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const { currentStep, isActive, advance, skip, showOverlay } = usePageTutorial('write');
+
+
 
   useEffect(() => {
     const calculate = () => {
@@ -87,7 +90,7 @@ export default function WriteSigil() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <Menu />
-          <div className= 'glasscard' ref={cardRef} style={{
+          <div className='glasscard' ref={cardRef} style={{
             width: 'min(55dvh, 85dvw)',
             height: '88dvh',
             display: 'flex',
@@ -116,23 +119,26 @@ export default function WriteSigil() {
               <span style={{ color: 'black', fontSize: 'clamp(10px, 1.8vw, 26px)' }}>
                 Unique letters: {uniqueChars}
               </span>
-              <button className="pinkbutton" onClick={handleNext}
-                disabled={isProcessing || showOverlay}
-                style={{
-                  backgroundColor: (isProcessing || showOverlay) ? '#ccc' : '#9e38fd',
-                  cursor: (isProcessing || showOverlay) ? 'not-allowed' : 'pointer',
-                  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px",
-                  zIndex: 9999,
-                  opacity: showOverlay ? 0.3 : 1, transition: 'opacity 600ms ease',
-                }}>
-                {isProcessing ? "Processing..." : "Next"}
-              </button>
             </div>
           </div>
         </div>
       </div>
+      <button className="pinkbutton" onClick={handleNext}
+        disabled={isProcessing || !intention}
+        style={{
+          position: 'relative',
+          bottom: '1.5rem',
+          right: '2rem',
+          backgroundColor: (isProcessing || !intention) ? '#ccc' : '#9e38fd',
+          cursor: (isProcessing || !intention) ? 'not-allowed' : 'pointer',
+          fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px",
+          zIndex: 8000,
+          alignSelf: 'center',
+        }}>
+        {isProcessing ? "Processing..." : "Next"}
+      </button>
       <TutorialBlockOverlay visible={showOverlay} />
-      {isActive && currentStep && (
+      {isActive && currentStep && charactersVisible && (
         <TutorialCharacters
           step={currentStep}
           onNext={advance}
@@ -140,6 +146,11 @@ export default function WriteSigil() {
           showNext={showTutorialNext}
           showSkip={showTutorialSkip}
           cardRef={cardRef}
+          onBennetFinished={() => {
+            if (currentStep?.id === 3) {
+              setTimeout(() => setCharactersVisible(false), 5000);
+            }
+          }}
         />
       )}
     </div>

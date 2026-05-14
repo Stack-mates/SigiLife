@@ -21,6 +21,7 @@ export default function DestroySigil() {
   const navigate = useNavigate()
   const scrollRef = useRef<HTMLDivElement>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [showActions, setShowActions] = useState(false);
 
   useEffect(() => {
     const calculate = () => {
@@ -52,6 +53,12 @@ export default function DestroySigil() {
       .catch(err => console.error(err))
   }, [sigilId])
 
+  useEffect(() => {
+    if (!isDestroying) return;
+    const t = setTimeout(() => setShowActions(true), 5000);
+    return () => clearTimeout(t);
+  }, [isDestroying]);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const eyeEl = eyeContainerRef.current
     if (!eyeEl) return
@@ -61,28 +68,28 @@ export default function DestroySigil() {
     setMousePos({ x, y })
   }
 
-const handleDestroy = async () => {
-  if (isSubmitting) return;
-  setIsDeleting(true);
-  try {
-    const res = await fetch(`/api/sigils/${sigilData.id}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error('Failed to destroy sigil');
-    if (!user) return;
-    await fetch(`/api/users/${user.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ destroyCount: (user.destroyCount ?? 0) + 1 })
-    });
-    setIsDestroying(true);
-    setShowInstruction(true);
-    setTimeout(() => setShowInstruction(false), 6000);
-  } catch (error) {
-    console.error('destroy error:', error);
-    setIsSubmitting(false);
-  } finally {
-    setIsDeleting(false);
+  const handleDestroy = async () => {
+    if (isSubmitting) return;
+    setIsDeleting(true);
+    try {
+      const res = await fetch(`/api/sigils/${sigilData.id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to destroy sigil');
+      if (!user) return;
+      await fetch(`/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destroyCount: (user.destroyCount ?? 0) + 1 })
+      });
+      setIsDestroying(true);
+      setShowInstruction(true);
+      setTimeout(() => setShowInstruction(false), 6000);
+    } catch (error) {
+      console.error('destroy error:', error);
+      setIsSubmitting(false);
+    } finally {
+      setIsDeleting(false);
+    }
   }
-}
 
   if (!user) { return null }
   if (!sigilData) { return <p>Loading sigil...</p> }
@@ -91,12 +98,12 @@ const handleDestroy = async () => {
     <div className='maincontainer'>
       {showInstruction && (
         <div className="floating-instruction">
-          Trace your sigil to imbue it with your chosen emotion
+          Hold down and lightly trace your sigil to Destroy!
         </div>
       )}
       <div ref={scrollRef} className={`scrollcontainer ${isDestroying ? 'noscroll' : ''}`}>
         <div
-          className='destroysigil art-page-base'
+          className={`destroysigil art-page-base${isDestroying ? ' hide-bg' : ''}`}
           onMouseMove={isDestroying ? handleMouseMove : undefined}
           style={{
             width: `${dims.width}px`,
@@ -105,10 +112,10 @@ const handleDestroy = async () => {
             transition: 'background-color 800ms ease',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Menu />
 
+          }}>
+          {!isDestroying && <Menu />}
+          <h1 className={'title-destroying'} style={{ fontSize: "clamp(22px, 4vw, 36px)" }}>Destroy Sigil</h1>
           {sigilData.imageData && (
             <img
               src={sigilData.imageData}
@@ -134,7 +141,7 @@ const handleDestroy = async () => {
               <div className='evileye' ref={eyeContainerRef}>
                 <EvilEye
                   eyeColor="#2e0fa9"
-                  intensity={3.1}
+                  intensity={5.1}
                   pupilSize={0.75}
                   irisWidth={0.25}
                   glowIntensity={0.65}
@@ -179,12 +186,13 @@ const handleDestroy = async () => {
             boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
             margin: '0 auto',
           }}>
-            <h1 style={{ fontSize: "clamp(22px, 4vw, 36px)" }}>Destroy Sigil</h1>
+            {!isDestroying && <ChangeEmotion emotion={emotion} setEmotion={setEmotion} />}
+
 
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem', width: '100%' }}>
-              <div style={{ transform: 'scale(1.6)', transformOrigin: 'center', marginBottom: '1rem', position: 'relative', zIndex: 300 }}>
-                <ChangeEmotion emotion={emotion} setEmotion={setEmotion} />
-              </div>
+
+
+
               {!isDestroying && emotion && (
                 <button className="glassbutton"
                   style={{ fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}
@@ -193,7 +201,7 @@ const handleDestroy = async () => {
                   Destroy Sigil
                 </button>
               )}
-              {isDestroying && !isDeleting && (
+              {isDestroying && !isDeleting && showActions && (
                 <button className="glassbutton"
                   style={{ position: 'relative', zIndex: 20, fontSize: "clamp(15px, 2.5vw, 20px)", padding: "10px 32px" }}
                   onClick={() => {
