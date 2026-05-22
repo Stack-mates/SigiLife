@@ -28,7 +28,7 @@ export default function UserFriends() {
 }) => (
   <div className="usercard">
     {showAvatar && (
-      <img src={`Avatar${parseInt(user.avatar) + 1}face.png`} className="avatar"
+      <img src={`/Avatar${parseInt(user.avatar) + 1}face.png`} className="avatar"
         style={{ width: "20px", height: "20px", borderRadius: "12px", flexShrink: 0 }} />
     )}
     <label className="pompiereregular" style={{ fontSize: "clamp(12px, 1.5vw, 18px)", padding: "4px 8px", flexShrink: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>

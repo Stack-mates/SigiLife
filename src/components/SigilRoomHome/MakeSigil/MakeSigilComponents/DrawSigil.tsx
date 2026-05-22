@@ -38,7 +38,7 @@ export default function DrawSigil() {
     id: 999,
     page: 'draw' as const,
     speaker: 'harper' as const,
-    harperText: "Make sure to name your new sigil, or it will default to My New Sigil. You can add a color, ring or a glow here. When you're finished, click Review.",
+    harperText: " You can add a color, ring or a glow here. When you're finished, click Review.",
     advanceOn: 'next' as const,
     skippable: true,
     showOverlay: false,
@@ -328,7 +328,7 @@ export default function DrawSigil() {
         }}>
           <Menu />
           <div ref={cardRef} className="glasscard"
-            style={{ width: 'min(55dvh, 85dvw)', height: '88dvh' }}>
+            style={{ width: '55dvh', height: '88dvh' }}>
             <h1 style={{ fontSize: "clamp(26px, 4vw, 42px)", textAlign: "center" }}>
               {step === 'draw' ? 'Draw Your Sigil' : 'Style Your Sigil'}
             </h1>
@@ -336,19 +336,18 @@ export default function DrawSigil() {
               {step === 'draw' ? (
                 <>
                   <button className="pinkbutton" onClick={() => setIsDrawingMode(!isDrawingMode)}
-                    style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px", color: isDrawingMode ? 'white' : 'black', cursor: 'pointer' }}>
+                    style={{ fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px", color: isDrawingMode ? 'white' : 'black', cursor: 'pointer' }}>
                     {isDrawingMode ? "🖐 Manipulate Mode" : "✍️ Draw Mode"}
                   </button>
                   {user.isAdmin === true &&
                     <label>
                       📂 Import SVG
                       <input type="file" accept=".svg" style={{ display: 'none' }} onChange={handleSVGUpload} />
-                    </label>}
+                    </label>}                  <label htmlFor="sigilName">Name Your Sigil:</label>
+                  <input type="text" style={{ color: "black" }} className='textinput' id="sigilName" value={sigilName} onChange={(e) => setSigilName(e.target.value)} />
                 </>
               ) : (
                 <div>
-                  <label htmlFor="sigilName">Name Your Sigil:</label>
-                  <input type="text" style={{ color: "black" }} className='textinput' id="sigilName" value={sigilName} onChange={(e) => setSigilName(e.target.value)} />
                   <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
                     <p>select <br />color:</p>
                     <input type="color" value={styleColor} onChange={(e) => setStyleColor(e.target.value)} style={{ cursor: 'pointer', width: '80px', height: '80px', alignSelf: "center" }} />
@@ -377,25 +376,25 @@ export default function DrawSigil() {
             </div>
             {!isDrawingMode && (
               <div className='rowbox' style={{ justifyContent: "center", gap: "8px" }}>
-                <button className="pinkbutton" onClick={handleDeleteSelected} style={{  opacity: canUndo ? 1 : 0.5,  }}>🗑️Delete</button>
-                <button className="pinkbutton" onClick={undo} disabled={!canUndo} style={{  opacity: canUndo ? 1 : 0.5,  }}>↶Undo</button>
-                <button className="pinkbutton" onClick={redo} disabled={!canRedo} style={{  opacity: canRedo ? 1 : 0.5,   }}>↷Redo</button>
+                <button className="pinkbutton" onClick={handleDeleteSelected} style={{ opacity: canUndo ? 1 : 0.5, }}>🗑️Delete</button>
+                <button className="pinkbutton" onClick={undo} disabled={!canUndo} style={{ opacity: canUndo ? 1 : 0.5, }}>↶Undo</button>
+                <button className="pinkbutton" onClick={redo} disabled={!canRedo} style={{ opacity: canRedo ? 1 : 0.5, }}>↷Redo</button>
               </div>
             )}
             {step === 'draw' ? (
               <div className='rowbox' style={{ justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
-                <button className="pinkbutton" onClick={handleClear} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Clear All</button>
+                <button className="pinkbutton" onClick={handleClear} style={{ fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Clear All</button>
                 <button className="pinkbutton" onClick={() => {
                   setStep('style');
                   setIsDrawingMode(false);
                   const skipped = sessionStorage.getItem('sigilTutorialSkipped');
                   if (!skipped && !user.hasCompletedTutorial) setShowStyleTip(true);
-                }} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Next: Style Sigil</button>
+                }} style={{ fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}> Style Sigil</button>
               </div>
             ) : (
               <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
-                <button className="pinkbutton" onClick={() => setStep('draw')} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>⬅ Back</button>
-                <button className="pinkbutton" onClick={handleNextToStyle} style={{  fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Review</button>
+                <button className="pinkbutton" onClick={() => setStep('draw')} style={{ fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>⬅ Back</button>
+                <button className="pinkbutton" onClick={handleNextToStyle} style={{ fontSize: "clamp(16px, 2.5vw, 22px)", padding: "10px 32px" }}>Review</button>
               </div>
             )}
           </div>

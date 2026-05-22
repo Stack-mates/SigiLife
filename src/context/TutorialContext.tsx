@@ -16,6 +16,7 @@ interface TutorialContextType {
   advance: () => void;
   skip: () => void;
   initForPage: (page: TutorialPage) => void;
+  completeCharacterTutorial: () => void;
 }
 
 const TutorialContext = createContext<TutorialContextType | null>(null);
@@ -30,7 +31,7 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     : null;
 
   const initForPage = useCallback((page: TutorialPage) => {
-  if (!user || user.hasCompletedTutorial) return;
+    if (!user || user.hasCompletedTutorial) return;
 
     const sessionStep = getTutorialStepFromSession();
     const pageSteps = TUTORIAL_STEPS.filter(s => s.page === page);
@@ -54,43 +55,41 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     }
   }, [user]);
 
+  const advance = useCallback(() => {
+    if (!currentStepId) return;
+    const currentIndex = TUTORIAL_STEPS.findIndex(s => s.id === currentStepId);
+    const nextIndex = currentIndex + 1;
 
-const advance = useCallback(() => {
-  if (!currentStepId) return;
-  const currentIndex = TUTORIAL_STEPS.findIndex(s => s.id === currentStepId);
-  const nextIndex = currentIndex + 1;
-
-  if (nextIndex >= TUTORIAL_STEPS.length) {
-    setIsActive(false);
-    setCurrentStepId(null);
-    clearTutorialSession();
-    if (user) {
-      fetch(`/api/users/${user.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hasCompletedTutorial: true }),
-      })
-        .then(res => res.json())
-        .then(updated => setUser(updated));
+    if (nextIndex >= TUTORIAL_STEPS.length) {
+      setIsActive(false);
+      setCurrentStepId(null);
+      clearTutorialSession();
+      if (user) {
+        fetch(`/api/users/${user.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ hasCompletedTutorial: true }),
+        })
+          .then(res => res.json())
+          .then(updated => setUser(updated));
+      }
+      return;
     }
-    return;
-  }
 
-  const currentPage = TUTORIAL_STEPS[currentIndex]?.page;
-  const nextStep = TUTORIAL_STEPS[nextIndex];
-  if (!nextStep) return;
+    const currentPage = TUTORIAL_STEPS[currentIndex]?.page;
+    const nextStep = TUTORIAL_STEPS[nextIndex];
+    if (!nextStep) return;
 
-  if (nextStep.page !== currentPage) {
-    setIsActive(false);
-    setCurrentStepId(null);
+    if (nextStep.page !== currentPage) {
+      setIsActive(false);
+      setCurrentStepId(null);
+      saveTutorialStepToSession(nextStep.id);
+      return;
+    }
+
+    setCurrentStepId(nextStep.id);
     saveTutorialStepToSession(nextStep.id);
-    return;
-  }
-
-  setCurrentStepId(nextStep.id);
-  saveTutorialStepToSession(nextStep.id);
-}, [currentStepId, user, setUser]);
-
+  }, [currentStepId, user, setUser]);
 
   const skip = useCallback(async () => {
     if (!user) return;
@@ -100,8 +99,14 @@ const advance = useCallback(() => {
     sessionStorage.setItem('sigilTutorialSkipped', 'true');
   }, [user]);
 
+  const completeCharacterTutorial = useCallback(() => {
+    setIsActive(false);
+    setCurrentStepId(null);
+    clearTutorialSession();
+  }, []);
+
   return (
-    <TutorialContext.Provider value={{ currentStep, isActive, advance, skip, initForPage }}>
+    <TutorialContext.Provider value={{ currentStep, isActive, advance, skip, initForPage, completeCharacterTutorial }}>
       {children}
     </TutorialContext.Provider>
   );
@@ -112,8 +117,9 @@ export function useTutorial() {
   if (!ctx) throw new Error('useTutorial must be used within TutorialProvider');
   return ctx;
 }
+
 export function usePageTutorial(page: TutorialPage) {
-  const { currentStep, isActive, advance, skip, initForPage } = useTutorial();
+  const { currentStep, isActive, advance, skip, initForPage, completeCharacterTutorial } = useTutorial();
   const { user } = useUser();
   const initializedRef = useRef(false);
 
@@ -134,6 +140,7 @@ export function usePageTutorial(page: TutorialPage) {
     isActive: isActive && isOnThisPage,
     advance,
     skip,
+    completeCharacterTutorial,
     showOverlay: isOnThisPage ? (currentStep?.showOverlay ?? false) : false,
   };
 }

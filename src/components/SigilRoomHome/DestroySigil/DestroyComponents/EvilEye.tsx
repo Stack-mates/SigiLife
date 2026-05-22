@@ -164,10 +164,10 @@ void main() {
 
 export default function EvilEye({
   eyeColor = '#FF6F37',
-  intensity = 1.5,
+  intensity = 3.5,
   pupilSize = 0.6,
   irisWidth = 0.25,
-  glowIntensity = 0.35,
+  glowIntensity = 0.55,
   scale = 0.8,
   noiseScale = 1.0,
   pupilFollow = 1.0,

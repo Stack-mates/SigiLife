@@ -25,9 +25,10 @@ export default function SaveSigil() {
     longitude: number;
   } | null>(null);
 
-  const { currentStep: tutorialStep, isActive, advance, skip } = usePageTutorial('style');
+const { currentStep: tutorialStep, isActive, advance, skip, completeCharacterTutorial } = usePageTutorial('style');
   const showTutorialNext = isActive && tutorialStep?.advanceOn === 'next';
   const showTutorialSkip = isActive && (tutorialStep?.skippable ?? false);
+  
 
   useEffect(() => {
     const calculate = () => {
@@ -67,7 +68,7 @@ export default function SaveSigil() {
 
   useEffect(() => {
     if (user?.id) {
-      fetch(`/api/users/${user.id}/following`)
+      fetch(`/api/users/${user.id}/friends`)
         .then(res => res.json())
         .then(data => setFriends(data))
         .catch(err => console.error("Error fetching friends:", err));
@@ -81,67 +82,68 @@ export default function SaveSigil() {
   };
 
   const handleSave = async () => {
-  if (!user || !user.id) {
-    setError("You must be logged in to save a sigil.");
-    return;
-  }
-  setIsSaving(true);
-  setError('');
+    if (!user || !user.id) {
+      setError("You must be logged in to save a sigil.");
+      return;
+    }
+    setIsSaving(true);
+    setError('');
 
-  const groupMembers = [
-    user.username,
-    ...friends.filter(f => selectedFriends.includes(f.id)).map(f => f.username),
-  ];
+    const groupMembers = [
+      user.username,
+      ...friends.filter(f => selectedFriends.includes(f.id)).map(f => f.username),
+    ];
 
-  try {
-    const response = await fetch('/api/sigils', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: sigilData.name,
-        userId: user.id,
-        intention: sigilData.intention,
-        canvasData: sigilData.canvasData,
-        imageData: sigilData.imageData,
-        groupMembers,
-        ...(location ?? {}),
-      }),
-    });
-
-    if (!response.ok) throw new Error('Failed to save sigil');
-    const result = await response.json();
-
-    if (selectedFriends.length > 0) {
-      await fetch('/api/sigils/share', {
+    try {
+      const response = await fetch('/api/sigils', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sigilId: result.id, targetUserIds: selectedFriends })
+        body: JSON.stringify({
+          name: sigilData.name,
+          userId: user.id,
+          intention: sigilData.intention,
+          canvasData: sigilData.canvasData,
+          imageData: sigilData.imageData,
+          groupMembers,
+          ...(location ?? {}),
+        }),
       });
+
+      if (!response.ok) throw new Error('Failed to save sigil');
+      const result = await response.json();
+
+      if (selectedFriends.length > 0) {
+        await fetch('/api/sigils/share', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sigilId: result.id, targetUserIds: selectedFriends })
+        });
+      }
+
+      await fetch(`/api/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sigilCount: (user.sigilCount ?? 0) + 1 })
+      });
+
+      localStorage.removeItem('sigilName');
+      localStorage.removeItem('sigilIntention');
+      localStorage.removeItem('sigilUniqueChars');
+      localStorage.removeItem('sigilCanvasData');
+      localStorage.removeItem('sigilImageData');
+
+if (isActive) {
+  completeCharacterTutorial();
+  navigate('/home');
+} else {
+        navigate('/library');
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while saving.');
+    } finally {
+      setIsSaving(false);
     }
-
-    await fetch(`/api/users/${user.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ sigilCount: (user.sigilCount ?? 0) + 1 })
-    });
-
-    localStorage.removeItem('sigilName');
-    localStorage.removeItem('sigilIntention');
-    localStorage.removeItem('sigilUniqueChars');
-    localStorage.removeItem('sigilCanvasData');
-    localStorage.removeItem('sigilImageData');
-
-    if (isActive) {
-      navigate(`/charge-sigil?sigilId=${result.id}`);
-    } else {
-      navigate('/library');
-    }
-  } catch (err: any) {
-    setError(err.message || 'An error occurred while saving.');
-  } finally {
-    setIsSaving(false);
-  }
-};
+  };
 
   if (!sigilData) return <div>Loading...</div>;
   console.log(JSON.stringify(sessionStorage))
@@ -159,7 +161,7 @@ export default function SaveSigil() {
           <div ref={cardRef}
             className="flex flex-col bg-white/10 backdrop-blur-xl p-8 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] pointer-events-auto border border-white/20"
             style={{
-              width: 'min(55dvh, 85dvw)',
+              width: '55dvh',
               height: '88dvh',
               overflowY: 'auto',
               gap: '1rem',

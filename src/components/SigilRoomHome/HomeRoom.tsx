@@ -8,6 +8,7 @@ import grimoireButton from '../../assets/GrimoireButton.svg'
 import makesigilButton from '../../assets/WritingButton.svg'
 import TutorialOverlay from '../ui/TutorialOverlay'
 
+
 export default function HomeRoom() {
   const { user, isLoading } = useUser();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -52,6 +53,7 @@ export default function HomeRoom() {
           style={{ width: `${dims.width}px`, height: `${dims.height}px` }}
         >
           <Menu />
+
           <Link id='destroy-btn' className='destroybutton' to="/library?action=destroy"
             onTouchStart={(e) => e.currentTarget.classList.add('touched')}
             onTouchEnd={(e) => e.currentTarget.classList.remove('touched')}>

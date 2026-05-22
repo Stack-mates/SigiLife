@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+
 import SigiLibrary from './SigiLibrary/SigiLibrary'
 import { useEffect, useState, useRef } from 'react'
 import { useUser } from '@/context/UserContext'
@@ -45,24 +45,18 @@ export default function RightPage() {
       <div ref={scrollRef} className='scrollcontainer'>
         <div className="rightpage2 art-page-base" style={{ width: `${dims.width}px`, height: `${dims.height}px` }}>
           <Menu />
+          <br/>
+
           <div className='glasscard' style={{
-            position: 'absolute',
-            top: '5dvh',
-            left: '58dvh',
+            position: 'relative',
+            flex: '1',
+            top:'0dvh',
+            left: '55dvh',
             width: '55dvh',
             height: '88dvh',
-            overflowY: 'auto',
-          }}>
-            <h1>{user.username}'s Sigils</h1>
-            <SigiLibrary items={sigils} user={user} />
-          <Link className="btn" style={{
-            position: 'absolute',
-            bottom: '3dvh',
-            left: '47%',
-            transform: 'translateX(-50%)',
-            fontSize: "clamp(13px, 2vw, 20px)",
-            padding: "8px 20px"
-          }} to="/make-sigil">🪶 MakeSigil</Link></div>
+         }}>
+          <h2>{user.username}'s Sigils</h2>
+            <SigiLibrary items={sigils} user={user} /></div>
         </div>
       </div>
     </div>

@@ -28,6 +28,7 @@ model User {
   destroyCount          Int          @default(0)
   sigils                Sigil[]
   sigilVotes            SigilVote[]
+  activities            Activity[]
   following             Follow[]     @relation("follower")
   followers             Follow[]     @relation("following")
   arPlacement           ArPlacement?
@@ -96,6 +97,24 @@ model SigilGroup {
   @@index([sigilId])
   @@map("sigil_groups")
 }
+
+model Activity {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  fromUserId  Int?
+  type        String   @db.VarChar(50)
+  message     String   @db.VarChar(500)
+  isNarrative Boolean  @default(false)
+  dismissed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("activities")
+}
+
+
+
 
 model SvgVector {
   id         Int      @id @default(autoincrement())

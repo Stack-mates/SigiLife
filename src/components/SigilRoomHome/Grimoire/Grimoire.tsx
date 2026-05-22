@@ -5,6 +5,7 @@ import Menu from "@/components/Parts/Menu";
 import mapButton from '../../../assets/MapButton.svg'
 import profileButton from '../../../assets/ProfileButton.svg'
 import sigilbookButton from '../../../assets/SigilBook.svg'
+import friendsButton from '../../../assets/FriendsButton.svg'
 
 export default function Grimoire() {
   const { user } = useUser();
@@ -45,7 +46,7 @@ export default function Grimoire() {
             onTouchStart={(e) => e.currentTarget.classList.add('touched')}
             onTouchEnd={(e) => e.currentTarget.classList.remove('touched')}
           >
-            <img src={mapButton} alt="Map Book" />
+            <img src={mapButton} alt="Map Globe" />
           </Link>
           <Link
             className="grimoireprofilelink"
@@ -53,7 +54,7 @@ export default function Grimoire() {
             onTouchStart={(e) => e.currentTarget.classList.add('touched')}
             onTouchEnd={(e) => e.currentTarget.classList.remove('touched')}
           >
-            <img src={profileButton} alt="Profile Book" />
+            <img src={profileButton} alt="Message Book" />
           </Link>
           <Link
             className="grimoireliblink"
@@ -62,6 +63,14 @@ export default function Grimoire() {
             onTouchEnd={(e) => e.currentTarget.classList.remove('touched')}
           >
             <img src={sigilbookButton} alt="Sigil Book" />
+          </Link>
+            <Link
+            className="grimoirefriendslink"
+            to="/profile"
+            onTouchStart={(e) => e.currentTarget.classList.add('touched')}
+            onTouchEnd={(e) => e.currentTarget.classList.remove('touched')}
+          >
+            <img src={friendsButton} alt="Crystal Ball" />
           </Link>
         </div>
       </div>

@@ -52,14 +52,20 @@ export default function Menu() {
 
   if (!user) return null
 
+  const AvatarFace = () => (
+    <div className="avatarfacebox">
+      <img className="avatarface" src={`/Avatar${user.avatar + 1}face.png`} style={{ height: '40px' }} />
+    </div>
+  )
+
   return (
     <div
       className="navmenu"
       id='menu-btn'
       style={{
         position: 'fixed',
-        top: '10px',
-        left: '10px',
+        top: '5px',
+        left: '5px',
         zIndex: 10000,
         alignItems: 'flex-start',
         display: 'flex',
@@ -74,7 +80,8 @@ export default function Menu() {
           style={{ padding: '0.4rem 0.75rem' }}
           onClick={() => setMenuOpen(true)}
         >
-          ☰
+          ☰ 
+          <AvatarFace/>
         </button>
       )}
       {menuOpen && <NavMenu onClose={() => setMenuOpen(false)} />}

@@ -52,7 +52,7 @@ export default function LandingPage() {
   const slides = [
     <></>,
 
-    <>You ever feel something<br />in a place that doesn’t belong to you? <br/> A strange sadness,<br /> sudden certainty, <br /> or a memory that isn’t yours?</>,
+    <>You ever feel something<br />in a place that doesn’t belong to you? <br /> A strange sadness,<br /> sudden certainty, <br /> or a memory that isn’t yours?</>,
 
     <>For decades, The Office<br />has documented emotional imprints<br />appearing across the world.<br /><br />Symbols from intention that remain behind.</>,
 
@@ -66,7 +66,7 @@ export default function LandingPage() {
     <img src={WriteSigil} alt="Write Sigil" style={{ objectFit: "contain", width: "100%", height: "25vh", borderRadius: '12px' }} />,
 
     <>Then SigiLife transforms it into something symbolic.<br /> Abstract, Unique, Tangible. <br /> & Entirely Yours- </>,
-    <><h1 style={{fontFamily: 'Pompiere'}}>A Sigil.</h1></>,
+    <><h1 style={{ fontFamily: 'Pompiere' }}>A Sigil.</h1></>,
     <img src={SigilMap} alt="Sigil Map" style={{ width: "100%", height: "25vh", objectFit: "contain", borderRadius: '12px' }} />,
 
     <>Then, place it somewhere real.<br /> A street corner, or a park.<br /> A graveyard.<br /> A bar you should not return to.</>,
@@ -136,7 +136,7 @@ export default function LandingPage() {
                   style={{ height: "29.5vh", margin: "0", width: "min(70dvh, 88dvw)" }}>
                   <CarouselContent style={{
                     height: "25vh",
-                    fontSize: "clamp(18px, 5vw, 42px)",
+                    fontSize: "clamp(16px, 3vw, 28px)",
                     fontFamily: "Pompiere",
                     textAlign: "center",
                     alignSelf: "center",

@@ -3,6 +3,16 @@ import prisma from '../prisma/prisma.client.js';
 
 const router = Router();
 
+const narrativeIds = [
+  process.env.MORGANA_USER_ID,
+  process.env.HARPER_USER_ID,
+  process.env.BENNET_USER_ID,
+  process.env.ALISTAIR_USER_ID
+].filter(Boolean).map(Number);
+
+
+
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Get Sigil Count
 router.get('/user/:userId/count', async (req, res) => {
   try {
@@ -11,12 +21,13 @@ router.get('/user/:userId/count', async (req, res) => {
       where: { userId }
     });
 
+    const isNarrative = narrativeIds.includes(userId);
     res.json({
       userId,
       count: sigilCount,
-      maxSigils: 12,
-      canCreateMore: sigilCount < 12,
-      remainingSlots: 12 - sigilCount,
+      maxSigils: isNarrative ? null : 12,
+      canCreateMore: isNarrative ? true : sigilCount < 12,
+      remainingSlots: isNarrative ? Infinity : 12 - sigilCount,
     });
   } catch (error) {
     console.error(error);
@@ -112,7 +123,7 @@ router.post('/:sigilId/vote', async (req: Request, res: Response) => {
     }
 
     const sigilId = parseInt(req.params.sigilId as string);
-    const { voteType } = req.body; // "charge" | "destroy"
+    const { voteType } = req.body;
 
     if (!voteType || !['charge', 'destroy'].includes(voteType)) {
       return res.status(400).json({ error: 'voteType must be "charge" or "destroy"' });
@@ -125,7 +136,6 @@ router.post('/:sigilId/vote', async (req: Request, res: Response) => {
     let updatedSigil;
 
     if (!existingVote) {
-      // New vote — create and increment
       await prisma.sigilVote.create({
         data: { sigilId, userId, voteType },
       });
@@ -137,7 +147,6 @@ router.post('/:sigilId/vote', async (req: Request, res: Response) => {
         },
       });
     } else if (existingVote.voteType === voteType) {
-      // Same vote — toggle off
       await prisma.sigilVote.delete({
         where: { sigilId_userId: { sigilId, userId } },
       });
@@ -149,7 +158,6 @@ router.post('/:sigilId/vote', async (req: Request, res: Response) => {
         },
       });
     } else {
-      // Different vote — switch
       await prisma.sigilVote.update({
         where: { sigilId_userId: { sigilId, userId } },
         data: { voteType },
@@ -166,6 +174,26 @@ router.post('/:sigilId/vote', async (req: Request, res: Response) => {
     const newVote = await prisma.sigilVote.findUnique({
       where: { sigilId_userId: { sigilId, userId } },
     });
+
+    const sigil = await prisma.sigil.findUnique({
+      where: { id: sigilId },
+      select: { userId: true, name: true }
+    });
+
+    if (sigil && sigil.userId !== userId && newVote) {
+      const voter = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { username: true }
+      });
+      await prisma.activity.create({
+        data: {
+          userId: sigil.userId,
+          fromUserId: userId,
+          type: 'sigil_voted',
+          message: `${voter?.username} ${voteType === 'charge' ? 'charged' : 'attacked'} your sigil "${sigil.name}"`,
+        }
+      });
+    }
 
     res.json({
       chargeScore: updatedSigil.chargeScore,
@@ -237,7 +265,8 @@ router.post('/', async (req, res) => {
       return res.status(401).json({ error: 'Please log in to save sigils.' });
     }
     const sigilCount = await prisma.sigil.count({ where: { userId: userId_ } });
-    if (sigilCount >= 12) {
+    const isNarrative = narrativeIds.includes(userId_);
+    if (!isNarrative && sigilCount >= 12) {
       return res.status(403).json({ error: 'Sigil limit reached. Destroy an existing sigil before creating a new one.' });
     }
 
@@ -259,6 +288,34 @@ router.post('/', async (req, res) => {
       },
     });
 
+    const friends = await prisma.follow.findMany({
+      where: {
+        followingId: userId_,
+        followerId: {
+          in: await prisma.follow.findMany({
+            where: { followerId: userId_ },
+            select: { followingId: true }
+          }).then(f => f.map((f: any) => f.followingId))
+        }
+      },
+      select: { followerId: true }
+    });
+
+    const creator = await prisma.user.findUnique({
+      where: { id: userId_ },
+      select: { username: true }
+    });
+
+    if (friends.length > 0 && locationName) {
+      await prisma.activity.createMany({
+        data: friends.map((f: any) => ({
+          userId: f.followerId,
+          fromUserId: userId_,
+          type: 'friend_map_sigil',
+          message: `${creator?.username} placed a sigil at ${locationName}! Go find it.`,
+        }))
+      });
+    }
     res.json({ id: sigil.id, message: 'Sigil saved successfully' });
   } catch (error) {
     console.error(error);
@@ -272,7 +329,8 @@ router.post('/share', async (req, res) => {
     const { sigilId, targetUserIds } = req.body;
 
     const sourceSigil = await prisma.sigil.findUnique({
-      where: { id: parseInt(sigilId) }
+      where: { id: parseInt(sigilId) },
+      include: { sigilGroups: true }
     });
 
     if (!sourceSigil) {
@@ -280,15 +338,31 @@ router.post('/share', async (req, res) => {
     }
 
     const results = [];
+    const sharer = await prisma.user.findUnique({
+      where: { id: sourceSigil.userId },
+      select: { username: true }
+    });
 
     for (const targetId of targetUserIds) {
       const parsedTargetId = parseInt(targetId);
+
+      const areFriends = await prisma.follow.findFirst({
+        where: { followerId: sourceSigil.userId, followingId: parsedTargetId }
+      }) && await prisma.follow.findFirst({
+        where: { followerId: parsedTargetId, followingId: sourceSigil.userId }
+      });
+
+      if (!areFriends) {
+        results.push({ targetId: parsedTargetId, status: 'failed', reason: 'Not friends' });
+        continue;
+      }
 
       const count = await prisma.sigil.count({
         where: { userId: parsedTargetId }
       });
 
-      if (count >= 12) {
+      const isNarrative = narrativeIds.includes(parsedTargetId);
+      if (!isNarrative && count >= 12) {
         results.push({ targetId: parsedTargetId, status: 'failed', reason: 'Library full' });
         continue;
       }
@@ -301,8 +375,22 @@ router.post('/share', async (req, res) => {
           canvasData: sourceSigil.canvasData,
           imageData: sourceSigil.imageData,
           isCharged: false,
+          sigilGroups: {
+            create: sourceSigil.sigilGroups.map(g => ({ groupMember: g.groupMember })),
+          },
         }
       });
+
+      await prisma.activity.create({
+        data: {
+          userId: parsedTargetId,
+          fromUserId: sourceSigil.userId,
+          type: 'group_added',
+          message: `${sharer?.username} shared a sigil with you: "${sourceSigil.name}"`,
+          dismissed: false,
+        }
+      });
+
       results.push({ targetId: parsedTargetId, status: 'success' });
     }
 

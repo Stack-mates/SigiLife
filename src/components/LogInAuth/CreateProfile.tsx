@@ -74,7 +74,7 @@ export default function CreateProfile() {
               </div>
             </label>
 
-            <label style={{ width: '100%', alignSelf: 'center' }}>Choose your Home Sigil Location:
+            <label style={{ width: '100%', alignSelf: 'center' }}>Choose your Map Location:
               <MapSearchBox
                 accessToken={import.meta.env.VITE_MAPBOX_TOKEN || ''}
                 onRetrieve={(res) => {

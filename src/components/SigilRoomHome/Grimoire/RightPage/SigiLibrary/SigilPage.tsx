@@ -123,8 +123,8 @@ export default function SigilPage() {
             style={{
               position: 'relative',
               top: '5dvh',
-              left: '58dvh',
-              width: '50dvh',
+              left: '55dvh',
+              width: '55dvh',
               height: '88dvh',
               gap: '0.75rem',
               display: 'flex',
@@ -233,7 +233,7 @@ export default function SigilPage() {
               </div>
             )}
 
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '0.5rem', width: '100%', textAlign: 'center' }}>
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '0.5rem', width: '100%', textAlign: 'center', alignContent:'center', }}>
               {sigilData.locationName ? (<div>
                 <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)" }}>🗺️{sigilData.locationName}</p>
                 <Link className="pinkbutton " style={{ border: '0px', width: '100%', textAlign: 'left', fontFamily: 'Pompiere', borderRadius: '12px'}} to="/map">SigilMap</Link></div>
@@ -241,7 +241,7 @@ export default function SigilPage() {
                 <div>
                   <p style={{ fontSize: "clamp(16px, 2.5dvh, 24px)", marginBottom: "0.5rem" }}>Set a location:</p>
                   {isSavingLocation ? <p>Saving...</p> : (
-                    <div style={{ maxWidth: "100%", margin: "0 auto" }}>
+                    <div style={{ width: "100%", margin: "0 auto", alignContent: 'center' }}>
                       <MapSearchBox accessToken={MAPBOX_TOKEN} onRetrieve={handleLocationRetrieve} />
                     </div>
                   )}
@@ -280,7 +280,7 @@ export default function SigilPage() {
                     transition: 'all 0.15s ease',
                   }}
                 >
-                  ✨ Votes to Charge&nbsp; {sigilData.chargeScore ?? 0}
+                  ✨ Building Sigil &nbsp; {sigilData.chargeScore ?? 0}
                 </button>
 
                 <button
@@ -304,7 +304,7 @@ export default function SigilPage() {
                     transition: 'all 0.15s ease',
                   }}
                 >
-                  🔥 Votes to Destroy&nbsp; {sigilData.destroyScore ?? 0}
+                  🔥 Attacking Sigil &nbsp; {sigilData.destroyScore ?? 0}
                 </button>
               </div>
             </div>

@@ -121,7 +121,7 @@ export default function DestroySigil() {
               src={sigilData.imageData}
               alt={sigilData.name}
               style={{
-                position: 'absolute',
+                position: 'fixed',
                 top: '50%',
                 left: '50%',
                 transform: 'translate(-50%, -50%)',
@@ -173,8 +173,9 @@ export default function DestroySigil() {
           <div style={{
             position: 'relative',
             zIndex: 10,
-            width: '88dvw',
+            width: '55dvw',
             height: '88dvh',
+            minWidth: '350px',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
