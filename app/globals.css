@@ -1,0 +1,24 @@
+/**
+ * Global styles — Tailwind v4 + the SigiLife theme system.
+ * STATUS: stub
+ *
+ * What goes here (M1):
+ * - Theme variables: --theme-text, --theme-glow, plus the four combinations
+ *   driven by classes on <html>: .dark and .theme-foliage / .theme-cyber
+ *   (applied by context/UserProvider).
+ * - Shared component layers ported from v1: .glasscard (frosted glass),
+ *   .pinkbutton, .glassbutton, .navmenu/.navbutton, .textinput,
+ *   .art-page-base (full-bleed Lino room background).
+ * - Font-face / font tokens: Figtree (body), Pompiere / New Rocker /
+ *   Special Elite (decorative, in public/fonts/).
+ *
+ * v1 reference: git show main:src/index.css  (port the system, prune dead rules)
+ * @see docs/CONVENTIONS.md (styling), docs/PRODUCT_SPEC.md (visual identity)
+ */
+
+@import "tailwindcss";
+
+:root {
+  --theme-text: #1a1a1a;
+  --theme-glow: #9e38fd;
+}
