@@ -1,0 +1,275 @@
+// SigiLife schema — Postgres.
+// RULE: any change here updates docs/DATA_MODEL.md in the same commit.
+// v1 schema (MySQL) for reference: git show main:server/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Enums ────────────────────────────────────────────────────────────────────
+
+enum Theme {
+  LIGHT
+  DARK
+}
+
+enum ColorTheme {
+  FOLIAGE
+  CYBER
+}
+
+enum SigilStatus {
+  ACTIVE
+  DESTROYED // destruction is a lifecycle state, never a row delete (GLOSSARY)
+}
+
+enum Emotion {
+  HOPE
+  GRIEF
+  RELIEF
+  JOY
+  LONGING
+}
+
+enum VoteType {
+  CHARGE
+  DESTROY
+}
+
+enum Plan {
+  FREE
+  PREMIUM
+}
+
+enum EntitlementSource {
+  SUBSCRIPTION
+  GRANT
+}
+
+// ── Auth.js adapter tables ───────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ── Core domain ──────────────────────────────────────────────────────────────
+
+model User {
+  id    String  @id @default(cuid())
+  email String  @unique
+  name  String? // from Google profile
+  image String? // from Google profile (Auth.js standard field)
+
+  // Profile — username presence == onboarding complete
+  username             String?    @unique @db.VarChar(100)
+  avatar               Int        @default(0)
+  theme                Theme      @default(DARK)
+  colorTheme           ColorTheme @default(FOLIAGE)
+  homeLocation         Json? // { lat, lng, name }
+  hasCompletedTutorial Boolean    @default(false)
+  isAdmin              Boolean    @default(false)
+
+  // Lifetime counters (denormalized; incremented transactionally)
+  sigilCount   Int @default(0)
+  destroyCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  accounts     Account[]
+  sessions     Session[]
+  sigils       Sigil[]
+  votes        SigilVote[]
+  sharesGiven  SigilShare[]  @relation("SharedSigils")
+  followers    Follow[]      @relation("Following")
+  following    Follow[]      @relation("Follower")
+  arPlacements ArPlacement[]
+  subscription Subscription?
+  entitlements Entitlement[]
+}
+
+model Sigil {
+  id        String      @id @default(cuid())
+  userId    String
+  name      String      @db.VarChar(100)
+  intention String?     @db.Text // the original statement (profanity-filtered)
+  status    SigilStatus @default(ACTIVE) // only ACTIVE counts against slots
+
+  canvasData Json? // Fabric.js canvas state
+  imageData  String? @db.Text // PNG data-URL render — flagged for object storage pre-launch
+
+  isCharged      Boolean  @default(false)
+  chargedEmotion Emotion?
+
+  // Map placement
+  locationName String?  @db.VarChar(200)
+  latitude     Decimal? @db.Decimal(10, 8)
+  longitude    Decimal? @db.Decimal(11, 8)
+
+  // Denormalized community tallies (recomputed in vote transaction)
+  chargeScore  Int @default(0)
+  destroyScore Int @default(0)
+
+  createdAt   DateTime  @default(now())
+  destroyedAt DateTime?
+
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  votes       SigilVote[]
+  shares      SigilShare[]
+  arPlacement ArPlacement[]
+
+  @@index([userId, status])
+  @@index([status, latitude, longitude]) // map queries
+}
+
+model SigilVote {
+  id       String   @id @default(cuid())
+  sigilId  String
+  userId   String
+  voteType VoteType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sigil Sigil @relation(fields: [sigilId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sigilId, userId]) // one vote per user per sigil; toggle semantics in API
+  @@index([userId])
+}
+
+model Follow {
+  id          String @id @default(cuid())
+  followerId  String
+  followingId String
+
+  createdAt DateTime @default(now())
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@index([followingId])
+}
+
+// SigiLites: who a sigil has been shared with. Replaces v1 SigilGroup
+// (which stored a denormalized username varchar).
+model SigilShare {
+  id      String @id @default(cuid())
+  sigilId String
+  userId  String
+
+  createdAt DateTime @default(now())
+
+  sigil Sigil @relation(fields: [sigilId], references: [id], onDelete: Cascade)
+  user  User  @relation("SharedSigils", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sigilId, userId])
+  @@index([userId])
+}
+
+// Letterform seed data for the draw canvas — one row per character.
+// Seeded by prisma/seed.ts from font files; read-only at runtime.
+model SvgVector {
+  id         String @id @default(cuid())
+  character  String @db.VarChar(4)
+  vectorData String @db.Text // SVG path data
+  width      Int
+  height     Int
+
+  @@unique([character])
+}
+
+// AR anchor: where a sigil lives in physical space (M8 — see docs/features/ar.md)
+model ArPlacement {
+  id      String @id @default(cuid())
+  userId  String
+  sigilId String
+
+  posX Decimal @db.Decimal(10, 5)
+  posY Decimal @db.Decimal(10, 5)
+  posZ Decimal @db.Decimal(10, 5)
+  rotX Decimal @db.Decimal(10, 5)
+  rotY Decimal @db.Decimal(10, 5)
+  rotZ Decimal @db.Decimal(10, 5)
+  rotW Decimal @db.Decimal(10, 5)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sigil Sigil @relation(fields: [sigilId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sigilId])
+}
+
+// ── Monetization (see docs/features/monetization.md) ────────────────────────
+// Stripe is the source of truth for billing; Entitlement is the source of
+// truth for permissions. Both written ONLY by the Stripe webhook (or admin grant).
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique
+  stripeCustomerId     String    @unique
+  stripeSubscriptionId String?   @unique
+  plan                 Plan      @default(FREE)
+  status               String? // raw Stripe subscription status
+  currentPeriodEnd     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Entitlement {
+  id     String            @id @default(cuid())
+  userId String
+  key    String // "sigil_slots" | "premium_styles" | ...
+  value  Json // e.g. 36, true
+  source EntitlementSource
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+}
