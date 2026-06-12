@@ -36,6 +36,7 @@ placeholder export so the project compiles. When you implement a stub:
 | New page / routing | [ARCHITECTURE.md](ARCHITECTURE.md) (route groups, client/server split) |
 | Styling / UI | [docs/CONVENTIONS.md](docs/CONVENTIONS.md) + [docs/PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md) (visual identity) |
 | Unsure what to build | [docs/ROADMAP.md](docs/ROADMAP.md) (current milestone) |
+| Starting a milestone | `docs/plans/M<N>-*.md` (detailed tasks; if missing, write it from `docs/plans/TEMPLATE.md` first) |
 
 ## Commands
 

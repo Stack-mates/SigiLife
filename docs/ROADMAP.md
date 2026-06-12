@@ -4,6 +4,12 @@ Milestones are sequential; a milestone is "done" when its definition of done
 passes and its feature doc's acceptance criteria are met. Update the status
 column as work lands.
 
+Phase-by-phase overview (dependencies, risks, why-this-order):
+[plans/OVERVIEW.md](plans/OVERVIEW.md). Detailed task plans are written
+just-in-time, one milestone ahead: [plans/M1-auth.md](plans/M1-auth.md),
+[plans/M2-make-sigil.md](plans/M2-make-sigil.md), then from
+[plans/TEMPLATE.md](plans/TEMPLATE.md) as each milestone wraps.
+
 | M | Name | Scope | Definition of done | Status |
 |---|---|---|---|---|
 | M0 | Scaffold | This branch: docs + stub tree + prisma draft | `build`/`lint`/`typecheck` pass; PR merged | **in progress** |

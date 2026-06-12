@@ -41,6 +41,7 @@ in Feb 2026 (see docs/features/ar.md).
 | [docs/CONVENTIONS.md](docs/CONVENTIONS.md) | Naming, styling, commits, PR flow, stub maintenance |
 | [docs/GLOSSARY.md](docs/GLOSSARY.md) | Domain language — sigil, charge, grimoire, scrye… |
 | [docs/ROADMAP.md](docs/ROADMAP.md) | Milestones M0–M8 with definitions of done |
+| [docs/plans/](docs/plans/OVERVIEW.md) | Phase overview + just-in-time detailed task plans (M1, M2 written) |
 | [docs/DECISIONS.md](docs/DECISIONS.md) | ADR log — why Next.js, Postgres, Auth.js, Stripe |
 | [docs/features/](docs/features/) | Per-area specs: auth, make-sigil, charge-destroy, grimoire, map, social, tutorial, ar, monetization |
 
