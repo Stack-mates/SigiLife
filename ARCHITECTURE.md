@@ -12,7 +12,7 @@
 | Maps | Mapbox GL + react-map-gl (deferred — M4) | global sigil map + geocoding |
 | Ritual FX | OGL / WebGL shaders (deferred — M5) | charge fluid sim, destroy evil-eye |
 | Payments | Stripe (deferred — M7) | ADR-005 — subscriptions + premium sigil slots |
-| AR | 8th Wall engine in `public/xr` (deferred — M8) | place sigils in physical space |
+| AR | 8th Wall Distributed Engine Binary (`@8thwall/engine-binary`, deferred — M8) | ADR-007 — open-sourced Feb 2026, SLAM binary free for commercial use in a broader app; `public/xr` is a v1-era snapshot until M8 pins the npm version |
 
 "Deferred" deps are NOT in package.json yet — install them when their
 milestone starts, with a DECISIONS.md note. Stubs must not import them.
@@ -34,7 +34,7 @@ types/          shared TS types, 8thwall.d.ts
 docs/           the documentation set (see README index)
 public/art/     hand-made Lino-style SVG art from v1 (the visual identity)
 public/xr/      8th Wall engine binaries (WASM) — do not lint/modify
-vendor/         xr-standalone.zip reference bundle
+                (v1 snapshot; replaced by pinned @8thwall/engine-binary at M8, ADR-007)
 ```
 
 ## Request flows

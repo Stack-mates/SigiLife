@@ -4,10 +4,11 @@
  * Route: /ar/[sigilId] · COOP/COEP headers set in next.config.ts for this
  * path only (SharedArrayBuffer requirement)
  *
- * What goes here (M8 — ⚠ resolve 8th Wall licensing first, see feature doc):
+ * What goes here (M8 — licensing resolved, ADR-007: pin @8thwall/engine-binary,
+ * keep Niantic attribution visible per its limited-use license):
  * - Feature-flag + admin gate; graceful "not supported" screen otherwise.
  * - <ArViewer> (components/ar), dynamic import, ssr: false: camera permission
- *   → SLAM init (public/xr engine, types/8thwall.d.ts globals) → surface
+ *   → SLAM init (engine binary, types/8thwall.d.ts globals) → surface
  *   reticle → tap to place sigil image plane → PUT /api/ar/placements.
  *
  * v1 reference: git show main:src/components/.../Map/PlaceSigilInWorld.tsx

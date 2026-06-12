@@ -51,6 +51,25 @@ in M0. Stubs may not import them.
 **Why:** Keeps the scaffold installable/buildable fast and forces each
 milestone to start with a conscious dependency decision.
 
+## ADR-007 · 2026-06-11 · 8th Wall open-source transition; drop vendored zip
+**Decision:** M8 AR will use the **Distributed Engine Binary**
+(`@8thwall/engine-binary` from npm / github.com/8thwall/engine), pinned at
+implementation time. `vendor/xr-standalone.zip` was deleted — it turned out
+to be a corrupt download (saved HTML of the GitHub repo page, not an
+archive), and the artifact is now reproducible from npm/GitHub anyway.
+`public/xr/` stays as a reference snapshot until M8 replaces it with the
+pinned npm version.
+**Why:** Niantic retired the hosted 8th Wall platform on 2026-02-28 and
+released the tech in two forms: an MIT framework (no SLAM) and a binary-only
+limited-use engine WITH SLAM, free for commercial use as part of a broader
+app. SigiLife needs SLAM, qualifies as a broader app, and needs no API keys
+under the new model. Obligations: keep Niantic attribution visible; never
+sell AR as a standalone product. Full analysis: docs/features/ar.md.
+**Alternatives:** MIT framework only (no SLAM — can't do surface
+placement); WebXR (free, but narrower iOS support — remains the fallback
+if the community binary stagnates; also note the separate 8thwall.io
+community fork).
+
 ---
 
 ### Template

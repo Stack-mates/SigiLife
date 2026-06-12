@@ -24,8 +24,9 @@ npm run dev                       # http://localhost:3000
 ```
 
 You need: a Postgres database (local Docker, Neon, or Supabase), Google OAuth
-credentials, and a Mapbox public token. Stripe and 8th Wall keys are only
-needed for the monetization and AR milestones.
+credentials, and a Mapbox public token. Stripe keys are only needed for the
+monetization milestone; AR needs no keys at all — 8th Wall went open source
+in Feb 2026 (see docs/features/ar.md).
 
 ## Documentation index
 
