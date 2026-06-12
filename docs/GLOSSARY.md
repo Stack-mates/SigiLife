@@ -7,8 +7,8 @@ docs. The fiction is the product; sloppy language breaks it.
 |---|---|
 | **Sigil** | A personal symbol drawn by a user, distilled from an intention. The core object of the app. |
 | **Intention** | The statement a user writes to begin a sigil (e.g. "I will finish what I start"). Stored on the sigil; profanity-filtered. |
-| **Consonant extraction** | The crafting rule: the unique consonants of the intention become the letterform seeds of the drawing. Implemented in `lib/sigil/extractConsonants.ts`. |
-| **Letterform vectors** | SVG path data for each extracted consonant, placed on the canvas as raw material for drawing (DB: `SvgVector`). |
+| **Character extraction** | The crafting rule: strip vowels (incl. accented), spaces, digits, and duplicates from the intention — keeping consonants, accented consonants, and symbols, first instance wins. Implemented in `lib/sigil/extractSigilCharacters.ts`. |
+| **Letterform vectors** | SVG path data for each extracted character, traced at runtime from the sigil font (`lib/sigil/traceGlyphs.ts`, ADR-008) and placed on the canvas as editable vector raw material. |
 | **Charge** | The ritual of empowering a sigil with an emotion (Hope, Grief, Relief, Joy, Longing) through the fluid-trace interaction. A sigil "is charged"; never "liked" or "upvoted". |
 | **Destroy** | The ritual of releasing a sigil when its work is done — the evil-eye ceremony. Destruction is a **lifecycle state** (`status: DESTROYED`), not row deletion. Never say "delete" in UI. |
 | **Charge score / Destroy score** | Community vote tallies on a sigil (✨ / 🔥). One vote per user per sigil; voting the same way twice retracts it. |

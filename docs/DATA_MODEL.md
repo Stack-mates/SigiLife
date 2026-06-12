@@ -45,10 +45,10 @@ Replaces v1's `SigilGroup`, which stored a denormalized username varchar.
 Now a real join: `sigilId` + `userId` (the SigiLite), unique pair, cascade
 on sigil delete.
 
-### SvgVector
-Letterform seed data: one row per character (`character`, `vectorData` SVG
-path, `width`, `height`). Seeded from font files via the seed script (v1:
-`server/prisma/seed-opentype.js` on `main`). Read-only at runtime.
+### ~~SvgVector~~ (removed 2026-06-12, ADR-008)
+v1 seeded letterform paths into a table; the rebuild traces glyphs at
+runtime from the font (`lib/sigil/traceGlyphs.ts`), so the table and seed
+pipeline are gone. The font file is the source of truth for any glyph.
 
 ### ArPlacement
 One per (user, sigil): position `posX/Y/Z` + rotation quaternion

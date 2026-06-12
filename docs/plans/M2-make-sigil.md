@@ -1,5 +1,11 @@
 # M2 Plan — Make Sigil
 
+> **Superseded in part (2026-06-12):** PR1–PR3 shipped with changed rules —
+> extraction keeps symbols/accented consonants (extractSigilCharacters),
+> glyphs trace at runtime (ADR-008, no seed/SvgVector), single-canvas editor.
+> PR4 (server save, profanity, slots, shares) moved to the auth milestone
+> (ADR-009). See docs/features/make-sigil.md for current truth.
+
 **Spec:** [../features/make-sigil.md](../features/make-sigil.md) ·
 **Exit:** end-to-end sigil creation on a phone; consonant rules match v1;
 slot limit enforced server-side; all feature-doc acceptance criteria checked.
@@ -18,7 +24,7 @@ slot limit enforced server-side; all feature-doc acceptance criteria checked.
 
 ### PR 1 — pure logic + seed data (no UI; the testable core)
 1. Vitest setup; `npm run test` script. ✎ CONVENTIONS testing section.
-2. `lib/sigil/extractConsonants.ts` — port v1 logic EXACTLY (read
+2. `lib/sigil/extractSigilCharacters.ts` — port v1 logic EXACTLY (read
    `main:src/components/.../WriteSigil.tsx` first; lock behavior with unit
    tests incl. unicode/empty/vowel-only cases). ✎ flip STATUS.
 3. `prisma/seed.ts` — port `main:server/prisma/seed-opentype.js`: font →
@@ -62,7 +68,7 @@ slot limit enforced server-side; all feature-doc acceptance criteria checked.
 15. `components/premium/SlotMeter.tsx` — basic used/12 version. ✎ flip STATUS.
 
 ## Verification
-- Unit: extractConsonants + vectorSeed green in CI (`npm run test`).
+- Unit: extractSigilCharacters + vectorSeed green in CI (`npm run test`).
 - Phone E2E: write → draw with finger → undo/redo torture (20+) → style →
   save → row in db:studio with canvasData + imageData; library stub URL loads.
 - 13th sigil attempt → LIMIT_REACHED surfaced as the slot-full panel.

@@ -35,7 +35,7 @@
 | GET | `/api/users/[id]/follows` | session | `?direction=followers\|following\|mutual` | `{data: UserSummary[]}` | `/followers`, `/following` |
 | POST | `/api/users/[id]/follows` | session | — (id = target) | `{data: Follow}` | `POST /users/follow` |
 | DELETE | `/api/users/[id]/follows` | session | — | unfollow | `PATCH /users/unfollow` |
-| POST | `/api/vectors` | session | `vectorsSchema`: `{characters: string[]}` | `{data: SvgVector[]}` letterform seeds for the draw canvas | `POST /vectors/character-vectors` |
+| POST | `/api/vectors` | none yet (add session when auth lands — ADR-009) | `vectorsSchema`: `{characters: string[]}` (1–64, single code points) | `{data: {glyphs: TracedGlyph[], missing: string[]}}` — paths traced at runtime from the sigil font (ADR-008), `missing` = chars the font can't draw. **Implemented.** | `POST /vectors/character-vectors` |
 | GET/PUT | `/api/ar/placements` | session | PUT: `placementSchema` (sigilId, pos, quaternion) | `{data: ArPlacement}` | (unfinished in v1) |
 | POST | `/api/stripe/checkout` | session | `{plan: "PREMIUM"}` | `{data: {url}}` Stripe Checkout session | — (new) |
 | POST | `/api/stripe/webhook` | Stripe signature | raw body | 200; syncs Subscription + Entitlements | — (new) |

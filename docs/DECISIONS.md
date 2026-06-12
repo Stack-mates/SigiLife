@@ -70,6 +70,33 @@ placement); WebXR (free, but narrower iOS support — remains the fallback
 if the community binary stagnates; also note the separate 8thwall.io
 community fork).
 
+## ADR-008 · 2026-06-12 · Runtime glyph tracing replaces SvgVector seeding
+**Decision:** `POST /api/vectors` traces glyph outlines at request time with
+`opentype.js` from `public/fonts/UncialAntiqua-Regular.ttf` (verified: full
+coverage incl. accented consonants and symbols, 371 glyphs). The `SvgVector`
+table and seed script are removed. Installed: `fabric` (editor),
+`opentype.js` (+types), `vitest` (dev).
+**Why:** The intention rules now keep accented letters and symbols — a
+pre-seeded a–z table can't serve that; the font itself is the source of
+truth for any glyph. Also removes the DB dependency from the creation flow
+entirely, enabling ADR-009's sequencing.
+**Alternatives:** seed every glyph (brittle, 371 rows, still misses future
+fonts); client-side tracing (ships the parser + font to every browser).
+
+## ADR-009 · 2026-06-12 · Sigil creation first; Google auth + DB land last
+**Decision:** Build the make-sigil flow now with no auth/DB; drafts persist
+locally (sessionStorage/localStorage). Google OAuth + Postgres move to the
+END of the build order. When user-owned features need an identity before
+then, use a dev-identity shim behind the same `lib/auth.ts` interface so
+swapping in real auth is config, not refactor.
+**Why:** The differentiated, risky work (editor, rituals) should de-risk
+first; auth is commodity work with a fixed contract (session shape is
+already specified in docs/features/auth.md). Caveat recorded: the DB cannot
+wait as long as OAuth — votes/social/library persistence need Postgres
+well before launch; only the identity provider is "absolutely last."
+**Alternatives:** roadmap order as planned (M1 first — rejected by team
+preference); mock the whole API (more scaffolding than value).
+
 ---
 
 ### Template

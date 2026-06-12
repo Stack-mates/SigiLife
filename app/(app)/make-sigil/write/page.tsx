@@ -1,14 +1,20 @@
 /**
  * Write step — the intention.
- * STATUS: stub
+ * STATUS: implemented
  * Route: /make-sigil/write
  *
- * What goes here (M2): mounts <WriteSigil> (components/sigil) — textarea,
- * live unique-consonant preview via lib/sigil/extractConsonants, client-side
- * profanity precheck, Next → /make-sigil/draw.
+ * Mounts <WriteSigil>: textarea + live character chips (extraction rules in
+ * lib/sigil/extractSigilCharacters) + Next gating. Server-side profanity
+ * filtering happens at save (auth/DB milestone — ADR-009).
  *
  * @see docs/features/make-sigil.md
  */
+import { WriteSigil } from "@/components/sigil/WriteSigil";
+
 export default function WriteStepPage() {
-  return <main className="p-8">write intention (stub)</main>;
+  return (
+    <main>
+      <WriteSigil />
+    </main>
+  );
 }

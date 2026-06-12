@@ -205,17 +205,8 @@ model SigilShare {
   @@index([userId])
 }
 
-// Letterform seed data for the draw canvas — one row per character.
-// Seeded by prisma/seed.ts from font files; read-only at runtime.
-model SvgVector {
-  id         String @id @default(cuid())
-  character  String @db.VarChar(4)
-  vectorData String @db.Text // SVG path data
-  width      Int
-  height     Int
-
-  @@unique([character])
-}
+// NOTE: v1's SvgVector table was removed (ADR-008) — letterform paths are
+// traced at runtime from the font by lib/sigil/traceGlyphs.ts.
 
 // AR anchor: where a sigil lives in physical space (M8 — see docs/features/ar.md)
 model ArPlacement {

@@ -1,20 +1,15 @@
 /**
- * Prisma seed — populates SvgVector with letterform path data.
+ * Prisma seed — currently nothing to seed.
  * STATUS: stub
  *
- * What goes here (M2, make-sigil milestone):
- * - Load a font file (opentype.js) from public/fonts/
- * - For each character a–z: extract the glyph path, normalize to a viewbox,
- *   upsert an SvgVector row { character, vectorData, width, height }
- * - Idempotent: safe to re-run (upsert on the unique `character` field)
- *
- * v1 reference: git show main:server/prisma/seed-opentype.js
- * Run with: npm run db:seed
- * @see docs/features/make-sigil.md
+ * v1 seeded letterform vectors into an SvgVector table; the rebuild traces
+ * glyphs at runtime instead (ADR-008, lib/sigil/traceGlyphs.ts), so that
+ * pipeline is gone. This file stays as the hook for future seed needs
+ * (e.g. demo/staging fixtures). Run with: npm run db:seed
  */
 
 async function main() {
-  console.log("seed.ts is a stub — implemented in M2 (see docs/features/make-sigil.md)");
+  console.log("Nothing to seed — glyphs are traced at runtime (ADR-008).");
 }
 
 main().catch((e) => {

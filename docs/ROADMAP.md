@@ -4,6 +4,11 @@ Milestones are sequential; a milestone is "done" when its definition of done
 passes and its feature doc's acceptance criteria are met. Update the status
 column as work lands.
 
+**Re-sequenced 2026-06-12 (ADR-009):** Google auth + DB move to the END of
+the build order; the creation flow shipped first with local-only persistence.
+M2's client side is largely done; M1 is now effectively the FINAL milestone
+(rename pending — treat "M1" rows below as "auth milestone, last").
+
 Phase-by-phase overview (dependencies, risks, why-this-order):
 [plans/OVERVIEW.md](plans/OVERVIEW.md). Detailed task plans are written
 just-in-time, one milestone ahead: [plans/M1-auth.md](plans/M1-auth.md),
@@ -14,7 +19,7 @@ just-in-time, one milestone ahead: [plans/M1-auth.md](plans/M1-auth.md),
 |---|---|---|---|---|
 | M0 | Scaffold | This branch: docs + stub tree + prisma draft | `build`/`lint`/`typecheck` pass; PR merged | **in progress** |
 | M1 | Auth + profile | Auth.js Google login, create-profile, settings, session gate, theming live | New user can sign in, onboard, pick theme, sign out, return | |
-| M2 | Make sigil | write→draw→style wizard, consonant extraction, Fabric canvas, vectors API, save with slot check, profanity filter. Install: fabric. Add Vitest (ADR). | A user can create a sigil end-to-end and see it in the library | |
+| M2 | Make sigil | write→draw→style wizard, character extraction (consonants+symbols), single-canvas Fabric editor, runtime glyph tracing (ADR-008), local keep + PNG. Installed: fabric, opentype.js, vitest. | A user can create a sigil end-to-end | **core done 2026-06-12** (server save → auth milestone) |
 | M3 | Grimoire + library | Book shell, library grid, sigil detail page, rename, destroy (status flip) | Full read/manage lifecycle of own sigils | |
 | M4 | Map + votes | WorldMap, placement, place-sigil flow, vote endpoint + VotePanel. Install: mapbox-gl, react-map-gl, @mapbox/search-js-react. | Sigils visible/votable on the global map | |
 | M5 | Rituals | Charge + destroy ritual pages, emotion picker, SplashCursor fluid sim, EvilEye. Install: ogl. | Rituals feel good on a phone; charge sets emotion; destroy frees slot | |

@@ -1,59 +1,66 @@
 # Feature: Make Sigil (write → draw → style)
 
-**Milestone:** M2 · **Status:** stub
+**Milestone:** M2 · **Status: core implemented 2026-06-12** (server save
+deferred — ADR-009)
 
 ## Purpose
-The core creation wizard. Intention text → unique-consonant extraction →
-Fabric.js canvas seeded with letterform vectors → style (color/ring/glow) →
-name + optional location + optional share → save.
+The core creation wizard. Intention text → character extraction → a single
+modern canvas editor seeded with TRUE VECTOR letterforms traced from the
+sigil font → style + name → keep.
 
-## User stories
-- I write an intention and watch its unique consonants appear live.
-- I draw freely over/with the letterform shapes; I can move/scale/rotate
-  pieces, undo/redo, clear.
-- I color my strokes, add a ring, add a glow; I name the sigil.
-- I optionally pin it to a place and share it with SigiFriends, then save —
-  and I'm offered the charge ritual immediately.
-- If my slots are full I'm told so and pointed at destroy (or premium).
+## Character extraction (rules locked 2026-06-12 — supersedes v1 consonants-only)
+Implemented in `lib/sigil/extractSigilCharacters.ts` (unit-tested):
+- **KEEP:** consonant letters incl. accented (ñ, ç, ß…), symbols & punctuation (&, !, ?)
+- **STRIP:** vowels incl. accented forms (a/é/ü…), spaces, digits, duplicates
+- **Dedup:** first instance wins; case-insensitive for letters ("S" then "s"
+  keeps "S"); ñ and n are distinct letters; symbols dedup exactly; "y" is a
+  consonant. Order of first appearance preserved. Max intention: 280 chars.
 
-## Flow & state
-`make-sigil/layout.tsx` mounts `MakeSigilProvider` holding the draft
-(intention, consonants, canvas JSON, style, name, location, shareWith).
-Replaces v1's localStorage juggling; surviving a refresh is nice-to-have,
-not required (provider may mirror to sessionStorage).
+## Letterforms: runtime glyph tracing (ADR-008 — replaces SvgVector table)
+`POST /api/vectors` traces outlines on demand with opentype.js from
+`public/fonts/UncialAntiqua-Regular.ttf` (`lib/sigil/traceGlyphs.ts`,
+font parsed once + cached). Any glyph the font covers works — verified
+incl. accented consonants and symbols. Characters without a glyph return
+in `missing` and the editor tells the user to draw them by hand. No DB.
 
-Steps: `/make-sigil/write` → `/draw` → `/style`. Entering `/make-sigil`
-redirects to `/write`. Guard: `/draw` without an intention bounces back.
+## The editor (single canvas — supersedes v1's draw/manipulate split)
+`components/sigil/DrawSigilCanvas.tsx`, Fabric.js (dynamic import only):
+- **Select tool** (default): move/scale/rotate letterforms AND drawn strokes;
+  color control recolors the selection (fills for letterforms, strokes for pen).
+- **Pen tool:** PencilBrush freehand, color + width (2–16), round caps.
+- Undo/redo (JSON snapshot history), delete selection, clear-and-reseed
+  (clears drawing, restores the letterform ring).
+- Letterforms seed in a deterministic loose ring (`lib/sigil/vectorSeed.ts`,
+  unit-tested) as fabric.Path objects — lossless scaling, full path data.
+- Responsive: logical 600×600 space, zoom-fitted to viewport via ResizeObserver.
 
-## Components
-`sigil/WriteSigil` (textarea + consonant preview + profanity precheck),
-`sigil/DrawSigilCanvas` (Fabric init, draw/manipulate modes, history stack),
-`sigil/StyleSigil` (style controls + name + `map/MapSearchBox` + share picker
-+ save), `layout/NextButton`.
+## Wizard state
+`context/MakeSigilProvider.tsx`: draft (intention, canvasJson, imageDataUrl,
+style {color, ring, glow}, name), characters always derived, sessionStorage
+mirror (refresh-safe), step-validity guards (draw needs characters, style
+needs a canvas).
 
-## lib
-- `lib/sigil/extractConsonants.ts` — pure function; port logic from
-  `main:src/components/.../WriteSigil.tsx`. Unit-test this (first Vitest target).
-- `lib/sigil/vectorSeed.ts` — lay letterform vectors onto the canvas.
-
-## API / data
-- `POST /api/vectors` — consonants → SvgVector rows.
-- `POST /api/sigils` — full draft; server re-runs profanity filter + slot
-  check (`lib/entitlements.ts`). `LIMIT_REACHED` → slot-full UI.
-- Models: Sigil, SvgVector, SigilShare.
+## Style step (lean local version)
+Name + ring/glow toggles + aura color, CSS-previewed; "Keep this sigil"
+stores the finished draft in localStorage (`sigilife:finished-sigils`) +
+PNG download. **Deferred to the auth/DB milestone:** real POST /api/sigils,
+profanity filter, slot enforcement, share-with-friends, baking ring/glow
+into the final render, migrating locally-kept sigils into the grimoire.
 
 ## v1 reference (`main`)
-`src/components/SigilRoomHome/MakeSigil/**` (canvas config, brush settings,
-history implementation), `server/routes/vector.routes.ts`,
-`server/prisma/seed-opentype.js` (vector seeding).
+`src/components/SigilRoomHome/MakeSigil/**` — consulted for Fabric patterns;
+extraction and architecture intentionally diverge (rules above).
 
 ## Acceptance criteria
-- [ ] End-to-end create on a phone with touch drawing.
-- [ ] Consonant extraction matches v1 behavior (case-insensitive, unique, consonants only).
-- [ ] Undo/redo ≥ 20 steps without canvas corruption.
-- [ ] Slot limit enforced server-side (client check is cosmetic).
-- [ ] Profanity in the intention blocks save with a clear message.
+- [x] Consonant/symbol extraction matches the locked rules (12 unit tests)
+- [x] Letterforms are editable vector paths, any font-covered glyph incl. ñ/&
+- [x] One canvas, select + pen, no mode pages
+- [x] Undo/redo, delete, clear-and-reseed
+- [ ] End-to-end create on a phone with touch drawing (manual verify pending)
+- [ ] Server persistence + profanity + slots (auth/DB milestone)
 
 ## Open questions
-- Keep v1's admin-only SVG import on the canvas? (lean: drop)
-- Max intention length (v1 had none; propose 280 chars).
+- ~~Intention max length~~ → 280. ~~Admin SVG import~~ → dropped.
+- Font choice per-sigil (editor font picker) — Uncial Antiqua is the only
+  seed font for now; revisit as a premium style hook (monetization.md).
+- Touch ergonomics pass (pinch-zoom? two-finger pan?) after phone testing.

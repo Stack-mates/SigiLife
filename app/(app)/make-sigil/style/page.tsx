@@ -1,17 +1,19 @@
 /**
- * Style step — styling, naming, placing, sharing, saving.
- * STATUS: stub
+ * Style step — name, ring, glow, local save.
+ * STATUS: implemented (local-only save until auth/DB — ADR-009)
  * Route: /make-sigil/style
  *
- * What goes here (M2): mounts <StyleSigil> (components/sigil) — stroke color /
- * ring / glow controls over a preview render, name input, optional location
- * (MapSearchBox, M4), SigiFriend share picker, Save → POST /api/sigils.
- * On success: route to /charge-sigil/[newId] (the loop flows straight into
- * the charge ritual). LIMIT_REACHED → slot-full panel with destroy/premium links.
+ * Mounts <StyleSigil>. Real POST /api/sigils persistence, profanity check,
+ * slot enforcement, and share-with-friends arrive with the auth milestone.
  *
- * v1 reference: git show main:src/components/.../MakeSigilComponents/SaveSigil.tsx
  * @see docs/features/make-sigil.md
  */
+import { StyleSigil } from "@/components/sigil/StyleSigil";
+
 export default function StyleStepPage() {
-  return <main className="p-8">style & save (stub)</main>;
+  return (
+    <main>
+      <StyleSigil />
+    </main>
+  );
 }

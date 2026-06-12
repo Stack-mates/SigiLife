@@ -1,15 +1,20 @@
 /**
  * Draw step — the sigil canvas.
- * STATUS: stub
- * Route: /make-sigil/draw · client-heavy page (ARCHITECTURE.md exception list)
+ * STATUS: implemented
+ * Route: /make-sigil/draw · client-heavy page (Fabric.js editor)
  *
- * What goes here (M2): guard (no intention in draft → redirect /write), then
- * mounts <DrawSigilCanvas> (components/sigil) with letterform seeds fetched
- * from POST /api/vectors for the draft's consonants. Fabric.js is dynamically
- * imported here — never in a server bundle.
+ * Mounts <DrawSigilCanvas>: single-canvas editor (select + pen tools),
+ * letterforms traced as vector paths from /api/vectors. The component
+ * itself guards the step (no characters in draft → back to /write).
  *
  * @see docs/features/make-sigil.md
  */
+import { DrawSigilCanvas } from "@/components/sigil/DrawSigilCanvas";
+
 export default function DrawStepPage() {
-  return <main className="p-8">draw sigil (stub)</main>;
+  return (
+    <main>
+      <DrawSigilCanvas />
+    </main>
+  );
 }

@@ -59,7 +59,7 @@ Cross-cutting:
 | `LogInAuth/ProtectedRoute.tsx` | `(app)/layout.tsx` session gate |
 | `SigilRoomHome/HomeRoom.tsx` | `(app)/home/page.tsx` |
 | `MakeSigil/MakeSigil.tsx` (slot gate) | slot check moved into `POST /api/sigils` + `premium/SlotMeter` |
-| `MakeSigilComponents/WriteSigil.tsx` | `sigil/WriteSigil` + `lib/sigil/extractConsonants.ts` |
+| `MakeSigilComponents/WriteSigil.tsx` | `sigil/WriteSigil` + `lib/sigil/extractSigilCharacters.ts` |
 | `MakeSigilComponents/DrawSigil.tsx` | `sigil/DrawSigilCanvas` (draw) + `sigil/StyleSigil` (style — was one file doing both) |
 | `MakeSigilComponents/SaveSigil.tsx` | `sigil/StyleSigil` save section + `map/MapSearchBox` |
 | `ChargeSigil/SigilCharge.tsx` | `charge/ChargeRitual` |

@@ -1,5 +1,10 @@
 # Implementation Plan — Phase Overview (M1–M8)
 
+> **Re-sequenced 2026-06-12 (ADR-009):** auth + DB (M1) moved to the END of
+> the build; M2's creation flow shipped first with local persistence and a
+> dev-identity shim planned for user-owned features in between. Read "M1"
+> below as "the final milestone"; M2 core is done.
+
 How this directory works: this file is the standing overview of all phases.
 Detailed task plans live alongside it (`M1-auth.md`, `M2-make-sigil.md`, …)
 and are written **just-in-time** — at most one milestone ahead of current
