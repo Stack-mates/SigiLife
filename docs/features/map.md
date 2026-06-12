@@ -14,6 +14,18 @@ sigil (at creation or later).
 - Voting toggles: same vote again retracts; opposite vote switches.
 - I place/move my sigil via search (geocoder) or dropping a pin.
 
+## Design decision for M4: model `Place` as a first-class concept
+
+Sponsored locations are a planned post-traction revenue stream (see
+features/monetization.md "Future revenue: partnerships" — the Niantic-style
+sanctified-sites model). To keep that a column instead of a rewrite, decide
+at M4 kickoff whether sigils attach to a **`Place`** row (id, name, lat/lng,
+and later: `sponsorId`, perk/art overrides) rather than carrying raw
+lat/lng + locationName themselves. Cost now: one join + a findOrCreate on
+placement. Option value: sponsored sites, per-place sigil clustering, and
+"charge here for a bonus" geo-verification all become additive.
+If adopted: ✎ DATA_MODEL.md + schema in the same PR (CLAUDE.md rule #1).
+
 ## Components & routes
 - `grimoire/map/page.tsx` → `map/WorldMap` (client) + `map/SigilMarker` +
   `map/VotePanel`.
@@ -38,5 +50,7 @@ popup UX, filter), `MapSearchBox.tsx`; vote logic in
 - [ ] No Mapbox secret leakage: only the pk. public token, via NEXT_PUBLIC_MAPBOX_TOKEN.
 
 ## Open questions
+- **`Place` as first-class model — decide at M4 kickoff** (see design
+  decision above; default lean: yes, the migration cost only grows later).
 - Marker rendering at scale: raw markers vs cluster layer threshold.
 - Should unplaced sigils be nudged toward placement (empty-map cold start)?

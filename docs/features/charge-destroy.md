@@ -43,3 +43,7 @@ WebGL fluid implementation — port, don't rewrite),
 ## Open questions
 - Can a sigil be re-charged with a different emotion? (v1: charge was one-way boolean. Lean: yes, re-charge overwrites emotion — more engagement.)
 - Does community destroy-score ever auto-destroy? (v1: no. Keep no for launch; revisit as a social mechanic.)
+- Destroy ritual done-state should leave room for the post-launch "closed
+  case file" print offer (physical memento of the destroyed sigil — see
+  features/monetization.md). No build needed at M5; just don't design the
+  ending as a dead-end screen.
