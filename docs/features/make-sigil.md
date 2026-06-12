@@ -56,11 +56,12 @@ extraction and architecture intentionally diverge (rules above).
 - [x] Letterforms are editable vector paths, any font-covered glyph incl. ñ/&
 - [x] One canvas, select + pen, no mode pages
 - [x] Undo/redo, delete, clear-and-reseed
-- [ ] End-to-end create on a phone with touch drawing (manual verify pending)
+- [x] End-to-end create on a phone with touch drawing (verified on device 2026-06-12)
 - [ ] Server persistence + profanity + slots (auth/DB milestone)
 
 ## Open questions
 - ~~Intention max length~~ → 280. ~~Admin SVG import~~ → dropped.
 - Font choice per-sigil (editor font picker) — Uncial Antiqua is the only
   seed font for now; revisit as a premium style hook (monetization.md).
-- Touch ergonomics pass (pinch-zoom? two-finger pan?) after phone testing.
+- Touch basics verified on device (select/transform/pen work). Pinch-zoom /
+  two-finger pan remain unimplemented — add if drawing detail demands it.
