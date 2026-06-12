@@ -15,8 +15,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMakeSigil } from "@/context/MakeSigilProvider";
-
-const FINISHED_KEY = "sigilife:finished-sigils";
+import { keepSigil } from "@/lib/sigil/localStore";
 
 export function StyleSigil() {
   const router = useRouter();
@@ -31,16 +30,13 @@ export function StyleSigil() {
 
   const finishLocally = () => {
     try {
-      const existing = JSON.parse(localStorage.getItem(FINISHED_KEY) ?? "[]");
-      existing.push({
+      keepSigil({
         name: draft.name || "Unnamed sigil",
         intention: draft.intention,
         style: draft.style,
         canvasJson: draft.canvasJson,
         imageDataUrl: draft.imageDataUrl,
-        finishedAt: new Date().toISOString(),
       });
-      localStorage.setItem(FINISHED_KEY, JSON.stringify(existing));
       setSaved(true);
     } catch {
       // storage full — the download button still works

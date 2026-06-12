@@ -1,16 +1,11 @@
 /**
- * Grimoire layout — the open spellbook frame around all grimoire pages.
- * STATUS: stub
+ * Grimoire layout — mounts the book shell around all grimoire pages.
+ * STATUS: implemented
  *
- * What goes here (M3):
- * - <GrimoireBook> (components/grimoire): the book art frame (Lino assets),
- *   responsive — two-page spread landscape, stacked pages portrait.
- * - Tab/bookmark navigation between map / library / profile / friends /
- *   settings (in-fiction: ribbon bookmarks).
- *
- * v1 reference: git show main:src/components/SigilRoomHome/Grimoire/Grimoire.tsx
  * @see docs/features/grimoire.md
  */
+import { GrimoireBook } from "@/components/grimoire/GrimoireBook";
+
 export default function GrimoireLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <GrimoireBook>{children}</GrimoireBook>;
 }

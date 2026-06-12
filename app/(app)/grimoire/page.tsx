@@ -1,14 +1,12 @@
 /**
- * Grimoire default spread — profile (left page) + library preview (right page).
- * STATUS: stub
- * Route: /grimoire
- *
- * What goes here (M3): server component fetching the session user's profile
- * summary + recent sigils via lib/prisma; renders <LeftPage> and <RightPage>
- * (components/grimoire) inside the book frame from the layout.
+ * Grimoire default — redirect to the library (the default spread with
+ * profile arrives in the DB era when profile data exists).
+ * STATUS: implemented (interim redirect)
  *
  * @see docs/features/grimoire.md
  */
+import { redirect } from "next/navigation";
+
 export default function GrimoirePage() {
-  return <main className="p-8">grimoire spread (stub)</main>;
+  redirect("/grimoire/library");
 }

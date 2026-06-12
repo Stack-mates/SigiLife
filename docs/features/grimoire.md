@@ -1,6 +1,16 @@
 # Feature: Grimoire (book shell, library, sigil page)
 
-**Milestone:** M3 · **Status:** stub
+**Milestone:** M3 · **Status: core implemented 2026-06-12 (local-first)**
+
+> Local-first era (ADR-009): the grimoire reads `lib/sigil/localStore.ts` —
+> the same on-device store the style step writes. That module is THE seam:
+> when the DB lands, its callers swap to API calls with identical shapes.
+> Shipped: book shell with ribbon tabs, library grid (active), "Closed
+> cases" view (destroyed), sigil page with inline rename and confirm+destroy
+> (mechanical status flip; ritual visuals are the rituals milestone).
+> Deferred to DB era: profile spread, map, friends, votes, SigiLites,
+> pick-mode routing. Destroyed-view name decided: **"Closed cases."**
+> Book shell decided: modern dark shell now, Lino art frame as polish pass.
 
 ## Purpose
 The user's spellbook: a two-page book UI that frames the map, library,
