@@ -12,11 +12,11 @@
 import Link from "next/link";
 import type { StoredSigil } from "@/lib/sigil/localStore";
 
-export function SigilThumb({ sigil }: { sigil: StoredSigil }) {
+export function SigilThumb({ sigil, href }: { sigil: StoredSigil; href?: string }) {
   const closed = sigil.status === "DESTROYED";
   return (
     <Link
-      href={`/grimoire/sigil/${sigil.id}`}
+      href={href ?? `/grimoire/sigil/${sigil.id}`}
       className={
         "group flex flex-col gap-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-3 transition hover:border-violet-700 " +
         (closed ? "opacity-50 saturate-50" : "")

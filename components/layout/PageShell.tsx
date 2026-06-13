@@ -1,16 +1,37 @@
 /**
- * PageShell — full-bleed Lino room background with a content slot.
- * STATUS: stub · server component
+ * PageShell — full-bleed atmospheric background with a centered content slot.
+ * STATUS: implemented (server component)
  *
- * Props (planned): { art: string (public/art path); children; overlayClassName? }
- * What goes here (M1): the v1 page pattern done once — background illustration
- * (next/image, priority), aspect-ratio handling for phone portrait (v1 scaled
- * a 2160x1260 desktop scene; rebuild crops/anchors art mobile-first),
- * glasscard content container. Used by home, landing, wizard, grimoire pages.
+ * Props: { art?: public-path to a Lino background; children; className? }.
+ * Renders the art faintly behind a dark wash so foreground content stays
+ * readable across themes. Uses a plain <img> (not next/image) because the
+ * art is decorative local SVG — next/image's optimizer rejects SVG without
+ * dangerouslyAllowSVG, and optimization buys nothing for a full-bleed wash.
  *
- * v1 reference: the .maincontainer/.art-page-base pattern in main:src/index.css
- * @see docs/CONVENTIONS.md (styling), docs/COMPONENT_MAP.md
+ * @see docs/CONVENTIONS.md (styling), docs/PRODUCT_SPEC.md
  */
-export function PageShell({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>;
+export function PageShell({
+  art,
+  children,
+  className = "",
+}: {
+  art?: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className={"relative min-h-dvh overflow-hidden bg-zinc-950 text-zinc-100 " + className}>
+      {art && (
+        // eslint-disable-next-line @next/next/no-img-element -- decorative local SVG
+        <img
+          src={art}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute inset-0 size-full select-none object-cover opacity-[0.12]"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/10 to-zinc-950" aria-hidden />
+      <div className="relative z-10">{children}</div>
+    </div>
+  );
 }
