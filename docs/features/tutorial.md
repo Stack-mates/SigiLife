@@ -1,6 +1,16 @@
 # Feature: Tutorial (Harper Crowe & Bennet Voss)
 
-**Milestone:** M6 · **Status:** stub
+**Milestone:** M6 · **Status: intro implemented 2026-06-13 (local-first)**
+
+> Shipped: a centered first-run overlay greeting from Harper & Bennet on the
+> first /home visit, walking through the loop (recruit → write → charge →
+> destroy → grimoire). Completion persists to localStorage
+> (`sigilife:tutorial-complete`); Skip always available; "Replay
+> introduction" in Settings. Voice ported from v1.
+> **Deferred (needs visual tuning, built unseen):** anchored per-page
+> spotlight steps that advance as the user performs each action — the current
+> version is a centered intro, not step-by-step page coaching.
+> **Needs a real-device pass:** portrait sizing + mobile bottom-sheet layout.
 
 ## Purpose
 First-run guidance delivered in-fiction by two agents of The Office: Harper

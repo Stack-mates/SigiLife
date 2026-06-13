@@ -1,19 +1,15 @@
 /**
- * (app) layout — THE auth gate for the whole signed-in app.
- * STATUS: stub
- *
- * What goes here (M1):
- * - Server-side session check via lib/auth.ts:
- *     no session            → redirect("/")
- *     session, no username  → redirect("/create-profile")
- *   This single gate replaces v1's per-route <ProtectedRoute> wrapper.
- * - Mounts the global chrome: <Menu> (components/layout) and
- *   <TutorialProvider> + <TutorialOverlay> (M6 — dynamic import, only for
- *   users with hasCompletedTutorial === false).
+ * (app) layout — global chrome for the signed-in app.
+ * STATUS: partial — mounts the tutorial (M6). The server-side AUTH GATE
+ * (no session → "/"; no username → "/create-profile") arrives with the
+ * auth milestone (ADR-009: auth last); until then all (app) routes are open
+ * and the app is local-first. <Menu> also lands with auth.
  *
  * v1 reference: git show main:src/components/LogInAuth/ProtectedRoute.tsx
- * @see docs/features/auth.md, ARCHITECTURE.md (route groups)
+ * @see docs/features/auth.md, docs/features/tutorial.md
  */
+import { TutorialProvider } from "@/context/TutorialProvider";
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <TutorialProvider>{children}</TutorialProvider>;
 }

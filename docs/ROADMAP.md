@@ -23,7 +23,7 @@ just-in-time, one milestone ahead: [plans/M1-auth.md](plans/M1-auth.md),
 | M3 | Grimoire + library | Book shell (ribbon tabs), library grid + Closed cases view, sigil page, rename, destroy (status flip) — local-first over lib/sigil/localStore | Full read/manage lifecycle of own sigils | **core done 2026-06-12** (social/profile/map → DB era) |
 | M4 | Map + votes | WorldMap, placement, place-sigil flow, vote endpoint + VotePanel. Install: mapbox-gl, react-map-gl, @mapbox/search-js-react. | Sigils visible/votable on the global map | |
 | M5 | Rituals | Charge + destroy ritual pages, emotion picker (5 canonical), SplashCursor fluid sim, EvilEye. Installed: ogl. GhostCursor dropped (ADR-011). | Rituals feel good on a phone; charge sets emotion; destroy → Closed cases | **done 2026-06-13** (local-first) |
-| M6 | Tutorial | Harper/Bennet overlay engine across M1–M5 screens, hasCompletedTutorial persistence | First-time flow guides a new user through their first sigil | |
+| M6 | Tutorial | Harper/Bennet first-run intro overlay on /home, completion persisted locally, replay in Settings | First-time flow introduces the loop | **intro done 2026-06-13** (anchored per-page steps deferred) |
 | M7 | Monetization | Stripe checkout + webhook, Subscription/Entitlement sync, premium page, PaywallGate, slot enforcement from entitlements. Install: stripe. | A test-mode user can buy premium and gain slots | |
 | M8 | AR (post-launch) | 8th Wall ArViewer, placements API, flag gate | Admin can place + revisit a sigil in AR | |
 

@@ -16,11 +16,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { clearAllSigils, listSigils } from "@/lib/sigil/localStore";
+import { useTutorial } from "@/context/TutorialProvider";
 
 export default function SettingsPage() {
   const router = useRouter();
+  const { replay } = useTutorial();
   const [count, setCount] = useState<number | null>(null);
   const [confirming, setConfirming] = useState(false);
+  const [replayed, setReplayed] = useState(false);
 
   useEffect(() => {
     setCount(listSigils().length);
@@ -72,6 +75,21 @@ export default function SettingsPage() {
               className="self-start rounded-full border border-red-900/60 px-5 py-2 text-sm text-red-400/90 transition enabled:hover:border-red-700 enabled:hover:text-red-300 disabled:opacity-40">
               Clear local sigils
             </button>
+          )}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-xs uppercase tracking-[0.2em] text-zinc-500">Guidance</h2>
+        <div className="flex flex-col gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <p className="text-sm text-zinc-300">Meet Harper and Bennet again.</p>
+          <button type="button"
+            onClick={() => { replay(); setReplayed(true); }}
+            className="self-start rounded-full border border-zinc-700 px-5 py-2 text-sm text-zinc-300 transition hover:border-zinc-500">
+            {replayed ? "Will replay on The Office" : "Replay introduction"}
+          </button>
+          {replayed && (
+            <p className="text-xs text-zinc-500">Head to The Office to see it again.</p>
           )}
         </div>
       </section>
