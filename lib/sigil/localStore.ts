@@ -13,6 +13,7 @@
  * @see docs/plans/M3-grimoire.md, docs/features/grimoire.md
  */
 import type { SigilStyle } from "@/context/MakeSigilProvider";
+import type { EmotionKey } from "@/types";
 
 export type StoredSigilStatus = "ACTIVE" | "DESTROYED";
 
@@ -24,7 +25,10 @@ export type StoredSigil = {
   canvasJson: unknown | null;
   imageDataUrl: string | null;
   status: StoredSigilStatus;
+  isCharged?: boolean;
+  chargedEmotion?: EmotionKey;
   finishedAt: string;
+  chargedAt?: string;
   destroyedAt?: string;
 };
 
@@ -53,7 +57,10 @@ function readAll(): StoredSigil[] {
         canvasJson: r.canvasJson ?? null,
         imageDataUrl: r.imageDataUrl ?? null,
         status: r.status === "DESTROYED" ? "DESTROYED" : "ACTIVE",
+        isCharged: r.isCharged ?? false,
+        chargedEmotion: r.chargedEmotion,
         finishedAt: r.finishedAt ?? new Date().toISOString(),
+        chargedAt: r.chargedAt,
         destroyedAt: r.destroyedAt,
       };
     });
@@ -99,7 +106,19 @@ export function renameSigil(id: string, name: string): StoredSigil | null {
   return target;
 }
 
-/** The mechanical destroy: status flip + timestamp. Ritual visuals are M5. */
+/** Charge completion: set emotion + isCharged. Re-charge overwrites (M5 decision). */
+export function chargeSigil(id: string, emotion: EmotionKey): StoredSigil | null {
+  const all = readAll();
+  const target = all.find((s) => s.id === id);
+  if (!target || target.status === "DESTROYED") return target ?? null;
+  target.isCharged = true;
+  target.chargedEmotion = emotion;
+  target.chargedAt = new Date().toISOString();
+  writeAll(all);
+  return target;
+}
+
+/** The mechanical destroy: status flip + timestamp. The ritual wraps this. */
 export function destroySigil(id: string): StoredSigil | null {
   const all = readAll();
   const target = all.find((s) => s.id === id);

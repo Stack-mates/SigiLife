@@ -97,6 +97,26 @@ well before launch; only the identity provider is "absolutely last."
 **Alternatives:** roadmap order as planned (M1 first — rejected by team
 preference); mock the whole API (more scaffolding than value).
 
+## ADR-011 · 2026-06-13 · Drop GhostCursor from the destroy ritual (avoids three.js)
+**Decision:** Omit v1's GhostCursor. EvilEye (ogl), with its pupil tracking
+the user's pointer/touch, is the destroy ceremony's centerpiece; a completion
+meter drives the flow. GhostCursor stays unported.
+**Why:** v1's GhostCursor imports the full `three` package plus
+EffectComposer/UnrealBloom postprocessing — ~600KB+ for a secondary cursor
+trail, against our lean-deps discipline (ADR-006). EvilEye alone is a strong,
+coherent ritual.
+**Alternatives:** add three.js (rejected — disproportionate); reimplement the
+trail in raw WebGL (possible later polish if the ritual wants more motion).
+
+## ADR-010 · 2026-06-13 · Install `ogl` for the destroy ritual (EvilEye)
+**Decision:** Add `ogl` (M5). It's the minimal WebGL layer v1's EvilEye is
+built on; porting verbatim keeps the shader intact. SplashCursor and
+GhostCursor are raw WebGL and need no dependency.
+**Why:** Rewriting the eye shader against raw WebGL would be pure risk for
+zero benefit — the v1 implementation works.
+**Alternatives:** three.js (heavier, already avoided); hand-rolled WebGL
+(needless reimplementation).
+
 ---
 
 ### Template

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
+  chargeSigil,
   destroySigil,
   getSigil,
   keepSigil,
@@ -56,6 +57,23 @@ describe("localStore", () => {
     const first = destroySigil(kept.id)!;
     const second = destroySigil(kept.id)!;
     expect(second.destroyedAt).toBe(first.destroyedAt);
+  });
+
+  it("charges a sigil with an emotion, and re-charge overwrites", () => {
+    const kept = keepSigil(DRAFT);
+    const charged = chargeSigil(kept.id, "HOPE");
+    expect(charged?.isCharged).toBe(true);
+    expect(charged?.chargedEmotion).toBe("HOPE");
+    expect(charged?.chargedAt).toBeTruthy();
+    const recharged = chargeSigil(kept.id, "GRIEF");
+    expect(recharged?.chargedEmotion).toBe("GRIEF");
+  });
+
+  it("does not charge a destroyed sigil", () => {
+    const kept = keepSigil(DRAFT);
+    destroySigil(kept.id);
+    const result = chargeSigil(kept.id, "JOY");
+    expect(result?.isCharged).toBeFalsy();
   });
 
   it("renames with the 100-char cap and empty-name fallback", () => {

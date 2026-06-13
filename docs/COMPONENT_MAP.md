@@ -22,9 +22,9 @@ app/layout.tsx [s] ........................ fonts, globals.css, <UserProvider>
     │   ├── charge/EmotionPicker [c]
     │   └── charge/SplashCursor [c] ....... fluid sim canvas
     ├── destroy-sigil/[sigilId]/page.tsx .. destroy/DestroyRitual [c]
-    │   ├── charge/EmotionPicker [c] ...... (shared)
-    │   ├── destroy/EvilEye [c] ........... OGL WebGL eye
-    │   └── destroy/GhostCursor [c]
+    │   ├── charge/EmotionPicker [c] ...... (shared, 5 canonical emotions)
+    │   └── destroy/EvilEye [c] ........... OGL WebGL eye (pupil tracks pointer)
+    │       (GhostCursor dropped — ADR-011, would pull in three.js)
     ├── grimoire/layout.tsx [s] ........... grimoire/GrimoireBook (book frame)
     │   ├── page.tsx [s] .................. LeftPage(profile) + RightPage(library)
     │   ├── map/page.tsx .................. map/WorldMap [c]

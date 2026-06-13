@@ -1,6 +1,16 @@
 # Feature: Charge & Destroy Rituals
 
-**Milestone:** M5 (pages exist from M3 with placeholder visuals) · **Status:** stub
+**Milestone:** M5 · **Status: implemented 2026-06-13 (local-first)**
+
+> Local-first (ADR-009): rituals persist via `lib/sigil/localStore`
+> (chargeSigil / destroySigil). Charge = EmotionPicker → SplashCursor fluid
+> trace tinted to the emotion color → engagement meter to completion →
+> isCharged + chargedEmotion saved. Destroy = in-fiction confirm →
+> EmotionPicker → EvilEye (pupil follows pointer/touch) → meter → status flip
+> → Closed cases. 5 canonical emotions from types/EMOTIONS. SplashCursor &
+> EvilEye ported from v1 (ADR-010); GhostCursor dropped to avoid three.js
+> (ADR-011). Reduced-motion: WebGL skipped, "finish now" affordance remains.
+> Sigil page wires Charge/Destroy buttons + shows the charged badge.
 
 ## Purpose
 The two rituals that make SigiLife feel like magic instead of CRUD.

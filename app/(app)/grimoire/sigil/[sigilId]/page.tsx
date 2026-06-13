@@ -1,25 +1,23 @@
 "use client";
 
 /**
- * Sigil page — full detail view: render, intention, rename, destroy.
+ * Sigil page — full detail view: render, intention, rename, charge, destroy.
  * STATUS: implemented (local store era — votes/SigiLites/location arrive
- * with the DB; ritual VISUALS for destroy arrive in the rituals milestone,
- * this is the mechanical status flip with an in-fiction confirm)
+ * with the DB). Charge/Destroy route to their ritual pages (M5); charged
+ * state + emotion are shown here.
  * Route: /grimoire/sigil/[sigilId]
  *
- * @see docs/features/grimoire.md, docs/plans/M3-grimoire.md
+ * @see docs/features/grimoire.md, docs/features/charge-destroy.md
  */
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { SigilRenderer } from "@/components/sigil/SigilRenderer";
-import { destroySigil, getSigil, renameSigil, type StoredSigil } from "@/lib/sigil/localStore";
+import { getSigil, renameSigil, type StoredSigil } from "@/lib/sigil/localStore";
+import { EMOTIONS } from "@/types";
 
 export default function SigilPage({ params }: { params: Promise<{ sigilId: string }> }) {
   const { sigilId } = use(params);
-  const router = useRouter();
   const [sigil, setSigil] = useState<StoredSigil | null | undefined>(undefined);
-  const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
     setSigil(getSigil(sigilId));
@@ -45,14 +43,7 @@ export default function SigilPage({ params }: { params: Promise<{ sigilId: strin
     if (updated) setSigil({ ...updated });
   };
 
-  const handleDestroy = () => {
-    const updated = destroySigil(sigil.id);
-    if (updated) {
-      setSigil({ ...updated });
-      setConfirming(false);
-      router.push("/grimoire/library?view=completed");
-    }
-  };
+  const charged = sigil.isCharged && sigil.chargedEmotion;
 
   return (
     <div className="flex flex-col gap-6">
@@ -84,33 +75,27 @@ export default function SigilPage({ params }: { params: Promise<{ sigilId: strin
             &ldquo;{sigil.intention}&rdquo;
           </blockquote>
         )}
+        {charged && (
+          <p className="flex items-center justify-center gap-2 text-center text-sm text-zinc-300">
+            <span className="size-2.5 rounded-full"
+              style={{ backgroundColor: EMOTIONS[sigil.chargedEmotion!].color, boxShadow: `0 0 8px ${EMOTIONS[sigil.chargedEmotion!].color}` }}
+              aria-hidden />
+            ⚡ Charged with {EMOTIONS[sigil.chargedEmotion!].label.toLowerCase()}
+          </p>
+        )}
         <p className="text-center text-xs text-zinc-600">kept {sigil.finishedAt.slice(0, 10)}</p>
       </div>
 
       {!closed && (
-        <div className="flex flex-col items-center gap-3 border-t border-zinc-800 pt-6">
-          {confirming ? (
-            <>
-              <p className="text-center text-sm text-zinc-300">
-                Close this case? Destruction is completion — it cannot be undone.
-              </p>
-              <div className="flex gap-3">
-                <button type="button" onClick={() => setConfirming(false)}
-                  className="rounded-full border border-zinc-700 px-6 py-2 text-zinc-300 hover:border-zinc-500">
-                  Not yet
-                </button>
-                <button type="button" onClick={handleDestroy}
-                  className="rounded-full bg-red-700 px-6 py-2 font-medium text-white hover:bg-red-600">
-                  Destroy it
-                </button>
-              </div>
-            </>
-          ) : (
-            <button type="button" onClick={() => setConfirming(true)}
-              className="rounded-full border border-red-900/60 px-6 py-2 text-red-400/90 transition hover:border-red-700 hover:text-red-300">
-              🔥 Destroy this sigil
-            </button>
-          )}
+        <div className="flex items-center justify-center gap-3 border-t border-zinc-800 pt-6">
+          <Link href={`/charge-sigil/${sigil.id}`}
+            className="rounded-full bg-violet-600 px-6 py-2.5 font-medium text-white transition hover:bg-violet-500">
+            ✨ {charged ? "Re-charge" : "Charge"}
+          </Link>
+          <Link href={`/destroy-sigil/${sigil.id}`}
+            className="rounded-full border border-red-900/60 px-6 py-2.5 text-red-400/90 transition hover:border-red-700 hover:text-red-300">
+            🔥 Destroy
+          </Link>
         </div>
       )}
     </div>

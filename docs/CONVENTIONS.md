@@ -65,6 +65,14 @@ Maintenance rules:
   include any doc updates (drift is a review blocker). The other dev reviews;
   AI review is supplementary, not a substitute.
 
+## Ported shader code (WebGL/WebGPU effects)
+
+Large third-party-derived effect files (e.g. `charge/SplashCursor.tsx`,
+`destroy/EvilEye.tsx`) carry a file-level `eslint-disable` header and are
+exempt from our usual lint/style rules — they're ported near-verbatim so they
+can be re-synced from upstream. Keep adaptations minimal and clearly marked
+(props, cleanup, reduced-motion). Don't refactor them to match house style.
+
 ## Testing policy
 
 - No test scaffolding yet (decided — keep the stub phase lean).
