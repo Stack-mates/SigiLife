@@ -16,11 +16,24 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 const TABS = [
-  { label: "Library", href: "/grimoire/library", match: (p: string, v: string | null) => p.startsWith("/grimoire/library") && v !== "completed" },
-  { label: "Closed cases", href: "/grimoire/library?view=completed", match: (p: string, v: string | null) => p.startsWith("/grimoire/library") && v === "completed" },
+  { label: "Library", href: "/grimoire/library" },
+  { label: "Closed cases", href: "/grimoire/library?view=completed" },
+  { label: "Profile", href: "/grimoire/profile" },
+  { label: "Settings", href: "/grimoire/settings" },
 ] as const;
 
-const SOON = ["Profile", "Map", "Friends"] as const;
+// Surfaces that need the map/social data layer (DB era).
+const SOON = ["Map", "Friends"] as const;
+
+function isActive(label: string, pathname: string, view: string | null): boolean {
+  switch (label) {
+    case "Library": return pathname.startsWith("/grimoire/library") && view !== "completed";
+    case "Closed cases": return pathname.startsWith("/grimoire/library") && view === "completed";
+    case "Profile": return pathname.startsWith("/grimoire/profile");
+    case "Settings": return pathname.startsWith("/grimoire/settings");
+    default: return false;
+  }
+}
 
 function Ribbons() {
   const pathname = usePathname();
@@ -29,7 +42,7 @@ function Ribbons() {
   return (
     <nav aria-label="Grimoire sections" className="flex flex-wrap items-center justify-center gap-2 pb-6">
       {TABS.map((tab) => {
-        const active = tab.match(pathname, view);
+        const active = isActive(tab.label, pathname, view);
         return (
           <Link
             key={tab.label}
