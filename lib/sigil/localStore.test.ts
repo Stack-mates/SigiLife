@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   chargeSigil,
+  clearAllSigils,
   destroySigil,
   getSigil,
   keepSigil,
@@ -95,6 +96,14 @@ describe("localStore", () => {
     expect(all[0].status).toBe("ACTIVE");
     // migration persisted: raw storage now carries the id
     expect(localStorage.getItem("sigilife:finished-sigils")).toContain(all[0].id);
+  });
+
+  it("clears all sigils", () => {
+    keepSigil(DRAFT);
+    keepSigil(DRAFT);
+    expect(listSigils()).toHaveLength(2);
+    clearAllSigils();
+    expect(listSigils()).toHaveLength(0);
   });
 
   it("returns null for unknown ids", () => {

@@ -80,6 +80,15 @@ export function listSigils(status?: StoredSigilStatus): StoredSigil[] {
   return status ? all.filter((s) => s.status === status) : all;
 }
 
+/** Wipe all locally-kept sigils. Pre-account maintenance/testing only. */
+export function clearAllSigils(): void {
+  try {
+    localStorage.removeItem(KEY);
+  } catch {
+    // nothing to clear
+  }
+}
+
 export function getSigil(id: string): StoredSigil | null {
   return readAll().find((s) => s.id === id) ?? null;
 }
