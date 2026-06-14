@@ -49,7 +49,30 @@ npm run db:migrate   # prisma migrate dev (needs DATABASE_URL)
 npm run db:generate  # regenerate prisma client after schema edits
 npm run db:studio    # browse the database
 npx prisma validate  # schema sanity check (no DB needed)
+
+npm run test         # unit (Vitest)
+npm run test:e2e     # end-to-end (Playwright + chromium); needs db + dev server
 ```
+
+## Verifying the UI (you CAN see the app)
+
+Do not claim "I can't see screens." Three ways to inspect the running UI,
+in order of preference:
+
+1. **chrome-devtools MCP (interactive)** — if `mcp__chrome-devtools__*` tools
+   are present, they drive the user's real **Brave** at `http://127.0.0.1:9222`
+   (local-scope MCP, set up 2026-06-14). Open/point a Brave tab at the dev
+   server (`http://localhost:3001`) and navigate/click/screenshot the real,
+   GPU-backed app — this is the only way to verify the **ritual WebGL visuals**
+   (charge fluid, destroy eye). Prereq: Brave running with
+   `--remote-debugging-port=9222` and the dev server up. If the tools are
+   absent, the MCP just needs the session reloaded (servers load at startup).
+2. **Screenshot script** — `SIGIL_ID=<id> node scripts/screenshots.mjs`
+   captures key pages to `/tmp/sigishots/*.png`; view them with an
+   image-capable read tool. Works headless, but skips the rituals' WebGL.
+3. **Playwright E2E** — asserts flows, not looks (`tests/e2e/`).
+
+Always look before claiming a UI is done.
 
 ## Hard rules
 
