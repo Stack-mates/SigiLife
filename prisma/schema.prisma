@@ -134,6 +134,7 @@ model Sigil {
 
   canvasData Json? // Fabric.js canvas state
   imageData  String? @db.Text // PNG data-URL render — flagged for object storage pre-launch
+  style      Json? // { color, ring, glow } — styling chosen in the make-sigil flow
 
   isCharged      Boolean  @default(false)
   chargedEmotion Emotion?

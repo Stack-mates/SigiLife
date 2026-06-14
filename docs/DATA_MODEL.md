@@ -21,7 +21,9 @@ verification + `express-mysql-session` `sessions` table.
 
 ### Sigil
 The core object. `name`, `intention` (the original statement), `canvasData`
-(Json — Fabric.js canvas state, was LONGTEXT string in v1), `imageData`
+(Json — Fabric.js canvas state, was LONGTEXT string in v1), `style` (Json —
+`{color, ring, glow}` chosen in the make-sigil flow; added 2026-06-14 to back
+the local-first UI shape), `imageData`
 (Text — PNG data-URL render; **flagged for object storage before launch**,
 see Open questions), `isCharged` + `chargedEmotion` (new — v1 didn't record
 which emotion), `locationName`/`latitude`/`longitude` (map placement),
