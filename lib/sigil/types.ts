@@ -23,6 +23,8 @@ export type SigilView = {
   status: SigilStatus;
   isCharged: boolean;
   chargedEmotion?: EmotionKey;
+  chargeScore: number;
+  destroyScore: number;
   /** ISO timestamp the sigil was created/kept. */
   finishedAt: string;
   /** ISO timestamp it was destroyed, if it has been. */
@@ -39,3 +41,11 @@ export type NewSigilInput = {
 };
 
 export const DEFAULT_STYLE: SigilStyle = { color: "#e8e3d8", ring: false, glow: false };
+
+export type VoteType = "CHARGE" | "DESTROY";
+
+export type VoteState = {
+  chargeScore: number;
+  destroyScore: number;
+  viewerVote: VoteType | null;
+};

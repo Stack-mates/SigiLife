@@ -12,16 +12,19 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { SigilRenderer } from "@/components/sigil/SigilRenderer";
-import { getSigil, renameSigil } from "@/lib/sigil/actions";
-import type { SigilView } from "@/lib/sigil/types";
+import { VotePanel } from "@/components/map/VotePanel";
+import { getSigil, getViewerVote, renameSigil } from "@/lib/sigil/actions";
+import type { SigilView, VoteType } from "@/lib/sigil/types";
 import { EMOTIONS } from "@/types";
 
 export default function SigilPage({ params }: { params: Promise<{ sigilId: string }> }) {
   const { sigilId } = use(params);
   const [sigil, setSigil] = useState<SigilView | null | undefined>(undefined);
+  const [viewerVote, setViewerVote] = useState<VoteType | null>(null);
 
   useEffect(() => {
     getSigil(sigilId).then(setSigil);
+    getViewerVote(sigilId).then(setViewerVote);
   }, [sigilId]);
 
   if (sigil === undefined) return <div className="py-16 text-center text-zinc-600">Consulting the book…</div>;
@@ -99,6 +102,15 @@ export default function SigilPage({ params }: { params: Promise<{ sigilId: strin
           </Link>
         </div>
       )}
+
+      <div className="border-t border-zinc-800 pt-6">
+        <VotePanel
+          sigilId={sigil.id}
+          initialChargeScore={sigil.chargeScore}
+          initialDestroyScore={sigil.destroyScore}
+          initialViewerVote={viewerVote}
+        />
+      </div>
     </div>
   );
 }

@@ -20,6 +20,8 @@ import {
   type NewSigilInput,
   type SigilStatus,
   type SigilView,
+  type VoteState,
+  type VoteType,
 } from "@/lib/sigil/types";
 import type { SigilStyle } from "@/context/MakeSigilProvider";
 
@@ -34,6 +36,8 @@ function toView(s: PrismaSigil): SigilView {
     status: s.status as SigilStatus,
     isCharged: s.isCharged,
     chargedEmotion: (s.chargedEmotion as EmotionKey | null) ?? undefined,
+    chargeScore: s.chargeScore,
+    destroyScore: s.destroyScore,
     finishedAt: s.createdAt.toISOString(),
     destroyedAt: s.destroyedAt?.toISOString(),
   };
@@ -107,4 +111,47 @@ export async function destroySigil(id: string): Promise<SigilView | null> {
 export async function clearAllSigils(): Promise<void> {
   const userId = await getCurrentUserId();
   await prisma.sigil.deleteMany({ where: { userId } });
+}
+
+/** The viewer's current vote on a sigil, if any. */
+export async function getViewerVote(sigilId: string): Promise<VoteType | null> {
+  const userId = await getCurrentUserId();
+  const vote = await prisma.sigilVote.findUnique({
+    where: { sigilId_userId: { sigilId, userId } },
+  });
+  return (vote?.voteType as VoteType | undefined) ?? null;
+}
+
+/**
+ * Cast/toggle a community vote. Toggle semantics in one transaction:
+ * same vote again retracts it; opposite vote switches; none creates. Then
+ * recompute the denormalized scores from the actual rows.
+ */
+export async function voteSigil(sigilId: string, type: VoteType): Promise<VoteState> {
+  const userId = await getCurrentUserId();
+
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.sigilVote.findUnique({
+      where: { sigilId_userId: { sigilId, userId } },
+    });
+
+    if (!existing) {
+      await tx.sigilVote.create({ data: { sigilId, userId, voteType: type } });
+    } else if (existing.voteType === type) {
+      await tx.sigilVote.delete({ where: { id: existing.id } }); // retract
+    } else {
+      await tx.sigilVote.update({ where: { id: existing.id }, data: { voteType: type } });
+    }
+
+    const [chargeScore, destroyScore] = await Promise.all([
+      tx.sigilVote.count({ where: { sigilId, voteType: "CHARGE" } }),
+      tx.sigilVote.count({ where: { sigilId, voteType: "DESTROY" } }),
+    ]);
+    await tx.sigil.update({ where: { id: sigilId }, data: { chargeScore, destroyScore } });
+
+    const viewer = await tx.sigilVote.findUnique({
+      where: { sigilId_userId: { sigilId, userId } },
+    });
+    return { chargeScore, destroyScore, viewerVote: (viewer?.voteType as VoteType | undefined) ?? null };
+  });
 }
