@@ -36,15 +36,23 @@ Foundations:
 
 I did **not** fake any of these credentials or build their UIs blind.
 
-## ⚠ Needs your eyes (built/verified without a human looking)
+## Visual state — reviewed via screenshots (2026-06-14)
 
-- **Visual pass on a phone:** home hub, landing, tutorial overlay (portrait
-  sizing + mobile layout), profile, settings, menu. Layouts are clean and
-  test-passing, but I can't judge how they *look*. Dedicated Lino button art
-  (`WritingButton.svg`, etc.) is available to swap into the hub/landing.
-- **Ritual visuals:** the WebGL fluid (charge) and eye (destroy) run only
-  with motion enabled; E2E exercises the flow with reduced-motion, so the
-  effects themselves are unverified — give them a look on a real device.
+Correction to earlier notes: I *can* see the UI — `scripts/screenshots.mjs`
+captures pages to PNGs that an image-capable read tool views. I did a phone-
+viewport pass over landing, home + tutorial overlay, write step, library,
+sigil page, profile, settings. They render cleanly and cohesively (Lino
+portraits/avatar, sigil ring+glow, charged badge, vote panel all correct).
+Found and **fixed** one bug: the nav menu button overlapped the top bars
+(wizard steps / grimoire ribbons).
+
+Still genuinely needs a **real device**:
+- **Ritual visuals** — the charge fluid + destroy eye are WebGL; headless
+  skips them (reduced-motion), so the effects themselves are unverified.
+- A judgment call on swapping the dedicated Lino **button art**
+  (`WritingButton.svg`, etc.) into the hub/landing vs. the current clean cards.
+- Touch feel of the editor on a phone (the earlier pass confirmed basic touch;
+  pinch-zoom/pan still unimplemented).
 
 ## Suggested next steps
 1. Phone-test the loop + the above surfaces; tell me what reads wrong.

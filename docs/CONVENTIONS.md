@@ -90,3 +90,13 @@ Two layers, both runnable from the shell (so agents can self-verify):
 
 Run both before claiming a feature done. When you add a feature with a user
 flow, extend `loop.spec` (or add a spec) so the flow is guarded forever.
+
+### Visual review (no browser MCP needed)
+
+There's no browser/screenshot MCP connected, but you can still *see* the UI:
+`SIGIL_ID=<id> node scripts/screenshots.mjs` captures the key pages to
+`/tmp/sigishots/*.png` (phone viewport by default; `VIEWPORT=desktop` for
+wide). An image-capable read tool can then view them. Use this to check
+layout/visuals before claiming a UI is done — don't assert "can't see it."
+Caveat: headless skips the rituals' WebGL (reduced-motion), so the fluid/eye
+*effects* still need a real device; everything static renders truthfully.

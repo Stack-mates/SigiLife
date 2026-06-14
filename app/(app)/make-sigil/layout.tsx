@@ -25,7 +25,7 @@ function StepIndicator() {
   const activeIndex = STEPS.findIndex((s) => pathname.startsWith(s.href));
 
   return (
-    <nav aria-label="Sigil creation steps" className="flex items-center justify-center gap-2 py-4">
+    <nav aria-label="Sigil creation steps" className="flex items-center justify-center gap-2 pb-4 pt-16">
       {STEPS.map((step, i) => {
         const state = i === activeIndex ? "active" : i < activeIndex ? "done" : "todo";
         return (
