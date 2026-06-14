@@ -11,7 +11,8 @@ app/layout.tsx [s] ........................ fonts, globals.css, <UserProvider>
 │   └── auth/GoogleSignInButton [c]
 ├── (auth)/create-profile/page.tsx [s]
 │   └── auth/ProfileForm [c] .............. username, avatar pick, home location, theme
-└── (app)/layout.tsx [s] .................. SESSION GATE · layout/Menu · TutorialProvider
+└── (app)/layout.tsx [s] .................. layout/Menu + TutorialProvider mounted
+                                            (server-side SESSION GATE deferred to the auth milestone)
     ├── home/page.tsx [s] ................. The Office hub
     │   └── (art hotspot links — no dedicated component; PageShell + Lino art)
     ├── make-sigil/layout.tsx [c] ......... <MakeSigilProvider> wizard shell
