@@ -9,7 +9,13 @@
  * @see docs/features/auth.md, docs/features/tutorial.md
  */
 import { TutorialProvider } from "@/context/TutorialProvider";
+import { Menu } from "@/components/layout/Menu";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return <TutorialProvider>{children}</TutorialProvider>;
+  return (
+    <TutorialProvider>
+      <Menu />
+      {children}
+    </TutorialProvider>
+  );
 }

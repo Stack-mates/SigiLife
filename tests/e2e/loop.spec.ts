@@ -35,6 +35,11 @@ test("create, charge, and destroy a sigil end to end", async ({ page }) => {
   await page.getByText(name).click();
   await expect(page).toHaveURL(/\/grimoire\/sigil\//);
 
+  // ── vote (community energy) ── toggling the charge vote bumps the score
+  const chargeVote = page.getByRole("button", { name: /vote to charge/i });
+  await chargeVote.click();
+  await expect(chargeVote).toContainText("1");
+
   // ── charge ──
   await page.getByRole("link", { name: /charge/i }).click();
   await expect(page).toHaveURL(/\/charge-sigil\//);
