@@ -75,7 +75,18 @@ can be re-synced from upstream. Keep adaptations minimal and clearly marked
 
 ## Testing policy
 
-- No test scaffolding yet (decided — keep the stub phase lean).
-- From M2 on: unit-test pure logic in `lib/` (consonant extraction,
-  entitlements, vote toggling) with Vitest; add it via ADR when M2 starts.
-  UI/ritual pages are verified manually until the product stabilizes.
+Two layers, both runnable from the shell (so agents can self-verify):
+
+- **Unit (Vitest)** — pure logic in `lib/` (`extractSigilCharacters`,
+  `vectorSeed`). `npm run test`. Add cases when you touch that logic.
+- **E2E (Playwright, `tests/e2e/`)** — real chromium drives the real app
+  against the dev server + Postgres. `npm run test:e2e`. `smoke.spec` checks
+  pages render their content; `loop.spec` walks the whole journey
+  (write → draw → style → keep → library → charge → destroy → closed cases).
+  Prereqs: `docker compose up -d db` and a dev server (Playwright reuses
+  :3001 or starts one). Rituals run under `reducedMotion: "reduce"` so the
+  flow is tested without flaky headless WebGL — the *visuals* still want a
+  human/device pass.
+
+Run both before claiming a feature done. When you add a feature with a user
+flow, extend `loop.spec` (or add a spec) so the flow is guarded forever.

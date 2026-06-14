@@ -19,8 +19,12 @@ charge or destroy it while the community lends its energy through votes.
 ```bash
 npm install
 cp .env.example .env.local        # fill in values — see comments in the file
-npm run db:migrate                # needs a Postgres DATABASE_URL
+docker compose up -d db           # local Postgres (or point DATABASE_URL elsewhere)
+npm run db:migrate                # apply migrations
 npm run dev                       # http://localhost:3000
+
+npm run test                      # unit tests (Vitest)
+npm run test:e2e                  # end-to-end (Playwright + chromium)
 ```
 
 You need: a Postgres database (local Docker, Neon, or Supabase), Google OAuth
