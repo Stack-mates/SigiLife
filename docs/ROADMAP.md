@@ -18,7 +18,8 @@ just-in-time, one milestone ahead: [plans/M1-auth.md](plans/M1-auth.md),
 | M | Name | Scope | Definition of done | Status |
 |---|---|---|---|---|
 | M0 | Scaffold | This branch: docs + stub tree + prisma draft | `build`/`lint`/`typecheck` pass; PR merged | **in progress** |
-| M1 | Auth + profile | Auth.js Google login, create-profile, settings, session gate, theming live | New user can sign in, onboard, pick theme, sign out, return | |
+| DB | Persistence | Postgres + Prisma, server-action data layer (lib/sigil/actions) replacing localStore, dev-identity shim | Sigils persist in the database across reloads/devices | **done 2026-06-14** (split out of M1 ahead of auth) |
+| M1 | Auth + profile | Auth.js Google login, create-profile, settings, session gate, theming live — swaps the dev-identity shim in lib/auth | New user can sign in, onboard, pick theme, sign out, return | (last milestone, ADR-009) |
 | M2 | Make sigil | write→draw→style wizard, character extraction (consonants+symbols), single-canvas Fabric editor, runtime glyph tracing (ADR-008), local keep + PNG. Installed: fabric, opentype.js, vitest. | A user can create a sigil end-to-end | **core done 2026-06-12** (server save → auth milestone) |
 | M3 | Grimoire + library | Book shell (ribbon tabs), library grid + Closed cases view, sigil page, rename, destroy (status flip) — local-first over lib/sigil/localStore | Full read/manage lifecycle of own sigils | **core done 2026-06-12** (social/profile/map → DB era) |
 | M4 | Map + votes | WorldMap, placement, place-sigil flow, vote endpoint + VotePanel. Install: mapbox-gl, react-map-gl, @mapbox/search-js-react. | Sigils visible/votable on the global map | |

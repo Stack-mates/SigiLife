@@ -7,9 +7,9 @@
  *
  * @see docs/features/grimoire.md
  */
-import type { StoredSigil } from "@/lib/sigil/localStore";
+import type { SigilView } from "@/lib/sigil/types";
 
-export function SigilRenderer({ sigil }: { sigil: StoredSigil }) {
+export function SigilRenderer({ sigil }: { sigil: SigilView }) {
   const closed = sigil.status === "DESTROYED";
   return (
     <div className={"relative mx-auto aspect-square w-full max-w-xs " + (closed ? "opacity-60 saturate-50" : "")}>

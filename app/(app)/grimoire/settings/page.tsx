@@ -15,7 +15,7 @@
  */
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { clearAllSigils, listSigils } from "@/lib/sigil/localStore";
+import { clearAllSigils, listSigils } from "@/lib/sigil/actions";
 import { useTutorial } from "@/context/TutorialProvider";
 
 export default function SettingsPage() {
@@ -26,11 +26,11 @@ export default function SettingsPage() {
   const [replayed, setReplayed] = useState(false);
 
   useEffect(() => {
-    setCount(listSigils().length);
+    listSigils().then((all) => setCount(all.length));
   }, []);
 
-  const handleClear = () => {
-    clearAllSigils();
+  const handleClear = async () => {
+    await clearAllSigils();
     setCount(0);
     setConfirming(false);
     router.refresh();

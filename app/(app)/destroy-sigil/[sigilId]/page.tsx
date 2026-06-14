@@ -13,14 +13,15 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { DestroyRitual } from "@/components/destroy/DestroyRitual";
-import { getSigil, type StoredSigil } from "@/lib/sigil/localStore";
+import { getSigil } from "@/lib/sigil/actions";
+import type { SigilView } from "@/lib/sigil/types";
 
 export default function DestroySigilPage({ params }: { params: Promise<{ sigilId: string }> }) {
   const { sigilId } = use(params);
-  const [sigil, setSigil] = useState<StoredSigil | null | undefined>(undefined);
+  const [sigil, setSigil] = useState<SigilView | null | undefined>(undefined);
 
   useEffect(() => {
-    setSigil(getSigil(sigilId));
+    getSigil(sigilId).then(setSigil);
   }, [sigilId]);
 
   if (sigil === undefined) {

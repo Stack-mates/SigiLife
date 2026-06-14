@@ -1,26 +1,26 @@
 "use client";
 
 /**
- * StyleSigil — name, ring, glow, and local save.
- * STATUS: implemented (lean local version — see scope note)
+ * StyleSigil — name, ring, glow, and save.
+ * STATUS: implemented (saves to the database via lib/sigil/actions.keepSigil)
  *
- * SCOPE (ADR-009): no auth/DB yet, so "save" = keep the finished draft in
- * localStorage + offer a PNG download. Ring/glow are stored as style
- * metadata and previewed with CSS; baking them into the final image (and
- * recolor-all) lands with the real save pipeline. Recoloring is available
- * in the editor via select-all + color.
+ * Ring/glow are stored as style metadata and previewed with CSS; baking them
+ * into the final rendered image is a later polish item. Recoloring strokes is
+ * available in the editor via select-all + color. The sigil is owned by the
+ * current user (dev-identity shim until real auth — ADR-009).
  *
  * @see docs/features/make-sigil.md
  */
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMakeSigil } from "@/context/MakeSigilProvider";
-import { keepSigil } from "@/lib/sigil/localStore";
+import { keepSigil } from "@/lib/sigil/actions";
 
 export function StyleSigil() {
   const router = useRouter();
   const { draft, setStyle, setName, reset, canStyle } = useMakeSigil();
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   if (!canStyle) {
     // Step guard: nothing drawn yet.
@@ -28,9 +28,10 @@ export function StyleSigil() {
     return null;
   }
 
-  const finishLocally = () => {
+  const finish = async () => {
+    setSaving(true);
     try {
-      keepSigil({
+      await keepSigil({
         name: draft.name || "Unnamed sigil",
         intention: draft.intention,
         style: draft.style,
@@ -39,8 +40,8 @@ export function StyleSigil() {
       });
       setSaved(true);
     } catch {
-      // storage full — the download button still works
-      setSaved(true);
+      // save failed — surface a retry rather than a silent success
+      setSaving(false);
     }
   };
 
@@ -106,13 +107,18 @@ export function StyleSigil() {
       {saved ? (
         <div className="flex flex-col items-center gap-3">
           <p className="text-center text-sm text-violet-300">
-            Kept on this device. Account sync arrives with the auth milestone —
-            your sigil will migrate to your grimoire.
+            Kept in your grimoire.
           </p>
-          <button type="button" onClick={() => { reset(); router.push("/make-sigil/write"); }}
-            className="rounded-full border border-zinc-700 px-6 py-2.5 text-zinc-300 transition hover:border-zinc-500">
-            Craft another
-          </button>
+          <div className="flex gap-3">
+            <button type="button" onClick={() => router.push("/grimoire/library")}
+              className="rounded-full bg-violet-600 px-6 py-2.5 font-medium text-white transition hover:bg-violet-500">
+              Open library
+            </button>
+            <button type="button" onClick={() => { reset(); router.push("/make-sigil/write"); }}
+              className="rounded-full border border-zinc-700 px-6 py-2.5 text-zinc-300 transition hover:border-zinc-500">
+              Craft another
+            </button>
+          </div>
         </div>
       ) : (
         <div className="flex items-center justify-center gap-3">
@@ -120,9 +126,9 @@ export function StyleSigil() {
             className="rounded-full border border-zinc-700 px-6 py-2.5 text-zinc-300 transition hover:border-zinc-500">
             Download PNG
           </button>
-          <button type="button" onClick={finishLocally}
-            className="rounded-full bg-violet-600 px-8 py-2.5 font-medium text-white transition hover:bg-violet-500">
-            Keep this sigil
+          <button type="button" onClick={finish} disabled={saving}
+            className="rounded-full bg-violet-600 px-8 py-2.5 font-medium text-white transition enabled:hover:bg-violet-500 disabled:opacity-50">
+            {saving ? "Keeping…" : "Keep this sigil"}
           </button>
         </div>
       )}

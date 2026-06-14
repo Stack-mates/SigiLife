@@ -12,15 +12,16 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { SigilRenderer } from "@/components/sigil/SigilRenderer";
-import { getSigil, renameSigil, type StoredSigil } from "@/lib/sigil/localStore";
+import { getSigil, renameSigil } from "@/lib/sigil/actions";
+import type { SigilView } from "@/lib/sigil/types";
 import { EMOTIONS } from "@/types";
 
 export default function SigilPage({ params }: { params: Promise<{ sigilId: string }> }) {
   const { sigilId } = use(params);
-  const [sigil, setSigil] = useState<StoredSigil | null | undefined>(undefined);
+  const [sigil, setSigil] = useState<SigilView | null | undefined>(undefined);
 
   useEffect(() => {
-    setSigil(getSigil(sigilId));
+    getSigil(sigilId).then(setSigil);
   }, [sigilId]);
 
   if (sigil === undefined) return <div className="py-16 text-center text-zinc-600">Consulting the book…</div>;
@@ -38,8 +39,8 @@ export default function SigilPage({ params }: { params: Promise<{ sigilId: strin
 
   const closed = sigil.status === "DESTROYED";
 
-  const handleRename = (name: string) => {
-    const updated = renameSigil(sigil.id, name);
+  const handleRename = async (name: string) => {
+    const updated = await renameSigil(sigil.id, name);
     if (updated) setSigil({ ...updated });
   };
 

@@ -2,7 +2,7 @@
 
 /**
  * DestroyRitual — orchestrates the destruction ceremony.
- * STATUS: implemented (local-first; persists via lib/sigil/localStore)
+ * STATUS: implemented (persists to the database via lib/sigil/actions)
  *
  * Flow: in-fiction confirm (irreversible) → EmotionPicker → the <EvilEye>
  * watches, its pupil following the user's pointer/touch while a completion
@@ -17,13 +17,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EvilEye } from "@/components/destroy/EvilEye";
 import { EmotionPicker } from "@/components/charge/EmotionPicker";
-import { destroySigil, type StoredSigil } from "@/lib/sigil/localStore";
+import { destroySigil } from "@/lib/sigil/actions";
+import type { SigilView } from "@/lib/sigil/types";
 import { EMOTIONS, type EmotionKey } from "@/types";
 
 type Phase = "confirm" | "pick" | "tracing";
 const COMPLETION_TARGET = 100;
 
-export function DestroyRitual({ sigil }: { sigil: StoredSigil }) {
+export function DestroyRitual({ sigil }: { sigil: SigilView }) {
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("confirm");
   const [emotion, setEmotion] = useState<EmotionKey | null>(null);
@@ -51,8 +52,9 @@ export function DestroyRitual({ sigil }: { sigil: StoredSigil }) {
 
   useEffect(() => {
     if (phase === "tracing" && progress >= 100) {
-      destroySigil(sigil.id);
-      router.push("/grimoire/library?view=completed");
+      void destroySigil(sigil.id).then(() => {
+        router.push("/grimoire/library?view=completed");
+      });
     }
   }, [phase, progress, sigil.id, router]);
 

@@ -10,9 +10,9 @@
  * @see docs/features/grimoire.md
  */
 import Link from "next/link";
-import type { StoredSigil } from "@/lib/sigil/localStore";
+import type { SigilView } from "@/lib/sigil/types";
 
-export function SigilThumb({ sigil, href }: { sigil: StoredSigil; href?: string }) {
+export function SigilThumb({ sigil, href }: { sigil: SigilView; href?: string }) {
   const closed = sigil.status === "DESTROYED";
   return (
     <Link

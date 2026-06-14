@@ -2,9 +2,11 @@
 
 **Milestone:** M3 · **Status: core implemented 2026-06-12 (local-first)**
 
-> Local-first era (ADR-009): the grimoire reads `lib/sigil/localStore.ts` —
-> the same on-device store the style step writes. That module is THE seam:
-> when the DB lands, its callers swap to API calls with identical shapes.
+> **Now database-backed (2026-06-14).** Sigils persist in Postgres via the
+> server-action data layer `lib/sigil/actions.ts` (replaced the old
+> client-side localStore). Components call the actions (async) and map Prisma
+> rows to `SigilView` (`lib/sigil/types.ts`). Sigils are owned by the current
+> user — a dev-identity shim until Google auth (the last milestone, ADR-009).
 > Shipped: book shell with ribbon tabs, library grid (active), "Closed
 > cases" view (destroyed), sigil page with inline rename and confirm+destroy
 > (mechanical status flip; ritual visuals are the rituals milestone).

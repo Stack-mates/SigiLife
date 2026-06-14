@@ -5,14 +5,14 @@
  * STATUS: implemented (local-first; real account/avatar/home arrive with auth+DB)
  * Route: /grimoire/profile
  *
- * Stats derived from localStore: total crafted, active, charged, closed cases.
+ * Stats derived from the database (lib/sigil/actions): crafted, active, charged, closed.
  * Username/avatar/home-location and SigiFriends come with the DB milestone.
  *
  * v1 reference: git show main:src/components/.../Profile/UserProfile.tsx
  * @see docs/features/grimoire.md, docs/features/social.md
  */
 import { useEffect, useState } from "react";
-import { listSigils } from "@/lib/sigil/localStore";
+import { listSigils } from "@/lib/sigil/actions";
 
 type Stats = { crafted: number; active: number; charged: number; closed: number };
 
@@ -20,12 +20,13 @@ export default function ProfilePage() {
   const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
-    const all = listSigils();
-    setStats({
-      crafted: all.length,
-      active: all.filter((s) => s.status === "ACTIVE").length,
-      charged: all.filter((s) => s.isCharged && s.status === "ACTIVE").length,
-      closed: all.filter((s) => s.status === "DESTROYED").length,
+    listSigils().then((all) => {
+      setStats({
+        crafted: all.length,
+        active: all.filter((s) => s.status === "ACTIVE").length,
+        charged: all.filter((s) => s.isCharged && s.status === "ACTIVE").length,
+        closed: all.filter((s) => s.status === "DESTROYED").length,
+      });
     });
   }, []);
 

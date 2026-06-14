@@ -2,7 +2,7 @@
 
 /**
  * ChargeRitual — orchestrates the charge ceremony.
- * STATUS: implemented (local-first; persists via lib/sigil/localStore)
+ * STATUS: implemented (persists to the database via lib/sigil/actions)
  *
  * Flow: EmotionPicker → faint sigil over black with <SplashCursor> tinted to
  * the emotion color → an engagement meter fills as the user traces (explicit
@@ -17,7 +17,8 @@ import Link from "next/link";
 import { SplashCursor } from "@/components/charge/SplashCursor";
 import { EmotionPicker } from "@/components/charge/EmotionPicker";
 import { SigilRenderer } from "@/components/sigil/SigilRenderer";
-import { chargeSigil, type StoredSigil } from "@/lib/sigil/localStore";
+import { chargeSigil } from "@/lib/sigil/actions";
+import type { SigilView } from "@/lib/sigil/types";
 import { EMOTIONS, type EmotionKey } from "@/types";
 
 type Phase = "pick" | "tracing" | "done";
@@ -25,7 +26,7 @@ type Phase = "pick" | "tracing" | "done";
 /** Engagement units (one per pointer-move tick) needed to complete. */
 const COMPLETION_TARGET = 120;
 
-export function ChargeRitual({ sigil }: { sigil: StoredSigil }) {
+export function ChargeRitual({ sigil }: { sigil: SigilView }) {
   const [phase, setPhase] = useState<Phase>("pick");
   const [emotion, setEmotion] = useState<EmotionKey | null>(null);
   const [progress, setProgress] = useState(0);
@@ -40,8 +41,8 @@ export function ChargeRitual({ sigil }: { sigil: StoredSigil }) {
   // Complete once the meter fills.
   useEffect(() => {
     if (phase === "tracing" && progress >= 100 && emotion) {
-      chargeSigil(sigil.id, emotion);
       setPhase("done");
+      void chargeSigil(sigil.id, emotion);
     }
   }, [phase, progress, emotion, sigil.id]);
 

@@ -14,19 +14,20 @@ import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { SigilThumb } from "@/components/sigil/SigilThumb";
-import { listSigils, type StoredSigil } from "@/lib/sigil/localStore";
+import { listSigils } from "@/lib/sigil/actions";
+import type { SigilView } from "@/lib/sigil/types";
 
 function LibraryContent() {
   const params = useSearchParams();
   const completed = params.get("view") === "completed";
   const pick = params.get("pick"); // "charge" | "destroy" | null
-  const [sigils, setSigils] = useState<StoredSigil[] | null>(null);
+  const [sigils, setSigils] = useState<SigilView[] | null>(null);
 
   useEffect(() => {
-    setSigils(listSigils(completed ? "DESTROYED" : "ACTIVE"));
+    listSigils(completed ? "DESTROYED" : "ACTIVE").then(setSigils);
   }, [completed]);
 
-  const thumbHref = (s: StoredSigil) =>
+  const thumbHref = (s: SigilView) =>
     pick === "charge" ? `/charge-sigil/${s.id}`
       : pick === "destroy" ? `/destroy-sigil/${s.id}`
         : undefined;
