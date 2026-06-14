@@ -1,0 +1,52 @@
+# SigiLife — self-hosted stack (ADR-012): app + Postgres co-located.
+#
+# Local dev: you usually only need the `db` service (run the app with
+# `npm run dev`). Bring up just Postgres:  docker compose up -d db
+#
+# Production (unraid): the `app` + `db` services together, with a Cloudflare
+# Tunnel pointing at app:3000. See docs/DEPLOYMENT.md.
+#
+# Secrets come from a .env file next to this compose file (never committed).
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sigilife}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sigilife}
+      POSTGRES_DB: ${POSTGRES_DB:-sigilife}
+    ports:
+      # Exposed on localhost for local dev (Prisma Studio, etc.).
+      - "5432:5432"
+    volumes:
+      - sigilife_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sigilife}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Production app container. Not needed for local dev (use `npm run dev`).
+  # Enable with:  docker compose --profile prod up -d
+  app:
+    profiles: ["prod"]
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Pin matches the postgres:16 service version.
+      DATABASE_URL: ${DATABASE_URL}
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_GOOGLE_ID: ${AUTH_GOOGLE_ID}
+      AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET}
+      NEXT_PUBLIC_MAPBOX_TOKEN: ${NEXT_PUBLIC_MAPBOX_TOKEN}
+    ports:
+      # Bound to localhost only — Cloudflare Tunnel reaches it, the public
+      # internet does not hit this port directly.
+      - "127.0.0.1:3000:3000"
+
+volumes:
+  sigilife_pgdata:

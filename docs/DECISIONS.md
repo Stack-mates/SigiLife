@@ -8,11 +8,26 @@ Format: number, date, decision, why, alternatives considered.
 ## ADR-001 · 2026-06-11 · Next.js full-stack (App Router)
 **Decision:** Rebuild as a single Next.js app; route handlers replace the
 separate Express server.
-**Why:** One deployable, one TS config, server components cut client JS for
-the book/library pages, first-class Vercel deploys for a 2-person team that
-wants to ship and charge money, good docs for AI-assisted work.
-**Alternatives:** Keep Vite+Express (familiar but two apps to deploy/secure);
-Remix (smaller ecosystem).
+**Why:** The durable win is **one codebase instead of two** — v1 was a Vite
+client + an Express server with separate builds, tsconfigs, CORS, a session
+store, and a client/server type boundary that could drift. Next collapses
+that into one repo, one dev server, one deploy artifact, with API routes
+beside the pages that use them and shared types across the boundary — a real
+productivity gain for a 2-person + AI team. Also: Auth.js fits Next natively
+(ADR-003), and SSR benefits the landing/marketing surfaces (SEO, first paint)
+for a consumer app that needs to be found. Next is well-documented, which
+helps AI-assisted work.
+**Honest caveat (revised 2026-06-14):** the original rationale also cited
+"first-class Vercel deploys" and "server components cut client JS." Both are
+now weaker: we self-host (ADR-012, no Vercel), and SigiLife's signature
+features — the canvas editor and WebGL rituals — are inherently client-side
+(`"use client"`), so server components give the *core* experience little.
+For this client-heavy app the choice was closer to a judgment call than first
+framed; it nets positive on the codebase-unification and Auth.js wins, and
+since the rebuild (make-sigil/grimoire/rituals) is already built and working
+in Next, **keeping it is unambiguous** — reverting would be pure cost.
+**Alternatives:** Keep Vite+Express (familiar, and an honest fit for a
+client-heavy SPA, but two apps to deploy/secure); Remix (smaller ecosystem).
 
 ## ADR-002 · 2026-06-11 · Postgres (was MySQL/MariaDB)
 **Decision:** Postgres via Prisma.
@@ -116,6 +131,30 @@ GhostCursor are raw WebGL and need no dependency.
 zero benefit — the v1 implementation works.
 **Alternatives:** three.js (heavier, already avoided); hand-rolled WebGL
 (needless reimplementation).
+
+## ADR-012 · 2026-06-14 · Self-host on unraid (not Vercel)
+**Decision:** Host SigiLife on the team's existing unraid box (Purity): the
+Next.js app as a `output: "standalone"` Docker container co-located with a
+Postgres container, fronted by a Cloudflare Tunnel (free TLS, hides the
+residential IP, no port-forwarding). Vercel is not used. App↔DB over
+localhost. Admin access via Tailscale.
+**Why:** Hardware is already owned; operating cost is ~electricity + a domain
++ pennies for off-box backups. At pre-launch / low user numbers, paying for
+managed infra is premature. Co-locating app+DB also gives localhost-latency
+queries. Next.js does not require Vercel — it runs anywhere Node runs.
+**Non-negotiables:** automated **off-box** backups from day one (nightly
+`pg_dump` → cheap cloud storage; test a restore); network isolation so a
+public app can't pivot into the home LAN; keep it reversible — the app only
+reaches Postgres via `DATABASE_URL`, so moving the DB or the app to managed
+hosting later is config, not code.
+**Migration trigger:** revisit managed hosting when downtime starts costing
+real users/revenue, when we must scale beyond one box, or when babysitting
+the box exceeds what a managed service would cost.
+**Avoid:** Vercel app + home database (serverless→home DB is high-latency and
+forces exposing Postgres). If self-hosting, host the whole stack at home.
+**Alternatives:** Vercel + Neon/Supabase (zero-ops, costs money, the path we
+keep open via the migration trigger); single cloud VPS (no owned-hardware
+savings).
 
 ---
 

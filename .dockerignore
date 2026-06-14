@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+npm-debug.log
+.env
+.env.local
+.env.*.local
+README.md
+OVERNIGHT.md
+docs
+**/*.test.ts
+vitest.config.ts

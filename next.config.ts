@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Self-hosted deploy target (ADR-012): emit a minimal standalone Node
+  // server (.next/standalone) for a small Docker image on unraid.
+  output: "standalone",
+
   // The 8th Wall AR engine (public/xr) requires SharedArrayBuffer, which in
   // turn requires cross-origin isolation. These headers are scoped to the AR
   // route only so the rest of the app is unaffected.

@@ -4,7 +4,8 @@
 
 | Layer | Choice | Why (ADR) |
 |---|---|---|
-| Framework | Next.js (App Router, TypeScript) | ADR-001 — single deployable, server components, easy Vercel deploys |
+| Framework | Next.js (App Router, TypeScript) | ADR-001 — one codebase (vs v1's client+server split), Auth.js fit, marketing-page SSR |
+| Hosting | Self-hosted: standalone Node in Docker on unraid, behind Cloudflare Tunnel | ADR-012 — own the hardware, near-zero cost until real traffic; **not** Vercel |
 | Database | Postgres via Prisma | ADR-002 — replaces v1 MySQL; better hosted options (Neon/Supabase) |
 | Auth | Auth.js (NextAuth v5) + Google provider + Prisma adapter | ADR-003 — replaces hand-rolled OAuth + express-session |
 | Styling | Tailwind CSS v4 + CSS theme variables | carried over from v1's visual system |
