@@ -1,6 +1,6 @@
 /**
  * Shared types & domain constants.
- * STATUS: stub
+ * STATUS: implemented (EMOTIONS + API response shapes; Prisma enum re-exports remain)
  *
  * What goes here (M1+):
  * - UserSummary / SigilSummary / MapSigil — the API response shapes
@@ -24,3 +24,38 @@ export const EMOTIONS = {
 } as const;
 
 export type EmotionKey = keyof typeof EMOTIONS;
+
+/** A user as it appears in lists (search results, follow lists). */
+export type UserSummary = {
+  id: string;
+  username: string | null;
+  avatar: number;
+  isFollowing?: boolean;
+  isFollower?: boolean;
+};
+
+/** A user's public profile page payload. */
+export type ProfileData = {
+  id: string;
+  username: string | null;
+  avatar: number;
+  sigilCount: number;
+  destroyCount: number;
+  homeLocation: { lat: number; lng: number; name: string } | null;
+  followerCount: number;
+  followingCount: number;
+  isFollowing?: boolean;
+};
+
+/** A sigil as it appears in lists/grids (never leaks full canvas/imageData rows). */
+export type SigilSummary = {
+  id: string;
+  name: string;
+  imageDataUrl: string | null;
+  status: "ACTIVE" | "DESTROYED";
+  isCharged: boolean;
+  finishedAt: string;
+};
+
+/** Direction filter for follow-edge queries. */
+export type FollowDirection = "followers" | "following" | "mutual";

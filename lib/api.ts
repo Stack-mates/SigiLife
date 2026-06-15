@@ -1,15 +1,18 @@
 /**
  * api — shared response envelopes for route handlers.
- * STATUS: stub (envelope helpers are real; extend as needed)
+ * STATUS: implemented (envelopes + requireViewer + parse helper)
  *
  * Every endpoint returns { data } on success or { error: { code, message } }
- * on failure — see docs/API_CONTRACT.md conventions. Add here (M1+):
- * - requireSession(): session-or-401 helper wrapping lib/auth
- * - zod parse helper mapping ZodError → VALIDATION envelope
+ * on failure — see docs/API_CONTRACT.md conventions.
+ * - requireViewer(): resolves the acting user via the lib/auth dev shim;
+ *   structured so real auth can later throw UNAUTHORIZED without touching callers.
+ * - parse(): runs a zod schema's safeParse, mapping failure → VALIDATION envelope.
  *
  * @see docs/API_CONTRACT.md
  */
 import { NextResponse } from "next/server";
+import { z } from "zod";
+import { getCurrentUserId } from "@/lib/auth";
 
 export type ErrorCode =
   | "NOT_FOUND"
@@ -43,4 +46,37 @@ export function err(code: ErrorCode, message: string) {
 /** Standard stub response — replace with the real handler per API_CONTRACT. */
 export function notImplemented(endpoint: string) {
   return err("NOT_IMPLEMENTED", `${endpoint} is a stub — see docs/API_CONTRACT.md`);
+}
+
+/**
+ * Resolve the acting user (the "viewer"). Currently delegates to the lib/auth
+ * dev shim. When real auth lands, this is where an UNAUTHORIZED is thrown if
+ * there is no session — callers (route handlers) stay the same.
+ */
+export async function requireViewer(): Promise<string> {
+  return getCurrentUserId();
+}
+
+/**
+ * Validate `data` against a zod schema. On success returns the parsed,
+ * fully-typed data; on failure returns a ready-to-return VALIDATION envelope
+ * with the schema's issue messages joined.
+ */
+export function parse<T>(
+  schema: z.ZodType<T>,
+  data: unknown,
+):
+  | { ok: true; data: T }
+  | { ok: false; response: ReturnType<typeof err> } {
+  const result = schema.safeParse(data);
+  if (!result.success) {
+    const message = result.error.issues
+      .map((issue) => {
+        const path = issue.path.join(".");
+        return path ? `${path}: ${issue.message}` : issue.message;
+      })
+      .join("; ");
+    return { ok: false, response: err("VALIDATION", message || "Invalid input") };
+  }
+  return { ok: true, data: result.data };
 }

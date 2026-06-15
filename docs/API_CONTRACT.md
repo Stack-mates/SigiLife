@@ -21,20 +21,20 @@
 |---|---|---|---|---|---|
 | * | `/api/auth/[...nextauth]` | — | Auth.js managed | Auth.js managed | `POST /api/auth/google`, `GET /api/auth/me` |
 | GET | `/api/sigils` | session | `?scope=all\|mine&status=active\|destroyed` | `{data: MapSigil[]}` (map markers; scope=all returns only placed sigils) **Implemented (M4).** | `GET /allsigils`, `GET /user/:userId/sigils` |
-| POST | `/api/sigils` | session | `createSigilSchema`: name, intention, canvasData, imageData, location?, shareWith?: userId[] | `{data: Sigil}` · `LIMIT_REACHED` if no free slot (via `lib/entitlements`) | `POST /api/sigils` |
+| POST | `/api/sigils` | session | `createSigilSchema`: name, intention, canvasData, imageData, location?, shareWith?: userId[] | `{data: Sigil}` · `LIMIT_REACHED` if no free slot (via `lib/entitlements`) · best-effort profanity gate · resolves `shareWith` to followed users + `SigilShare` rows in one tx **Implemented.** | `POST /api/sigils` |
 | GET | `/api/sigils/[id]` | session | — | `{data: SigilView}` incl. location, scores, owner username **Implemented (M4).** | `GET /:id` + `/:id/vote-status` |
 | PATCH | `/api/sigils/[id]` | owner | `updateSigilSchema`: name?, locationName?, latitude?, longitude? | `{data: SigilView}` **Implemented (M4).** | `PATCH /:id`, `PATCH /:id/location` |
-| DELETE | `/api/sigils/[id]` | owner | — | sets `status: DESTROYED`, increments destroyCount. Hard-delete is admin-only. | `DELETE /:id` (was hard delete) |
-| POST | `/api/sigils/[id]/vote` | session | `voteSchema`: `{type: "CHARGE"\|"DESTROY"}` | `{data: {chargeScore, destroyScore, viewerVote}}` — toggle semantics, transactional recompute | `POST /:sigilId/vote` |
-| PATCH | `/api/sigils/[id]/charge` | owner | `chargeSchema`: `{emotion: "HOPE"\|"GRIEF"\|"RELIEF"\|"JOY"\|"LONGING"}` | `{data: Sigil}` sets isCharged + chargedEmotion | `PATCH /:id/charge` |
-| POST | `/api/sigils/[id]/share` | owner | `shareSchema`: `{userIds: string[]}` (must be follows) | `{data: SigilShare[]}` | `POST /share` + SigilGroup |
-| GET | `/api/users` | session | `?q=<username prefix>` | `{data: UserSummary[]}` | `GET /users/search` |
-| GET | `/api/users/[id]` | session | — | `{data: profile + active sigil count + follow state}` | `GET /users/:id` |
-| PATCH | `/api/users/[id]` | self | `updateUserSchema`: username?, avatar?, theme?, colorTheme?, homeLocation?, hasCompletedTutorial? | `{data: User}` | `PATCH /users/:id` |
-| DELETE | `/api/users/[id]` | self | — | account deletion (cascade) | `DELETE /users/:id` |
-| GET | `/api/users/[id]/follows` | session | `?direction=followers\|following\|mutual` | `{data: UserSummary[]}` | `/followers`, `/following` |
-| POST | `/api/users/[id]/follows` | session | — (id = target) | `{data: Follow}` | `POST /users/follow` |
-| DELETE | `/api/users/[id]/follows` | session | — | unfollow | `PATCH /users/unfollow` |
+| DELETE | `/api/sigils/[id]` | owner | — | sets `status: DESTROYED`, increments destroyCount. Hard-delete is admin-only. Non-owner/unknown → 404. **Implemented.** | `DELETE /:id` (was hard delete) |
+| POST | `/api/sigils/[id]/vote` | session | `voteSchema`: `{type: "CHARGE"\|"DESTROY"}` | `{data: {chargeScore, destroyScore, viewerVote}}` — toggle semantics, transactional recompute **Implemented.** | `POST /:sigilId/vote` |
+| PATCH | `/api/sigils/[id]/charge` | owner | `chargeSchema`: `{emotion: "HOPE"\|"GRIEF"\|"RELIEF"\|"JOY"\|"LONGING"}` | `{data: Sigil}` sets isCharged + chargedEmotion; ownership scoped in `chargeSigil()` (non-owner → 404) **Implemented.** | `PATCH /:id/charge` |
+| POST | `/api/sigils/[id]/share` | owner | `shareSchema`: `{userIds: string[]}` (must be follows) | `{data: SigilShare[]}` · rejects whole request if any target is not followed (no partial shares); upserts are idempotent **Implemented.** | `POST /share` + SigilGroup |
+| GET | `/api/users` | session | `?q=<username prefix>` (min 2 chars, excludes self) | `{data: UserSummary[]}` incl. `isFollowing` relative to viewer **Implemented.** | `GET /users/search` |
+| GET | `/api/users/[id]` | session | — | `{data: ProfileData}` — profile + sigilCount/destroyCount + follower/following counts + follow state **Implemented.** | `GET /users/:id` |
+| PATCH | `/api/users/[id]` | self | `updateUserSchema`: username?, avatar?, theme?, colorTheme?, homeLocation?, hasCompletedTutorial? | `{data: User}` · `CONFLICT` on duplicate username **Implemented.** | `PATCH /users/:id` |
+| DELETE | `/api/users/[id]` | self | — | account deletion (cascade) → `{data: {deleted: true}}` **Implemented.** | `DELETE /users/:id` |
+| GET | `/api/users/[id]/follows` | session | `?direction=followers\|following\|mutual` (default following) | `{data: UserSummary[]}` (mutual = SigiFriends) **Implemented.** | `/followers`, `/following` |
+| POST | `/api/users/[id]/follows` | session | — (id = target) | `{data: {following: true}}` — idempotent upsert; cannot follow self **Implemented.** | `POST /users/follow` |
+| DELETE | `/api/users/[id]/follows` | session | — | unfollow → `{data: {following: false}}` (idempotent) **Implemented.** | `PATCH /users/unfollow` |
 | POST | `/api/vectors` | none yet (add session when auth lands — ADR-009) | `vectorsSchema`: `{characters: string[]}` (1–64, single code points) | `{data: {glyphs: TracedGlyph[], missing: string[]}}` — paths traced at runtime from the sigil font (ADR-008), `missing` = chars the font can't draw. **Implemented.** | `POST /vectors/character-vectors` |
 | GET/PUT | `/api/ar/placements` | session | PUT: `placementSchema` (sigilId, pos, quaternion) | `{data: ArPlacement}` | (unfinished in v1) |
 | POST | `/api/stripe/checkout` | session | `{plan: "PREMIUM"}` | `{data: {url}}` Stripe Checkout session **Implemented (M7).** | — (new) |

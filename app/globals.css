@@ -1,16 +1,17 @@
 /**
  * Global styles — Tailwind v4 + the SigiLife theme system.
- * STATUS: stub
+ * STATUS: implemented
  *
- * What goes here (M1):
- * - Theme variables: --theme-text, --theme-glow, plus the four combinations
- *   driven by classes on <html>: .dark and .theme-foliage / .theme-cyber
- *   (applied by context/UserProvider).
- * - Shared component layers ported from v1: .glasscard (frosted glass),
- *   .pinkbutton, .glassbutton, .navmenu/.navbutton, .textinput,
- *   .art-page-base (full-bleed Lino room background).
- * - Font-face / font tokens: Figtree (body), Pompiere / New Rocker /
- *   Special Elite (decorative, in public/fonts/).
+ * Theme system (additive over the existing zinc/violet component utilities —
+ * the dark look is the DEFAULT and untouched):
+ * - Mode is driven by `.dark` on <html> (default; light is the absence of it).
+ * - Color theme is driven by `.theme-foliage` / `.theme-cyber` on <html>
+ *   (default foliage). Both classes are set by app/layout.tsx (server, no FOUC)
+ *   and kept in sync by context/UserProvider.
+ * - `--accent` (+ hover/contrast/glow) is the one knob the two color themes
+ *   turn: foliage = emerald/green, cyber = violet/magenta. Components opt in
+ *   via `var(--accent)`; everything still using literal violet/zinc utilities
+ *   keeps working unchanged.
  *
  * v1 reference: git show main:src/index.css  (port the system, prune dead rules)
  * @see docs/CONVENTIONS.md (styling), docs/PRODUCT_SPEC.md (visual identity)
@@ -18,7 +19,74 @@
 
 @import "tailwindcss";
 
+/* The default canvas: consume the theme tokens so every page (including ones
+   without their own full-bleed background, e.g. /create-profile) sits on the
+   correct surface. Dark by default (--theme-bg is zinc-950 in :root); flips
+   only when .dark is absent. Pages with their own background paint over it. */
+body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
+}
+
+/* ---- Base tokens (dark is the default look) ---------------------------- */
 :root {
-  --theme-text: #1a1a1a;
+  --theme-text: #f4f4f5; /* zinc-100 */
+  --theme-bg: #09090b; /* zinc-950 */
   --theme-glow: #9e38fd;
+
+  /* Accent — overridden per color theme below. Foliage is the default. */
+  --accent: #34d399; /* emerald-400 */
+  --accent-strong: #10b981; /* emerald-500 */
+  --accent-contrast: #052e16; /* deep green ink on accent */
+  --accent-glow: #34d39966;
+}
+
+/* Light mode: only flips base text/bg tokens. Components that hard-code
+   zinc/violet utilities are unaffected; this is for var()-driven surfaces. */
+:root:not(.dark) {
+  --theme-text: #18181b; /* zinc-900 */
+  --theme-bg: #fafafa; /* zinc-50 */
+}
+
+/* ---- Color themes ------------------------------------------------------- */
+.theme-foliage {
+  --accent: #34d399;
+  --accent-strong: #10b981;
+  --accent-contrast: #052e16;
+  --accent-glow: #34d39966;
+  --theme-glow: #10b981;
+}
+
+.theme-cyber {
+  --accent: #a855f7; /* violet/magenta */
+  --accent-strong: #9e38fd;
+  --accent-contrast: #faf5ff;
+  --accent-glow: #9e38fd66;
+  --theme-glow: #9e38fd;
+}
+
+/* Slightly brighter accents in dark mode for legibility on the dark canvas. */
+.dark.theme-foliage {
+  --accent: #34d399;
+  --accent-strong: #34d399;
+}
+
+.dark.theme-cyber {
+  --accent: #c084fc;
+  --accent-strong: #a855f7;
+}
+
+/* ---- Utilities for opt-in components ----------------------------------- */
+.accent-text {
+  color: var(--accent);
+}
+.accent-bg {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+.accent-ring {
+  --tw-ring-color: var(--accent);
+}
+.accent-glow {
+  box-shadow: 0 0 24px var(--accent-glow);
 }

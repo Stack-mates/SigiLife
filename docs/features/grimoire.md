@@ -13,6 +13,13 @@
 > Deferred to DB era: profile spread, map, friends, votes, SigiLites,
 > pick-mode routing. Destroyed-view name decided: **"Closed cases."**
 > Book shell decided: modern dark shell now, Lino art frame as polish pass.
+>
+> **Update 2026-06-15:** map + votes shipped (M4); friends + DB-backed profile
+> data shipped (see social.md). `grimoire/LeftPage` (profile summary) and
+> `grimoire/RightPage` (recent-sigil grid) are now **implemented** as
+> presentational server components, but the default `/grimoire` spread still
+> redirects to `/grimoire/library` — mounting LeftPage/RightPage into a real
+> two-page spread is the remaining grimoire task.
 
 ## Purpose
 The user's spellbook: a two-page book UI that frames the map, library,

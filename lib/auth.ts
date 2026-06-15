@@ -32,3 +32,27 @@ export async function getCurrentUserId(): Promise<string> {
   cachedDevUserId = user.id;
   return user.id;
 }
+
+/**
+ * The acting user's profile fields needed by the root layout / UserProvider to
+ * apply theming server-side and seed client context. Read-only summary — never
+ * leaks counters or relations. When real auth lands this resolves from the
+ * session instead of the dev shim; callers stay the same.
+ */
+export type CurrentUser = {
+  id: string;
+  username: string | null;
+  avatar: number;
+  theme: "LIGHT" | "DARK";
+  colorTheme: "FOLIAGE" | "CYBER";
+};
+
+/** Resolve the acting user's profile summary, creating the dev user on first use. */
+export async function getCurrentUser(): Promise<CurrentUser> {
+  const id = await getCurrentUserId();
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id },
+    select: { id: true, username: true, avatar: true, theme: true, colorTheme: true },
+  });
+  return user;
+}

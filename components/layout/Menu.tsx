@@ -19,6 +19,7 @@ const LINKS = [
   { href: "/home", label: "The Office" },
   { href: "/make-sigil", label: "Write a Sigil" },
   { href: "/grimoire/library", label: "Library" },
+  { href: "/grimoire/friends", label: "SigiFriends" },
   { href: "/grimoire/profile", label: "Profile" },
   { href: "/grimoire/settings", label: "Settings" },
   // Premium (M7) is implemented but intentionally not surfaced yet — the

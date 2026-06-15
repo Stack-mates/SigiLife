@@ -27,7 +27,9 @@ app/layout.tsx [s] ........................ fonts, globals.css, <UserProvider>
     │   └── destroy/EvilEye [c] ........... OGL WebGL eye (pupil tracks pointer)
     │       (GhostCursor dropped — ADR-011, would pull in three.js)
     ├── grimoire/layout.tsx [s] ........... grimoire/GrimoireBook (book frame)
-    │   ├── page.tsx [s] .................. LeftPage(profile) + RightPage(library)
+    │   ├── page.tsx [s] .................. redirects → library (interim). grimoire/LeftPage [s] (profile)
+    │   │                                    + grimoire/RightPage [s] (library) are IMPLEMENTED but not
+    │   │                                    yet mounted — the default spread wires them later.
     │   ├── map/page.tsx .................. map/WorldMap [c]
     │   │   ├── map/SigilMarker [c]
     │   │   └── map/VotePanel [c]
@@ -43,11 +45,15 @@ app/layout.tsx [s] ........................ fonts, globals.css, <UserProvider>
 
 Cross-cutting:
   layout/PageShell [s] ......... full-bleed Lino room background + glasscard slot
-  layout/Menu [c] .............. hamburger nav (mounted by (app)/layout)
-  layout/NextButton [c] ........ wizard step nav
+  layout/Menu [c] .............. hamburger nav (mounted by (app)/layout); links The Office,
+                                 Write a Sigil, Library, SigiFriends, Profile, Settings
+  layout/NextButton [c] ........ wizard step nav [implemented]
   tutorial/TutorialOverlay [c] . step engine; tutorial/TutorialCharacter [c] (Harper/Bennet)
   premium/PaywallGate [c] ...... wraps premium-only UI; reads entitlements
-  ui/* ......................... primitives (button, card, …) — shadcn-style
+  ui/Button [s], ui/Card [s] ... primitives (hand-rolled variant strings, no cva/clsx — ADR-006);
+                                 [implemented] — the one Button/Card surface used app-wide
+  context/UserProvider [c] ..... session user + live theme application ([implemented]; mounted by
+                                 app/layout.tsx, seeded server-side via lib/auth getCurrentUser)
 ```
 
 ## Old → new mapping (v1 paths on `main` under `src/components/`)

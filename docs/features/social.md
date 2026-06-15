@@ -1,6 +1,6 @@
 # Feature: Social (follows, SigiFriends, sharing, scrying)
 
-**Milestone:** M3–M4 (follows with grimoire; feed polish with map) · **Status:** stub
+**Milestone:** M3–M4 (follows with grimoire; feed polish with map) · **Status: implemented 2026-06-15 (DB-backed, against the dev-identity shim)** — user search, follow/unfollow (idempotent), followers/following/mutual (SigiFriends), and sigil sharing (followed-only, no partial shares) all live via `/api/users*` and `/api/sigils/[id]/share`; UI = `social/UserSearch` + `social/FollowButton` + `social/FriendsList` on `/grimoire/friends` (linked in Menu). **Deferred:** the shared-sigil "scrying" feed (rendering others' `SigilShare` rows) is not built yet; real per-user auth replaces the dev shim in the auth milestone.
 
 ## Purpose
 Light-touch social: follow people, share sigils with mutuals (SigiFriends),

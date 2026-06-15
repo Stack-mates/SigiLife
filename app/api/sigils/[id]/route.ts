@@ -1,6 +1,6 @@
 /**
  * /api/sigils/[id] — one sigil.
- * STATUS: implemented (GET + PATCH; DELETE is M3)
+ * STATUS: implemented (GET + PATCH + DELETE)
  *
  * GET    (M4): public sigil details for map popup — chargeScore, destroyScore,
  *              owner username. Returns 404 if not found or DESTROYED.
@@ -15,7 +15,8 @@
 import { type NextRequest } from "next/server";
 import { getCurrentUserId } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { ok, err, notImplemented } from "@/lib/api";
+import { ok, err } from "@/lib/api";
+import { destroySigil } from "@/lib/sigil/actions";
 import { updateSigilSchema } from "@/lib/validation";
 
 export async function GET(
@@ -119,6 +120,22 @@ export async function PATCH(
   }
 }
 
-export async function DELETE() {
-  return notImplemented("DELETE /api/sigils/[id]");
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    // destroySigil scopes to the current user, so a non-owner (or unknown id)
+    // resolves to null → 404. Destruction is the DESTROY lifecycle: status
+    // flips to DESTROYED and destroyedAt is set; the row is never deleted.
+    const view = await destroySigil(id);
+    if (!view) return err("NOT_FOUND", "Sigil not found.");
+
+    return ok(view);
+  } catch (e) {
+    console.error("DELETE /api/sigils/[id] error:", e);
+    return err("INTERNAL", "Failed to destroy sigil.");
+  }
 }
