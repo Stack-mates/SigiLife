@@ -163,6 +163,13 @@ savings).
 
 ---
 
+## ADR-014 · 2026-06-14 · Install stripe for M7 monetization
+**Decision:** Add `stripe` (v22) as the Stripe Node.js SDK. Singleton client in `lib/stripe.ts`; webhook in `/api/stripe/webhook`.
+**Why:** Official SDK handles retry logic, webhook signature verification, and TypeScript types. Direct HTTP is not worth reinventing.
+**Alternatives:** HTTP fetch to Stripe API directly (rejected — no type safety, no automatic retries, no webhook helper).
+
+---
+
 ### Template
 
 ```

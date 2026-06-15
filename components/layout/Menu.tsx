@@ -21,6 +21,7 @@ const LINKS = [
   { href: "/grimoire/library", label: "Library" },
   { href: "/grimoire/profile", label: "Profile" },
   { href: "/grimoire/settings", label: "Settings" },
+  { href: "/premium", label: "Premium" },
 ] as const;
 
 export function Menu() {

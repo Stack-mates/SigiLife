@@ -20,10 +20,10 @@
 | Method | Path | Auth | Body / Query | Returns | v1 equivalent (on `main`) |
 |---|---|---|---|---|---|
 | * | `/api/auth/[...nextauth]` | — | Auth.js managed | Auth.js managed | `POST /api/auth/google`, `GET /api/auth/me` |
-| GET | `/api/sigils` | session | `?scope=all\|mine\|user:<id>&status=active\|destroyed` | `{data: Sigil[]}` (feed/map; includes scores, location, owner summary) | `GET /allsigils`, `GET /user/:userId/sigils` |
+| GET | `/api/sigils` | session | `?scope=all\|mine&status=active\|destroyed` | `{data: MapSigil[]}` (map markers; scope=all returns only placed sigils) **Implemented (M4).** | `GET /allsigils`, `GET /user/:userId/sigils` |
 | POST | `/api/sigils` | session | `createSigilSchema`: name, intention, canvasData, imageData, location?, shareWith?: userId[] | `{data: Sigil}` · `LIMIT_REACHED` if no free slot (via `lib/entitlements`) | `POST /api/sigils` |
-| GET | `/api/sigils/[id]` | session | — | `{data: Sigil}` incl. votes summary, SigiLites, viewer's vote | `GET /:id` + `/:id/vote-status` |
-| PATCH | `/api/sigils/[id]` | owner | `updateSigilSchema`: name?, location? | `{data: Sigil}` | `PATCH /:id`, `PATCH /:id/location` |
+| GET | `/api/sigils/[id]` | session | — | `{data: SigilView}` incl. location, scores, owner username **Implemented (M4).** | `GET /:id` + `/:id/vote-status` |
+| PATCH | `/api/sigils/[id]` | owner | `updateSigilSchema`: name?, locationName?, latitude?, longitude? | `{data: SigilView}` **Implemented (M4).** | `PATCH /:id`, `PATCH /:id/location` |
 | DELETE | `/api/sigils/[id]` | owner | — | sets `status: DESTROYED`, increments destroyCount. Hard-delete is admin-only. | `DELETE /:id` (was hard delete) |
 | POST | `/api/sigils/[id]/vote` | session | `voteSchema`: `{type: "CHARGE"\|"DESTROY"}` | `{data: {chargeScore, destroyScore, viewerVote}}` — toggle semantics, transactional recompute | `POST /:sigilId/vote` |
 | PATCH | `/api/sigils/[id]/charge` | owner | `chargeSchema`: `{emotion: "HOPE"\|"GRIEF"\|"RELIEF"\|"JOY"\|"LONGING"}` | `{data: Sigil}` sets isCharged + chargedEmotion | `PATCH /:id/charge` |
@@ -37,8 +37,8 @@
 | DELETE | `/api/users/[id]/follows` | session | — | unfollow | `PATCH /users/unfollow` |
 | POST | `/api/vectors` | none yet (add session when auth lands — ADR-009) | `vectorsSchema`: `{characters: string[]}` (1–64, single code points) | `{data: {glyphs: TracedGlyph[], missing: string[]}}` — paths traced at runtime from the sigil font (ADR-008), `missing` = chars the font can't draw. **Implemented.** | `POST /vectors/character-vectors` |
 | GET/PUT | `/api/ar/placements` | session | PUT: `placementSchema` (sigilId, pos, quaternion) | `{data: ArPlacement}` | (unfinished in v1) |
-| POST | `/api/stripe/checkout` | session | `{plan: "PREMIUM"}` | `{data: {url}}` Stripe Checkout session | — (new) |
-| POST | `/api/stripe/webhook` | Stripe signature | raw body | 200; syncs Subscription + Entitlements | — (new) |
+| POST | `/api/stripe/checkout` | session | `{plan: "PREMIUM"}` | `{data: {url}}` Stripe Checkout session **Implemented (M7).** | — (new) |
+| POST | `/api/stripe/webhook` | Stripe signature | raw body | 200; syncs Subscription + Entitlements (idempotent) **Implemented (M7).** | — (new) |
 
 ## Server actions policy
 
