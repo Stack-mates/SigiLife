@@ -156,6 +156,11 @@ forces exposing Postgres). If self-hosting, host the whole stack at home.
 keep open via the migration trigger); single cloud VPS (no owned-hardware
 savings).
 
+## ADR-013 · 2026-06-14 · Keep raw lat/lng on Sigil for map placement (no Place model)
+**Decision:** Sigils store locationName/latitude/longitude directly rather than referencing a Place row. The Place model (with sponsorId, perks, art overrides) is deferred to post-traction.
+**Why:** The Prisma schema already had these fields before M4; adding Place would require a migration with no immediate payoff. Sponsored sites are a post-traction revenue stream (features/monetization.md). If Place is needed later, it's a migration that adds a placeId FK to Sigil — not a rewrite.
+**Alternatives:** Add Place now (rejected — migration cost before we have paying users, and the sponsorship market needs to be validated first).
+
 ---
 
 ### Template
