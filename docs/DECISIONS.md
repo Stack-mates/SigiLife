@@ -168,6 +168,27 @@ savings).
 **Why:** Official SDK handles retry logic, webhook signature verification, and TypeScript types. Direct HTTP is not worth reinventing.
 **Alternatives:** HTTP fetch to Stripe API directly (rejected — no type safety, no automatic retries, no webhook helper).
 
+## ADR-015 · 2026-06-14 · Pin `@8thwall/engine-binary@1` (8thwall.org), self-host into public/xr (M8 plan)
+**Decision:** For M8 AR, depend on `@8thwall/engine-binary@1` from the
+official 8thwall.org lineage (`github.com/8thwall/engine`) and copy its
+`dist/*` into `public/xr/` at build, replacing the stale ~Jan-2026 snapshot
+committed from v1. Gitignore the generated `public/xr/` (reproducible);
+preserve the LICENSE/attribution per ADR-007. Load via the package's
+`XR8Promise` export (the old `XR8` global pattern is superseded) — update
+`types/8thwall.d.ts`. jsdelivr CDN is the documented fallback. This is a
+planning decision; no code lands until M8 (post-launch).
+**Why:** Niantic retired hosted 8th Wall (2026-02-28); 8thwall.org is the
+official, maintained continuation (the `8thwall.io` community fork is not
+authoritative). Re-pinning picks up browser-compat fixes the snapshot lacks.
+Self-hosting keeps cross-origin isolation simple (COOP/COEP already scoped to
+`/ar/*`) and suits the standalone Docker deploy (ADR-012). The binary's
+limited-use license permits commercial use as a secondary feature of a
+broader app (ADR-007).
+**Alternatives:** keep the v1 snapshot (rejected — stale, unmaintained, no
+compat fixes); jsdelivr CDN at runtime (kept only as fallback — adds a
+runtime third-party dependency and a cross-origin wrinkle); the `8thwall.io`
+fork (rejected — not the official lineage).
+
 ---
 
 ### Template

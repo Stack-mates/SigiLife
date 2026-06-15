@@ -1,7 +1,8 @@
 # Feature: AR Placement (8th Wall)
 
 **Milestone:** M8 — explicitly post-launch · **Status:** stub (flag-gated)
-**Last researched:** 2026-06-11
+**Last researched:** 2026-06-14 (engine landscape re-confirmed; open questions
+resolved — see below. Detailed task plan: [../plans/M8-ar.md](../plans/M8-ar.md))
 
 ## Purpose
 Place a sigil in physical space: SLAM surface detection, tap to anchor,
@@ -88,10 +89,24 @@ v1 already depended on `@8thwall/engine-binary` — same package we'll pin at M8
 - [ ] Engine pinned to a specific `@8thwall/engine-binary` version, noted
       in DECISIONS.md.
 
-## Open questions
-- Engine delivery at M8: copy npm artifacts into `public/xr/` (self-host,
-  works offline-ish, COOP/COEP friendly) vs jsdelivr CDN. Lean: self-host.
-- Is AR placement premium-only? (Fine under the license as part of the app;
-  see monetization.md. Decide at M7/M8 boundary.)
-- Community-fork health: 8thwall.io exists as a separate open-source
-  continuation — re-evaluate which lineage is healthier when M8 starts.
+## Open questions — RESOLVED 2026-06-14 (kept here as the decision record)
+- **Engine delivery:** ✅ **Self-host.** Pin `@8thwall/engine-binary@1` and
+  copy `dist/*` into `public/xr/` at build (replacing the stale Jan-2026
+  snapshot). Self-hosting keeps cross-origin isolation simple (our COOP/COEP
+  headers are already scoped to `/ar/*`) and works with the standalone Docker
+  deploy (ADR-012). jsdelivr CDN
+  (`https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js`,
+  `crossorigin="anonymous"`) stays a documented fallback. The new package
+  exports `XR8Promise` rather than relying on the `XR8` global — update
+  `types/8thwall.d.ts` accordingly.
+- **Premium-only?** ✅ **No.** Monetization is intentionally dormant (user
+  decision, 2026-06-14); framing stays on slots/styles (ADR-007). AR ships
+  free behind the env flag — do not wrap it in `PaywallGate`. Revisit only if
+  billing is later activated.
+- **Community-fork health:** ✅ **8thwall.org is the source.** Official
+  continuation backed by Niantic Spatial; binary at `github.com/8thwall/engine`
+  (npm `@8thwall/engine-binary@1`), MIT framework at `github.com/8thwall/8thwall`.
+  The separate `8thwall.io` community continuation is not authoritative — not
+  our lineage.
+- **Gating:** ✅ env flag `NEXT_PUBLIC_AR_ENABLED` (default off) now; add an
+  `isAdmin` check when auth (M1) lands. See [../plans/M8-ar.md](../plans/M8-ar.md).
