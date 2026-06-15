@@ -21,7 +21,9 @@ const LINKS = [
   { href: "/grimoire/library", label: "Library" },
   { href: "/grimoire/profile", label: "Profile" },
   { href: "/grimoire/settings", label: "Settings" },
-  { href: "/premium", label: "Premium" },
+  // Premium (M7) is implemented but intentionally not surfaced yet — the
+  // /premium route and Stripe flow exist; add { href: "/premium", label:
+  // "Premium" } here to turn it on once billing goes live.
 ] as const;
 
 export function Menu() {
