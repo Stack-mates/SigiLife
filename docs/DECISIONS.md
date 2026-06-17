@@ -189,6 +189,29 @@ compat fixes); jsdelivr CDN at runtime (kept only as fallback — adds a
 runtime third-party dependency and a cross-origin wrinkle); the `8thwall.io`
 fork (rejected — not the official lineage).
 
+## ADR-016 · 2026-06-17 · Native iOS/Android via React Native (Expo) over a shared API; monorepo
+**Decision:** Ship truly-native iOS + Android apps listed in both stores, built
+alongside web. Stack: **React Native (Expo)** consuming a **token-authed REST
+API** that becomes the single source of truth for mutations. Restructure into a
+**monorepo** (pnpm workspaces + Turborepo): `apps/web`, `apps/mobile`,
+`packages/shared` (zod schemas, types, EMOTIONS, pure domain logic like
+extractSigilCharacters), `packages/api-client`, `packages/db` (Prisma). Auth
+moves from "last milestone" to the **first shared dependency** — both frontends
+gate on it. Full plan: docs/plans/MOBILE-native.md.
+**Why:** The user requires store presence (rules out PWA-only), truly-native
+feel (rules out Capacitor's web-in-a-shell), with a 2-person team (rules out
+Swift+Kotlin). RN/Expo is the only option meeting all three while keeping the
+team's React/TS skills. The monorepo + API-as-source-of-truth is the keystone:
+every native path needs it, the web app benefits, and it prevents the product
+forking into three codebases. Domain logic, validation, types, and the entire
+backend are shared; all UI + the WebGL rituals/canvas/map are rebuilt natively.
+**Alternatives:** Capacitor (rejected — not truly native, WebAR-in-WebView
+unreliable, App Store 4.2 risk); PWA (rejected — no iOS App Store listing);
+native Swift+Kotlin (rejected — infeasible for 2 people). **Risk acknowledged:**
+~2.5–3× build surface pre-launch; the rituals (ogl→Skia/expo-gl), drawing
+canvas (Fabric→Skia), map (native Mapbox), IAP (vs Stripe), and native AR are
+the genuine cost items, not boilerplate.
+
 ---
 
 ### Template
