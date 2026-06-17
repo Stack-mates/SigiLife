@@ -10,6 +10,9 @@ next-env.d.ts
 build/
 dist/
 
+# turborepo cache
+.turbo/
+
 # env — never commit real secrets; .env.example is the template
 .env
 .env.local

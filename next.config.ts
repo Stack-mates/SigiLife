@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   // server (.next/standalone) for a small Docker image on unraid.
   output: "standalone",
 
+  // Transpile the workspace packages (ADR-016) — they ship TS source, so Next
+  // compiles them like first-party code instead of expecting prebuilt JS.
+  transpilePackages: ["@sigilife/shared", "@sigilife/api-client"],
+
   // The 8th Wall AR engine (public/xr) requires SharedArrayBuffer, which in
   // turn requires cross-origin isolation. These headers are scoped to the AR
   // route only so the rest of the app is unaffected.

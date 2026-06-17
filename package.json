@@ -2,6 +2,17 @@
   "name": "sigilife",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.32.1",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ]
+  },
   "description": "SigiLife — an intention-based social app where users craft, charge, and destroy sigils placed in the real world.",
   "scripts": {
     "dev": "next dev",
@@ -20,6 +31,8 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
     "@prisma/client": "^6.5.0",
+    "@sigilife/api-client": "workspace:*",
+    "@sigilife/shared": "workspace:*",
     "fabric": "^7.4.0",
     "mapbox-gl": "^3.24.1",
     "next": "^15.3.0",
@@ -45,6 +58,7 @@
     "prisma": "^6.5.0",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.19.0",
+    "turbo": "^2.3.0",
     "typescript": "^5.7.0",
     "vitest": "^4.1.8"
   }

@@ -80,12 +80,22 @@ mobile proceed concurrently.**
 
 ### Phase 0 — Foundation (shared; do before any mobile UI)
 - Monorepo restructure (apps/web, packages/shared, packages/db, api-client).
-- **Finish auth as token-based** (this is M1, now with a mobile dimension):
-  Auth.js Google on web + native Google sign-in on mobile → backend issues a
-  JWT/session token the API accepts. The dev shim retires here.
-- Make the REST API complete + authoritative for every mutation; web migrates
-  off server actions for writes (reads can stay RSC).
-- Extract `packages/shared` (schemas, types, domain logic) + `api-client`.
+  - **2026-06-17 — pnpm + Turborepo workspace stood up; `packages/shared`
+    (types, validation, EMOTIONS, extractSigilCharacters) + `packages/api-client`
+    extracted.** The web app stays at the repo root and keeps its `@/` imports
+    via thin re-export shims (low-churn; migrate to package specifiers later).
+    `packages/db` deferred (Prisma is server-only, not mobile-shared, riskiest
+    to extract). **`.npmrc` sets `node-linker=hoisted`** — pnpm's default
+    isolated layout broke Prisma's generated-client resolution and
+    eslint-config-next's bundled plugins; hoisting matches the npm layout the
+    code was written against while keeping pnpm's store/workspaces/Turborepo.
+    Verified green: typecheck/lint/build, unit 12/12, E2E 8/8.
+- **Finish auth as token-based** — DONE (M1): Auth.js JWT, real Google sign-in
+  verified, mobile Bearer path + `/api/auth/mobile`. Dev shim still on (fallback)
+  until `AUTH_ENFORCED=true`.
+- Make the REST API complete + authoritative for every mutation — DONE (A4):
+  web writes go through `@sigilife/api-client` → `/api/*`.
+- Extract `packages/shared` + `api-client` — DONE (above).
 
 ### Phase 1 — Mobile shell + core read flows
 - Expo app boots, auth flow works, navigation skeleton (Office, Grimoire,

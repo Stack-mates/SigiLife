@@ -1,0 +1,4 @@
+# pnpm workspace (ADR-016). The Next.js web app is the repo-root package for
+# now; shared libraries live under packages/*. apps/mobile (Expo) joins later.
+packages:
+  - "packages/*"

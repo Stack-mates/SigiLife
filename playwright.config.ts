@@ -6,7 +6,7 @@ import { defineConfig, devices } from "@playwright/test";
  * :3001 if present (the one we keep up for phone testing), else starts one.
  * Requires the Postgres container up (docker compose up -d db).
  *
- * Run: npm run test:e2e   ·   see docs/CONVENTIONS.md (testing policy)
+ * Run: pnpm test:e2e   ·   see docs/CONVENTIONS.md (testing policy)
  */
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -26,7 +26,7 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "npm run dev -- -H 0.0.0.0 -p 3001",
+    command: "pnpm exec next dev -H 0.0.0.0 -p 3001",
     url: "http://localhost:3001",
     reuseExistingServer: true,
     timeout: 120_000,
