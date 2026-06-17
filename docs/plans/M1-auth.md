@@ -4,6 +4,33 @@
 **Exit:** a fresh Google account can sign in → onboard → /home themed →
 sign out → return. All acceptance criteria in the feature doc checked.
 
+> **UPDATE 2026-06-17 — auth is now the keystone, and token-based.**
+> Two things changed since this plan was written:
+>
+> **(a) Much of M1 already landed against the dev shim** (overnight build,
+> 2026-06-15): `lib/prisma`, the init migration, `lib/validation`
+> (updateUserSchema etc.), `lib/api` (requireViewer + parse), `ProfileForm`,
+> `/create-profile`, the theme system in `globals.css` + `UserProvider` (live
+> foliage/cyber × light/dark), `Menu`, `getCurrentUser`, and the user/profile
+> API routes. **What's NOT done = the actual identity provider:** real
+> Auth.js Google wiring in `lib/auth.ts`, the `[...nextauth]` route,
+> `GoogleSignInButton`, the session gate in `(app)/layout`, and `signOut`.
+>
+> **(b) Mobile pivot (ADR-016) makes sessions token-based.** Native apps can't
+> ride Next-Auth cookies, so the session must be a **JWT** the API accepts as
+> either a cookie (web) or a `Bearer` token (mobile). Decision: **Auth.js
+> with `session: { strategy: "jwt" }`**, Google provider; mobile does native
+> Google sign-in → posts the Google ID token to a backend endpoint → backend
+> verifies and returns the same JWT. `requireViewer()` resolves the user from
+> cookie-or-Bearer, falling back to the dev shim **only** when no real auth is
+> configured (so local dev keeps working credential-less).
+>
+> **The one external dependency (blocks the Google path end-to-end):**
+> Google OAuth credentials — see Prerequisites. Everything else (the token
+> layer, the API-as-source-of-truth migration, the dev fallback) can be built
+> and tested without them; the Google provider activates when the env vars land.
+> Revised task order lives in the "Revised tasks (2026-06-17)" section below.
+
 ## Open questions to resolve FIRST (write answers into auth.md)
 - [ ] Username mutability after onboarding (proposal: allowed in settings,
       rate-limited to once per 30 days — cheap to enforce later, decide copy now)
@@ -65,3 +92,35 @@ sign out → return. All acceptance criteria in the feature doc checked.
 - `git grep "STATUS: stub" app/(auth) app/api/auth lib/auth.ts` → empty.
 
 ## Done = ROADMAP M1 row checked, M3 plan NOT needed yet (M2 already written).
+
+---
+
+## Revised tasks (2026-06-17) — token-based, web + mobile, dev-fallback preserved
+
+### Phase A — credential-INDEPENDENT (buildable + testable now, no Google creds)
+A1. `lib/auth.ts` → configure Auth.js (`session.strategy = "jwt"`, Google
+    provider reading env, PrismaAdapter). Keep a **dev-login fallback**:
+    `requireViewer()` resolves from cookie-or-`Bearer` JWT, else the existing
+    dev shim — so the app runs credential-less and activates real auth when
+    `AUTH_GOOGLE_*` are present. ✎ types/next-auth.d.ts.
+A2. `app/api/auth/[...nextauth]/route.ts` → `export const { GET, POST } = handlers`.
+A3. API auth layer: a `Bearer`-token path in `requireViewer()` + a dev
+    token-mint route (test-only, gated to non-prod) so the token model is
+    exercisable before Google works. ✎ API_CONTRACT.
+A4. **API-as-source-of-truth:** migrate web write-paths (charge/destroy/vote/
+    create/rename/follow/share) to call the authenticated `/api/*` routes
+    instead of server actions. Reads may stay RSC. (Prereq for mobile.)
+A5. Extract domain logic + schemas + types toward `packages/shared` boundaries
+    (can be in-repo dirs now; physical monorepo split is the later step).
+
+### Phase B — credential-DEPENDENT (needs Google OAuth creds to finish/test)
+B1. `app/page.tsx` + `GoogleSignInButton` → real `signIn("google")`.
+B2. `(app)/layout.tsx` gate: no session → `/`; no username → `/create-profile`.
+B3. `Menu` → real `signOut()`; settings → DELETE account confirm.
+B4. Mobile token exchange endpoint: native Google ID token → verified → JWT.
+B5. Retire the dev shim's auto-user once real sessions exist (keep it behind a
+    dev-only flag for local E2E).
+
+### Verification additions
+- Bearer-token request to a write endpoint succeeds with a valid JWT, 401s
+  without — proving the mobile auth path before the mobile app exists.
