@@ -12,6 +12,10 @@ onboarding completes — its presence is the "profile complete" signal),
 (FOLIAGE/CYBER), `homeLocation` (Json `{lat,lng,name}` — v1 stored a JSON
 string), `hasCompletedTutorial`, `sigilCount`/`destroyCount` (lifetime
 counters, denormalized), `isAdmin`.
+`emailVerified` (DateTime?) is **required by the Auth.js Prisma adapter** —
+it's written when a Google account is linked. Added 2026-06-17 (migration
+`add_user_email_verified`) after a missing-column 500 on the OAuth callback;
+the adapter's User schema is not optional.
 Dropped from v1: `googleId`, `picture` (live on `Account`/session now),
 `homeTeam`, `lightOrDark` (redundant with `theme`).
 

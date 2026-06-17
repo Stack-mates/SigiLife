@@ -92,10 +92,11 @@ model VerificationToken {
 // ── Core domain ──────────────────────────────────────────────────────────────
 
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique
-  name  String? // from Google profile
-  image String? // from Google profile (Auth.js standard field)
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime? // required by the Auth.js Prisma adapter (set on Google sign-in)
+  name          String? // from Google profile
+  image         String? // from Google profile (Auth.js standard field)
 
   // Profile — username presence == onboarding complete
   username             String?    @unique @db.VarChar(100)
