@@ -17,7 +17,6 @@ import { getCurrentUserId } from "@/lib/auth";
 import type { EmotionKey } from "@/types";
 import {
   DEFAULT_STYLE,
-  type NewSigilInput,
   type SigilStatus,
   type SigilView,
   type VoteState,
@@ -58,32 +57,9 @@ export async function getSigil(id: string): Promise<SigilView | null> {
   return row ? toView(row) : null;
 }
 
-export async function keepSigil(input: NewSigilInput): Promise<SigilView> {
-  const userId = await getCurrentUserId();
-  const row = await prisma.sigil.create({
-    data: {
-      userId,
-      name: input.name || "Unnamed sigil",
-      intention: input.intention,
-      style: input.style as object,
-      canvasData: (input.canvasJson as object) ?? undefined,
-      imageData: input.imageDataUrl ?? undefined,
-      status: "ACTIVE",
-    },
-  });
-  return toView(row);
-}
-
-export async function renameSigil(id: string, name: string): Promise<SigilView | null> {
-  const userId = await getCurrentUserId();
-  const existing = await prisma.sigil.findFirst({ where: { id, userId } });
-  if (!existing) return null;
-  const row = await prisma.sigil.update({
-    where: { id },
-    data: { name: name.slice(0, 100) || "Unnamed sigil" },
-  });
-  return toView(row);
-}
+// Create and rename now live solely on the REST API (POST /api/sigils,
+// PATCH /api/sigils/[id]) so web + mobile share one authoritative path
+// (A4, ADR-016). The former keepSigil/renameSigil server actions were removed.
 
 export async function chargeSigil(id: string, emotion: EmotionKey): Promise<SigilView | null> {
   const userId = await getCurrentUserId();

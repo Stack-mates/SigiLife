@@ -2,7 +2,7 @@
 
 /**
  * StyleSigil — name, ring, glow, and save.
- * STATUS: implemented (saves to the database via lib/sigil/actions.keepSigil)
+ * STATUS: implemented (saves via POST /api/sigils — slot check + profanity)
  *
  * Ring/glow are stored as style metadata and previewed with CSS; baking them
  * into the final rendered image is a later polish item. Recoloring strokes is
@@ -14,13 +14,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMakeSigil } from "@/context/MakeSigilProvider";
-import { keepSigil } from "@/lib/sigil/actions";
+import { api, ApiError } from "@/lib/api-client";
 
 export function StyleSigil() {
   const router = useRouter();
   const { draft, setStyle, setName, reset, canStyle } = useMakeSigil();
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!canStyle) {
     // Step guard: nothing drawn yet.
@@ -30,18 +31,24 @@ export function StyleSigil() {
 
   const finish = async () => {
     setSaving(true);
+    setError(null);
     try {
-      await keepSigil({
+      await api.post("/api/sigils", {
         name: draft.name || "Unnamed sigil",
         intention: draft.intention,
         style: draft.style,
-        canvasJson: draft.canvasJson,
-        imageDataUrl: draft.imageDataUrl,
+        canvasData: draft.canvasJson ?? undefined,
+        imageData: draft.imageDataUrl ?? undefined,
       });
       setSaved(true);
-    } catch {
-      // save failed — surface a retry rather than a silent success
+    } catch (e) {
+      // surface a meaningful failure rather than a silent success
       setSaving(false);
+      setError(
+        e instanceof ApiError && e.code === "LIMIT_REACHED"
+          ? "Your library is full. Destroy a sigil to free a slot."
+          : "Couldn’t keep your sigil. Please try again.",
+      );
     }
   };
 
@@ -121,15 +128,18 @@ export function StyleSigil() {
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-center gap-3">
-          <button type="button" onClick={downloadPng}
-            className="rounded-full border border-zinc-700 px-6 py-2.5 text-zinc-300 transition hover:border-zinc-500">
-            Download PNG
-          </button>
-          <button type="button" onClick={finish} disabled={saving}
-            className="rounded-full bg-violet-600 px-8 py-2.5 font-medium text-white transition enabled:hover:bg-violet-500 disabled:opacity-50">
-            {saving ? "Keeping…" : "Keep this sigil"}
-          </button>
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex items-center justify-center gap-3">
+            <button type="button" onClick={downloadPng}
+              className="rounded-full border border-zinc-700 px-6 py-2.5 text-zinc-300 transition hover:border-zinc-500">
+              Download PNG
+            </button>
+            <button type="button" onClick={finish} disabled={saving}
+              className="rounded-full bg-violet-600 px-8 py-2.5 font-medium text-white transition enabled:hover:bg-violet-500 disabled:opacity-50">
+              {saving ? "Keeping…" : "Keep this sigil"}
+            </button>
+          </div>
+          {error && <p role="alert" className="text-center text-sm text-red-400">{error}</p>}
         </div>
       )}
     </div>

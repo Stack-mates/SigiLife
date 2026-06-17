@@ -17,7 +17,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EvilEye } from "@/components/destroy/EvilEye";
 import { EmotionPicker } from "@/components/charge/EmotionPicker";
-import { destroySigil } from "@/lib/sigil/actions";
+import { api } from "@/lib/api-client";
 import type { SigilView } from "@/lib/sigil/types";
 import { EMOTIONS, type EmotionKey } from "@/types";
 
@@ -52,7 +52,7 @@ export function DestroyRitual({ sigil }: { sigil: SigilView }) {
 
   useEffect(() => {
     if (phase === "tracing" && progress >= 100) {
-      void destroySigil(sigil.id).then(() => {
+      void api.del(`/api/sigils/${sigil.id}`).then(() => {
         router.push("/grimoire/library?view=completed");
       });
     }

@@ -17,7 +17,7 @@ import Link from "next/link";
 import { SplashCursor } from "@/components/charge/SplashCursor";
 import { EmotionPicker } from "@/components/charge/EmotionPicker";
 import { SigilRenderer } from "@/components/sigil/SigilRenderer";
-import { chargeSigil } from "@/lib/sigil/actions";
+import { api } from "@/lib/api-client";
 import type { SigilView } from "@/lib/sigil/types";
 import { EMOTIONS, type EmotionKey } from "@/types";
 
@@ -42,7 +42,7 @@ export function ChargeRitual({ sigil }: { sigil: SigilView }) {
   useEffect(() => {
     if (phase === "tracing" && progress >= 100 && emotion) {
       setPhase("done");
-      void chargeSigil(sigil.id, emotion);
+      void api.patch(`/api/sigils/${sigil.id}/charge`, { emotion });
     }
   }, [phase, progress, emotion, sigil.id]);
 

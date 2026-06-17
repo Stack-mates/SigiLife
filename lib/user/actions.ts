@@ -7,8 +7,8 @@
  * STATUS: implemented
  *
  * Counts come from real Sigil rows, NOT the denormalized User.sigilCount /
- * destroyCount counters — the local-first creation path (lib/sigil/actions
- * keepSigil/destroySigil) doesn't maintain those, so they would read 0.
+ * destroyCount counters, which aren't reliably maintained across every
+ * create/destroy path (and predate them for existing rows).
  *
  * @see docs/DATA_MODEL.md, docs/features/grimoire.md, docs/features/social.md
  */

@@ -107,9 +107,15 @@ A2. `app/api/auth/[...nextauth]/route.ts` → `export const { GET, POST } = hand
 A3. API auth layer: a `Bearer`-token path in `requireViewer()` + a dev
     token-mint route (test-only, gated to non-prod) so the token model is
     exercisable before Google works. ✎ API_CONTRACT.
-A4. **API-as-source-of-truth:** migrate web write-paths (charge/destroy/vote/
-    create/rename/follow/share) to call the authenticated `/api/*` routes
-    instead of server actions. Reads may stay RSC. (Prereq for mobile.)
+A4. **API-as-source-of-truth — DONE 2026-06-17.** All web write-paths now call
+    the authenticated `/api/*` routes via a shared `lib/api-client.ts` (the
+    seed of packages/api-client): create (StyleSigil → POST /api/sigils, which
+    adds slot-check + profanity over the old action), charge/vote/destroy
+    (rituals + VotePanel), rename (sigil page); follow/profile/location were
+    already on the API. The now-redundant `keepSigil`/`renameSigil` server
+    actions were removed so create/rename have a single implementation. Reads
+    stay as RSC/server actions per plan. Verified: typecheck/lint/build + E2E
+    loop (create→charge→vote→destroy) 8/8.
 A5. Extract domain logic + schemas + types toward `packages/shared` boundaries
     (can be in-repo dirs now; physical monorepo split is the later step).
 

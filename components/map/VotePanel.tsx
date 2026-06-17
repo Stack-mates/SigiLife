@@ -2,7 +2,7 @@
 
 /**
  * VotePanel — community ✨charge / 🔥destroy voting control.
- * STATUS: implemented (DB-backed via lib/sigil/actions.voteSigil)
+ * STATUS: implemented (DB-backed via POST /api/sigils/[id]/vote)
  *
  * Optimistic toggle: same vote retracts, opposite switches; reconciles from
  * the server's recomputed scores. Shown on the sigil page now; the map reuses
@@ -13,8 +13,8 @@
  * @see docs/features/map.md, docs/API_CONTRACT.md
  */
 import { useState, useTransition } from "react";
-import { voteSigil } from "@/lib/sigil/actions";
-import type { VoteType } from "@/lib/sigil/types";
+import { api } from "@/lib/api-client";
+import type { VoteType, VoteState } from "@/lib/sigil/types";
 
 export function VotePanel({
   sigilId,
@@ -34,7 +34,7 @@ export function VotePanel({
 
   const cast = (type: VoteType) => {
     startTransition(async () => {
-      const next = await voteSigil(sigilId, type);
+      const next = await api.post<VoteState>(`/api/sigils/${sigilId}/vote`, { type });
       setCharge(next.chargeScore);
       setDestroy(next.destroyScore);
       setVote(next.viewerVote);

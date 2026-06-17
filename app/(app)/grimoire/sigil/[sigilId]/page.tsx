@@ -13,7 +13,8 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { SigilRenderer } from "@/components/sigil/SigilRenderer";
 import { VotePanel } from "@/components/map/VotePanel";
-import { getSigil, getViewerVote, renameSigil } from "@/lib/sigil/actions";
+import { getSigil, getViewerVote } from "@/lib/sigil/actions";
+import { api } from "@/lib/api-client";
 import type { SigilView, VoteType } from "@/lib/sigil/types";
 import { EMOTIONS } from "@/types";
 
@@ -43,8 +44,12 @@ export default function SigilPage({ params }: { params: Promise<{ sigilId: strin
   const closed = sigil.status === "DESTROYED";
 
   const handleRename = async (name: string) => {
-    const updated = await renameSigil(sigil.id, name);
-    if (updated) setSigil({ ...updated });
+    try {
+      const updated = await api.patch<SigilView>(`/api/sigils/${sigil.id}`, { name });
+      setSigil({ ...updated });
+    } catch {
+      // rename failed — leave the previous name in place
+    }
   };
 
   const charged = sigil.isCharged && sigil.chargedEmotion;
