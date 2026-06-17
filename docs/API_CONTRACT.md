@@ -19,7 +19,8 @@
 
 | Method | Path | Auth | Body / Query | Returns | v1 equivalent (on `main`) |
 |---|---|---|---|---|---|
-| * | `/api/auth/[...nextauth]` | — | Auth.js managed | Auth.js managed | `POST /api/auth/google`, `GET /api/auth/me` |
+| * | `/api/auth/[...nextauth]` | — | Auth.js managed (Google, JWT sessions) | Auth.js managed **Implemented (M1).** | `POST /api/auth/google`, `GET /api/auth/me` |
+| POST | `/api/auth/mobile` | — | `{idToken}` (Google ID token from native sign-in) | `{data: {token, user:{id,username}}}` — verifies via Google tokeninfo, upserts user by email, mints a Bearer JWT the app sends as `Authorization: Bearer` **Implemented (M1, mobile).** | — (new) |
 | GET | `/api/sigils` | session | `?scope=all\|mine&status=active\|destroyed` | `{data: MapSigil[]}` (map markers; scope=all returns only placed sigils) **Implemented (M4).** | `GET /allsigils`, `GET /user/:userId/sigils` |
 | POST | `/api/sigils` | session | `createSigilSchema`: name, intention, canvasData, imageData, location?, shareWith?: userId[] | `{data: Sigil}` · `LIMIT_REACHED` if no free slot (via `lib/entitlements`) · best-effort profanity gate · resolves `shareWith` to followed users + `SigilShare` rows in one tx **Implemented.** | `POST /api/sigils` |
 | GET | `/api/sigils/[id]` | session | — | `{data: SigilView}` incl. location, scores, owner username **Implemented (M4).** | `GET /:id` + `/:id/vote-status` |

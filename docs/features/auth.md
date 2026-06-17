@@ -1,6 +1,13 @@
 # Feature: Auth & Onboarding
 
-**Milestone:** M1 · **Status:** stub
+**Milestone:** M1 · **Status: implemented 2026-06-17** (ADR-016 — now the
+keystone, not last). Auth.js v5, Google provider, **JWT sessions** (one token
+serves web cookies + the mobile `Bearer` path via `/api/auth/mobile`).
+`requireViewer()` resolves cookie → Bearer → dev-fallback; the dev-identity
+shim stays active until `AUTH_ENFORCED=true` (prod), so local dev + E2E run
+credential-less. Onboarding + enforced gate live in `(app)/layout`. Verified
+to Google's consent screen; the final account-grant is the human's click.
+Next: flip `AUTH_ENFORCED` in prod, native OAuth clients, retire the dev shim.
 
 ## Purpose
 Google sign-in via Auth.js, then a one-time profile setup (username, avatar,

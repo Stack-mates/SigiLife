@@ -11,8 +11,10 @@
  * @see docs/API_CONTRACT.md
  */
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { getCurrentUserId } from "@/lib/auth";
+import { viewerIdFromBearer } from "@/lib/mobile-token";
 
 export type ErrorCode =
   | "NOT_FOUND"
@@ -49,11 +51,15 @@ export function notImplemented(endpoint: string) {
 }
 
 /**
- * Resolve the acting user (the "viewer"). Currently delegates to the lib/auth
- * dev shim. When real auth lands, this is where an UNAUTHORIZED is thrown if
- * there is no session — callers (route handlers) stay the same.
+ * Resolve the acting user (the "viewer") for an API request, in order:
+ *   1. a native `Authorization: Bearer <jwt>` token (mobile),
+ *   2. the Auth.js cookie session (web) or the dev fallback / enforced 401
+ *      (both handled by getCurrentUserId).
+ * Callers (route handlers) stay the same regardless of how the user authed.
  */
 export async function requireViewer(): Promise<string> {
+  const bearerId = await viewerIdFromBearer((await headers()).get("authorization"));
+  if (bearerId) return bearerId;
   return getCurrentUserId();
 }
 

@@ -5,8 +5,10 @@
  * STATUS: implemented
  *
  * A fixed corner toggle that opens a panel of links. Hidden on the immersive
- * ritual routes (charge/destroy) so it never breaks the ceremony. Sign-out
- * lands with real auth (the last milestone); for now it's pure navigation.
+ * ritual routes (charge/destroy) so it never breaks the ceremony. When a real
+ * session exists (passed from the server (app) layout), it shows who's signed
+ * in plus a Sign out action; in the dev fallback there's no session, so the
+ * account footer is omitted.
  *
  * v1 reference: git show main:src/components/Parts/Menu.tsx
  * @see docs/COMPONENT_MAP.md
@@ -14,6 +16,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+
+type Viewer = { username: string | null } | null;
 
 const LINKS = [
   { href: "/home", label: "The Office" },
@@ -27,7 +32,7 @@ const LINKS = [
   // "Premium" } here to turn it on once billing goes live.
 ] as const;
 
-export function Menu() {
+export function Menu({ viewer }: { viewer?: Viewer }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -71,6 +76,24 @@ export function Menu() {
                 </Link>
               );
             })}
+
+            {viewer && (
+              <div className="mt-auto flex flex-col gap-1 border-t border-zinc-800 pt-3">
+                <span className="px-4 text-xs text-zinc-500">
+                  Signed in{viewer.username ? ` as ${viewer.username}` : ""}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    void signOut({ callbackUrl: "/" });
+                  }}
+                  className="rounded-xl px-4 py-3 text-left text-sm text-zinc-300 transition hover:bg-zinc-800"
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
           </nav>
         </>
       )}
