@@ -1,16 +1,18 @@
 /**
- * api-client — typed fetch wrapper over the JSON envelope (lib/api).
+ * @sigilife/api-client — typed fetch wrapper over the JSON envelope (lib/api).
  * STATUS: implemented
  *
- * The single client-side path to the REST API. Same-origin on web, so the
- * Auth.js session cookie rides automatically; the native app will set an
- * `Authorization: Bearer <jwt>` header (lib/mobile-token) — this module is the
- * seed of the future packages/api-client both frontends share (ADR-016).
+ * The one client-side path to the REST API, shared by web + mobile (ADR-016).
+ * - Web: defaults are zero-config — relative paths, same-origin, so the Auth.js
+ *   session cookie rides automatically.
+ * - Mobile (RN): call configureApi({ baseUrl, getAuthHeader }) once at startup
+ *   to point at the server and attach `Authorization: Bearer <jwt>` (the token
+ *   minted by POST /api/auth/mobile).
  *
  * Unwraps `{data}` on success; throws ApiError carrying the envelope's
  * `{code, message}` on failure so callers can branch on e.g. LIMIT_REACHED.
  *
- * @see docs/API_CONTRACT.md, lib/api.ts
+ * @see docs/API_CONTRACT.md, lib/api.ts, lib/mobile-token.ts
  */
 export class ApiError extends Error {
   code: string;
@@ -21,10 +23,32 @@ export class ApiError extends Error {
   }
 }
 
+type ApiConfig = {
+  /** Prefixed to every path. "" (web, same-origin) by default. */
+  baseUrl: string;
+  /** Returns an Authorization header value (e.g. "Bearer …") or null. */
+  getAuthHeader?: () => string | null | Promise<string | null>;
+};
+
+const config: ApiConfig = { baseUrl: "" };
+
+/** Configure the client (mobile sets baseUrl + getAuthHeader; web needs neither). */
+export function configureApi(opts: Partial<ApiConfig>): void {
+  if (opts.baseUrl !== undefined) config.baseUrl = opts.baseUrl;
+  if (opts.getAuthHeader !== undefined) config.getAuthHeader = opts.getAuthHeader;
+}
+
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
-  const res = await fetch(path, {
+  const headers: Record<string, string> = {};
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (config.getAuthHeader) {
+    const auth = await config.getAuthHeader();
+    if (auth) headers["Authorization"] = auth;
+  }
+
+  const res = await fetch(`${config.baseUrl}${path}`, {
     method,
-    headers: body !== undefined ? { "Content-Type": "application/json" } : undefined,
+    headers: Object.keys(headers).length ? headers : undefined,
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 

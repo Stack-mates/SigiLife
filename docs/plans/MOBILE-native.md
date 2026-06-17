@@ -100,6 +100,20 @@ mobile proceed concurrently.**
 ### Phase 1 — Mobile shell + core read flows
 - Expo app boots, auth flow works, navigation skeleton (Office, Grimoire,
   Library, Profile, Friends). Read-only surfaces against the API.
+  - **2026-06-17 — scaffold landed (`apps/mobile`, Expo SDK 56 + expo-router).**
+    Wired into the pnpm workspace; metro.config.js for the monorepo (watches the
+    workspace root, resolves @sigilife/*). `@sigilife/api-client` made
+    configurable (`configureApi({ baseUrl, getAuthHeader })`) — web unchanged,
+    mobile points at `EXPO_PUBLIC_API_URL`. Screens: Office hub (index),
+    Library (reads GET /api/sigils via the shared client), sign-in scaffold.
+    Imports `@sigilife/shared` + `@sigilife/api-client` directly (no shims).
+    **Verified here:** mobile `tsc` clean + `expo export --platform web`
+    bundles (775 modules; routes /, /library, /signin); web app still green
+    (typecheck/build/unit/E2E). **Needs the user/device:** run on a
+    simulator/phone (`pnpm --filter @sigilife/mobile start`), and the native
+    Google sign-in (iOS/Android OAuth client IDs + the token-exchange wiring to
+    /api/auth/mobile + expo-secure-store) — currently a scaffold screen; the
+    app reads as the dev agent until then.
 
 ### Phase 2 — Create flow (the hard native craft)
 - Sigil drawing canvas in Skia; write→draw→style wizard; glyph rendering.
