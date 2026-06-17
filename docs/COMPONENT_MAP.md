@@ -26,18 +26,18 @@ app/layout.tsx [s] ........................ fonts, globals.css, <UserProvider>
     │   ├── charge/EmotionPicker [c] ...... (shared, 5 canonical emotions)
     │   └── destroy/EvilEye [c] ........... OGL WebGL eye (pupil tracks pointer)
     │       (GhostCursor dropped — ADR-011, would pull in three.js)
-    ├── grimoire/layout.tsx [s] ........... grimoire/GrimoireBook (book frame)
-    │   ├── page.tsx [s] .................. redirects → library (interim). grimoire/LeftPage [s] (profile)
-    │   │                                    + grimoire/RightPage [s] (library) are IMPLEMENTED but not
-    │   │                                    yet mounted — the default spread wires them later.
+    ├── grimoire/layout.tsx ............... grimoire/GrimoireBook (ribbon: Grimoire/Library/
+    │   │                                    Closed cases/Profile/Friends/Map/Settings — all live)
+    │   ├── page.tsx ...................... default spread: grimoire/LeftPage (profile) +
+    │   │                                    grimoire/RightPage (recent sigils), over lib/user/actions
     │   ├── map/page.tsx .................. map/WorldMap [c]
     │   │   ├── map/SigilMarker [c]
     │   │   └── map/VotePanel [c]
     │   ├── library/page.tsx [s] .......... grid of sigil/SigilThumb [s]
     │   ├── sigil/[sigilId]/page.tsx [s] .. detail; sigil/SigilRenderer, map/VotePanel [c]
-    │   ├── profile/page.tsx [s] .......... stats card
-    │   ├── friends/page.tsx [s] .......... social/UserSearch [c], social/FriendsList [c]
-    │   │   └── social/FollowButton [c]
+    │   ├── profile/page.tsx .............. DB-backed identity + stats (lib/user/actions getMyProfile)
+    │   ├── friends/page.tsx .............. social/UserSearch [c], social/FriendsList [c],
+    │   │   └── social/FollowButton [c]      social/SharedWithMe (scrying feed, lib/user/actions)
     │   └── settings/page.tsx [s] ......... settings form (server action candidate)
     ├── place-sigil/[sigilId]/page.tsx .... map/WorldMap [c] + map/MapSearchBox [c]
     ├── ar/[sigilId]/page.tsx ............. ar/ArViewer [c] (flag-gated)

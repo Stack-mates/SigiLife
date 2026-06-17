@@ -5,9 +5,9 @@
  * STATUS: implemented (modern dark shell; Lino art frame is a later polish
  * pass — decision recorded in docs/plans/M3-grimoire.md)
  *
- * Ribbon tabs: Library / Closed cases now; Profile, Map, Friends appear as
- * disabled "soon" ribbons until their milestones (DB era). Active tab from
- * the current route + ?view param.
+ * Ribbon tabs: Grimoire (default spread) / Library / Closed cases / Profile /
+ * Friends / Map / Settings — all live (DB era). Active tab from the current
+ * route + ?view param.
  *
  * @see docs/features/grimoire.md
  */
@@ -16,20 +16,23 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 const TABS = [
+  { label: "Grimoire", href: "/grimoire" },
   { label: "Library", href: "/grimoire/library" },
   { label: "Closed cases", href: "/grimoire/library?view=completed" },
   { label: "Profile", href: "/grimoire/profile" },
+  { label: "Friends", href: "/grimoire/friends" },
+  { label: "Map", href: "/grimoire/map" },
   { label: "Settings", href: "/grimoire/settings" },
 ] as const;
 
-// Surfaces that need the map/social data layer (DB era).
-const SOON = ["Map", "Friends"] as const;
-
 function isActive(label: string, pathname: string, view: string | null): boolean {
   switch (label) {
+    case "Grimoire": return pathname === "/grimoire";
     case "Library": return pathname.startsWith("/grimoire/library") && view !== "completed";
     case "Closed cases": return pathname.startsWith("/grimoire/library") && view === "completed";
     case "Profile": return pathname.startsWith("/grimoire/profile");
+    case "Friends": return pathname.startsWith("/grimoire/friends");
+    case "Map": return pathname.startsWith("/grimoire/map");
     case "Settings": return pathname.startsWith("/grimoire/settings");
     default: return false;
   }
@@ -59,12 +62,6 @@ function Ribbons() {
           </Link>
         );
       })}
-      {SOON.map((label) => (
-        <span key={label} title="Arrives with a later milestone"
-          className="cursor-not-allowed rounded-b-xl bg-zinc-900/50 px-4 py-2 text-sm text-zinc-700">
-          {label}
-        </span>
-      ))}
     </nav>
   );
 }

@@ -15,11 +15,18 @@
 > Book shell decided: modern dark shell now, Lino art frame as polish pass.
 >
 > **Update 2026-06-15:** map + votes shipped (M4); friends + DB-backed profile
-> data shipped (see social.md). `grimoire/LeftPage` (profile summary) and
-> `grimoire/RightPage` (recent-sigil grid) are now **implemented** as
-> presentational server components, but the default `/grimoire` spread still
-> redirects to `/grimoire/library` — mounting LeftPage/RightPage into a real
-> two-page spread is the remaining grimoire task.
+> data shipped (see social.md).
+>
+> **Update 2026-06-17 — grimoire finished.** The default `/grimoire` spread now
+> mounts `grimoire/LeftPage` (profile summary) + `grimoire/RightPage` (recent
+> sigils) over `lib/user/actions.ts getMyProfile()` + `listSigils()`. The
+> ribbon (GrimoireBook) now links all live surfaces — Grimoire / Library /
+> Closed cases / Profile / Friends / Map / Settings (the disabled "soon"
+> ribbons are gone). `/grimoire/profile` is now a DB-backed server component
+> (real identity + follow counts + live ritual breakdown), replacing the old
+> local-first client page. Counts come from real Sigil rows (the denormalized
+> `User.sigilCount`/`destroyCount` are not maintained by the local-first
+> create/destroy path, so they're bypassed).
 
 ## Purpose
 The user's spellbook: a two-page book UI that frames the map, library,

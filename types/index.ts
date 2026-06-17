@@ -59,3 +59,23 @@ export type SigilSummary = {
 
 /** Direction filter for follow-edge queries. */
 export type FollowDirection = "followers" | "following" | "mutual";
+
+/** The viewer's own profile + live ritual breakdown (grimoire spread + profile page).
+ *  Counts are computed from real Sigil rows, not the denormalized User counters. */
+export type MyProfile = ProfileData & {
+  /** ACTIVE sigils in the library. */
+  activeCount: number;
+  /** ACTIVE sigils that are charged. */
+  chargedCount: number;
+};
+
+/** A sigil someone shared with the viewer (the read side of SigilShare — "scrying"). */
+export type SharedSigil = {
+  id: string;
+  name: string;
+  imageDataUrl: string | null;
+  ownerUsername: string | null;
+  ownerAvatar: number;
+  /** ISO timestamp the share was created. */
+  sharedAt: string;
+};

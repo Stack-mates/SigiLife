@@ -5,11 +5,13 @@
  * v1 seeded letterform vectors into an SvgVector table; the rebuild traces
  * glyphs at runtime instead (ADR-008, lib/sigil/traceGlyphs.ts), so that
  * pipeline is gone. This file now seeds a handful of demo seekers so the
- * social surfaces (UserSearch / FollowButton / FriendsList) are demoable
- * against a real database before Google auth exists.
+ * social surfaces (UserSearch / FollowButton / FriendsList) plus the scrying
+ * mirror (a sigil harper shares with you) are demoable against a real
+ * database before Google auth exists.
  *
- * Idempotent: every user is upserted by email, and follow edges use the
- * unique (followerId, followingId) constraint, so re-running is safe.
+ * Idempotent: users upsert by email, follow edges use the unique
+ * (followerId, followingId) constraint, and the shared sigil is keyed by
+ * (owner, name), so re-running is safe.
  *
  * Run with: npm run db:seed   (or: npx tsx prisma/seed.ts)
  */
@@ -66,6 +68,33 @@ async function follow(followerId: string, followingId: string) {
   });
 }
 
+/**
+ * Idempotent: ensure `owner` has a demo sigil and has shared it with
+ * `recipient` — so the scrying mirror (received SigilShare) has something to
+ * show. Keyed by (owner, name) since Sigil has no natural unique column.
+ */
+async function ensureSharedSigil(ownerId: string, recipientId: string) {
+  const name = "Tended Garden";
+  let sigil = await prisma.sigil.findFirst({ where: { userId: ownerId, name } });
+  if (!sigil) {
+    sigil = await prisma.sigil.create({
+      data: {
+        userId: ownerId,
+        name,
+        intention: "I tend what I planted and let it grow",
+        status: "ACTIVE",
+        isCharged: true,
+        chargedEmotion: "HOPE",
+      },
+    });
+  }
+  await prisma.sigilShare.upsert({
+    where: { sigilId_userId: { sigilId: sigil.id, userId: recipientId } },
+    update: {},
+    create: { sigilId: sigil.id, userId: recipientId },
+  });
+}
+
 async function main() {
   // The acting "you" — same record lib/auth's getCurrentUserId() resolves.
   const dev = await upsertUser({
@@ -89,8 +118,11 @@ async function main() {
   await follow(harper.id, bennet.id);
   await follow(bennet.id, harper.id);
 
+  // Harper (a SigiFriend) shares a sigil with you → populates the scrying mirror.
+  await ensureSharedSigil(harper.id, dev.id);
+
   console.log(
-    `Seeded ${DEMO_USERS.length} demo seekers (harper, bennet, wren) + follow graph; dev user = ${dev.username}.`,
+    `Seeded ${DEMO_USERS.length} demo seekers (harper, bennet, wren) + follow graph + 1 shared sigil; dev user = ${dev.username}.`,
   );
 }
 
