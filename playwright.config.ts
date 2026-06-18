@@ -2,8 +2,11 @@ import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Playwright E2E config.
- * Drives the real app in chromium. Reuses an already-running dev server on
- * :3001 if present (the one we keep up for phone testing), else starts one.
+ * Drives the real app in chromium on a DEDICATED port :3001 — deliberately
+ * separate from the `npm run dev` / browser-review / phone-testing server on
+ * :3000, so E2E doesn't fight live browser tabs over the shared dev DB or
+ * on-demand compilation. Normally nothing else is on :3001, so this spawns its
+ * own clean server; reuse kicks in only if you already started one there.
  * Requires the Postgres container up (docker compose up -d db).
  *
  * Run: pnpm test:e2e   ·   see docs/CONVENTIONS.md (testing policy)

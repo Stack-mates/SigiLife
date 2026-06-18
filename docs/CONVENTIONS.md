@@ -83,8 +83,8 @@ Two layers, both runnable from the shell (so agents can self-verify):
   against the dev server + Postgres. `npm run test:e2e`. `smoke.spec` checks
   pages render their content; `loop.spec` walks the whole journey
   (write → draw → style → keep → library → charge → destroy → closed cases).
-  Prereqs: `docker compose up -d db` and a dev server (Playwright reuses
-  :3001 or starts one). Rituals run under `reducedMotion: "reduce"` so the
+  Prereqs: `docker compose up -d db`. Playwright runs its own dedicated server
+  on :3001 (separate from the `npm run dev` server on :3000, for isolation). Rituals run under `reducedMotion: "reduce"` so the
   flow is tested without flaky headless WebGL — the *visuals* still want a
   human/device pass.
 

@@ -62,7 +62,7 @@ in order of preference:
 1. **chrome-devtools MCP (interactive)** — if `mcp__chrome-devtools__*` tools
    are present, they drive the user's real **Brave** at `http://127.0.0.1:9222`
    (local-scope MCP, set up 2026-06-14). Open/point a Brave tab at the dev
-   server (`http://localhost:3001`) and navigate/click/screenshot the real,
+   server (`http://localhost:3000`) and navigate/click/screenshot the real,
    GPU-backed app — this is the only way to verify the **ritual WebGL visuals**
    (charge fluid, destroy eye). Prereq: Brave running with
    `--remote-debugging-port=9222` and the dev server up. If the tools are

@@ -4,7 +4,7 @@
  *
  * Prereqs: dev server running (npm run dev) + Postgres up.
  * Usage:   SIGIL_ID=<id> node scripts/screenshots.mjs
- *          BASE=http://localhost:3001 VIEWPORT=mobile node scripts/screenshots.mjs
+ *          BASE=http://localhost:3000 VIEWPORT=mobile node scripts/screenshots.mjs
  * Output:  /tmp/sigishots/*.png
  *
  * @see docs/CONVENTIONS.md (visual review)
@@ -13,7 +13,7 @@ import { chromium } from "@playwright/test";
 import { mkdirSync } from "fs";
 
 const OUT = "/tmp/sigishots";
-const BASE = process.env.BASE ?? "http://localhost:3001";
+const BASE = process.env.BASE ?? "http://localhost:3000";
 const SIGIL_ID = process.env.SIGIL_ID ?? "";
 const viewport =
   process.env.VIEWPORT === "desktop"
